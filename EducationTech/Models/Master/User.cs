@@ -7,7 +7,7 @@ namespace EducationTech.Models.Master
     public class User
     {
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         [Required(ErrorMessage = "Username is required")]
         [StringLength(50, ErrorMessage = "Username cannot be longer than 50 characters")]
@@ -29,5 +29,4 @@ namespace EducationTech.Models.Master
         [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }
     }
-
 }
