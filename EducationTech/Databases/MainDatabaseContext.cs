@@ -1,4 +1,5 @@
-﻿using EducationTech.Models.Master;
+﻿using EducationTech.Databases.Factories;
+using EducationTech.Models.Master;
 using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Databases

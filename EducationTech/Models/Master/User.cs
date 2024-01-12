@@ -25,6 +25,9 @@ namespace EducationTech.Models.Master
         public string? Email { get; set; }
 
         public Role Role { get; set; } = Role.Student;
+
+        [DataType(DataType.Date)]
+        public DateTime? DateOfBirth { get; set; }
     }
 
 }

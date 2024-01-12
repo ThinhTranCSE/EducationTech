@@ -1,4 +1,5 @@
 using EducationTech.Databases;
+using EducationTech.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech
@@ -13,10 +14,7 @@ namespace EducationTech
 
             builder.Services.AddControllers();
 
-            builder.Services.AddDbContext<MainDatabaseContext>(options =>
-            {
-                options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
+            builder.ConfigureDatabase();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -34,7 +32,6 @@ namespace EducationTech
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

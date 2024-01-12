@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Folder Include="Controllers\Business\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Models\Business\" />
     <Folder Include="DTOs\" />
     <Folder Include="Repositories\Master\" />

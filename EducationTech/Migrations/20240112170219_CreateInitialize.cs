@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace EducationTech.Migrations
 {
-    public partial class CreateUserTable : Migration
+    public partial class CreateInitialize : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -18,9 +19,10 @@ namespace EducationTech.Migrations
                     Id = table.Column<string>(type: "varchar(255)", nullable: false),
                     Username = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
                     Password = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "longtext", nullable: false),
-                    Email = table.Column<string>(type: "longtext", nullable: false),
-                    Role = table.Column<int>(type: "int", nullable: false)
+                    PhoneNumber = table.Column<string>(type: "longtext", nullable: true),
+                    Email = table.Column<string>(type: "longtext", nullable: true),
+                    Role = table.Column<int>(type: "int", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
