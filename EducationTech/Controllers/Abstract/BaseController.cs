@@ -11,26 +11,37 @@ namespace EducationTech.Controllers.Abstract
             try
             {
                 var result = await executedFunction();
-                if (result != null)
+                if (result != null )
                 {
+                    if(!(bool) result)
+                    {
+                        return BadRequest(new ResponseMessage { Status = 400, Message = "Failed" });
+                    }
                     return Ok(new ResponseMessage { Status = 200, Message = "Success", Data = result});
                 }
                 else
                 {
                     return BadRequest(new ResponseMessage { Status = 400, Message = "Failed" });
                 }
-                
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new ResponseMessage { Status = 500, Message = ex.Message});
+                return StatusCode(500, new ResponseMessage
+                {
+                    Status = 500,
+                    Message = new
+                    {
+                        Message = ex.Message,
+                        StackTrace = ex.StackTrace
+                    },
+                });
             }
         }
    
         protected class ResponseMessage
         {
             public int Status { get; set; } = 200;
-            public string Message { get; set; } = "";
+            public object? Message { get; set; } = null;
             public object? Data { get; set; } = null;
         }
     }

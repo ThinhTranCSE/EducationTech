@@ -1,6 +1,7 @@
 using EducationTech.Databases;
 using EducationTech.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Converters;
 
 namespace EducationTech
 {
@@ -12,9 +13,14 @@ namespace EducationTech
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+            });
 
             builder.ConfigureDatabase();
+            builder.Services.InjectServices();
+            builder.Services.InjectRepositpories();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

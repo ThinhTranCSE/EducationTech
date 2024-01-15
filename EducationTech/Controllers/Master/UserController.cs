@@ -1,26 +1,23 @@
 ﻿using EducationTech.Controllers.Abstract;
 using EducationTech.Models.Master;
+using EducationTech.Services.Master.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationTech.Controllers.Master
 {
     public class UserController : BaseController
     {
-        //private readonly IUserService _userService;
-        public UserController()
+        private readonly IUserService _userService;
+        public UserController(IUserService userService)
         {
+            _userService = userService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUsers(string text)
+        public async Task<IActionResult> GetAllUsers()
         {
-            bool check = true;
-            return await ExecuteAsync(async () => await DoSomeWork(check));
+            return await ExecuteAsync(async () => await _userService.Get(1));
         }
 
-        private async Task<int> DoSomeWork(bool param)
-        {
-            return 1;
-        }
     }
 }

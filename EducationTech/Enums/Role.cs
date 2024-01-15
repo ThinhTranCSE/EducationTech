@@ -1,9 +1,16 @@
-﻿namespace EducationTech.Enums
+﻿using System.ComponentModel;
+
+namespace EducationTech.Enums
 {
     public enum Role
     {
+        [Description("Admin")]
         Admin,
-        Author,
-        Student
+        [Description("Group Admin")]
+        GroupAdmin,
+        [Description("Instructor")]
+        Instructor,
+        [Description("Learner")]
+        Learner
     }
 }
