@@ -13,7 +13,7 @@ namespace EducationTech.Controllers.Abstract
                 var result = await executedFunction();
                 if (result != null )
                 {
-                    if(!(bool) result)
+                    if(result is bool && !(bool) result)
                     {
                         return BadRequest(new ResponseMessage { Status = 400, Message = "Failed" });
                     }
