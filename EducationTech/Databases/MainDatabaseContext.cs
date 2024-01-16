@@ -1,4 +1,6 @@
 ﻿using EducationTech.Databases.Factories;
+using EducationTech.Databases.Interceptors;
+using EducationTech.Extensions;
 using EducationTech.Models.Abstract;
 using EducationTech.Models.Master;
 using Microsoft.EntityFrameworkCore;
@@ -7,11 +9,24 @@ namespace EducationTech.Databases
 {
     public class MainDatabaseContext : DbContext
     {
-        public MainDatabaseContext(DbContextOptions<MainDatabaseContext> options) : base(options)
+        private readonly IConfiguration _configuration;
+        public MainDatabaseContext(DbContextOptions<MainDatabaseContext> options, IConfiguration configuration) : base(options)
         {
+            _configuration = configuration;
         }
 
         public DbSet<User> Users { get; set; }
+
+
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder
+                .RegisterDbContext(_configuration)
+                .AddInterceptors(new SoftDeleteInterceptor(), new TimestampInterceptor());
+
+            base.OnConfiguring(optionsBuilder);
+        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -32,7 +47,6 @@ namespace EducationTech.Databases
                 modelImplementation
                     .GetMethod(nameof(IModel.OnModelCreating))
                     ?.Invoke(Activator.CreateInstance(modelImplementation), new object[] { builder });
-
             });
         }
     }

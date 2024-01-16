@@ -3,14 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EducationTech", "EducationTech\EducationTech.csproj", "{7DDD79A6-41DB-48B3-BDC9-2B1017144210}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EducationTech", "EducationTech\EducationTech.csproj", "{7DDD79A6-41DB-48B3-BDC9-2B1017144210}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug Seeder|Any CPU = Debug Seeder|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7DDD79A6-41DB-48B3-BDC9-2B1017144210}.Debug Seeder|Any CPU.ActiveCfg = Debug Seeder|Any CPU
+		{7DDD79A6-41DB-48B3-BDC9-2B1017144210}.Debug Seeder|Any CPU.Build.0 = Debug Seeder|Any CPU
 		{7DDD79A6-41DB-48B3-BDC9-2B1017144210}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7DDD79A6-41DB-48B3-BDC9-2B1017144210}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DDD79A6-41DB-48B3-BDC9-2B1017144210}.Release|Any CPU.ActiveCfg = Release|Any CPU

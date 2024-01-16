@@ -5,6 +5,6 @@ namespace EducationTech.Services.Master.Interfaces
 {
     public interface IUserService : IService
     {
-        Task<User?> Get(int id);
+        Task<User?> GetUserById(Guid id);
     }
 }

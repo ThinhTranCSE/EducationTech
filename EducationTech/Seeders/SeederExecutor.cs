@@ -1,0 +1,83 @@
+﻿using EducationTech.Databases;
+using Swashbuckle.AspNetCore.SwaggerGen;
+
+namespace EducationTech.Seeders
+{
+    public class SeederExecutor : ISeederExecutor
+    {
+        private readonly MainDatabaseContext _context;
+        private readonly IDictionary<string, ISeeder> _seeders;
+
+        public SeederExecutor(MainDatabaseContext context)
+        {
+            _context = context;
+            _seeders = RegisterSeeders();
+        }
+
+        public IDictionary<string, ISeeder> RegisterSeeders()
+        {
+            IEnumerable<Type> seederTypes = typeof(ISeeder).Assembly.GetTypes()
+                    .Where(t => !t.IsAbstract && !t.IsInterface)
+                    .Where(t => t.IsAssignableTo(typeof(ISeeder)));
+            
+
+            IDictionary<string, ISeeder> seeders = seederTypes.Select(t =>
+            {
+                if(t.IsAbstract || t.IsInterface)
+                {
+                    throw new Exception($"Seeder {t.Name} cannot be abstract or interface");
+                }
+                if(!t.IsAssignableTo(typeof(ISeeder)))
+                {
+                    throw new Exception($"Seeder {t.Name} must implement ISeeder");
+                }
+                return new KeyValuePair<string, ISeeder>(t.GetType().Name, (ISeeder)Activator.CreateInstance(t, new object[] { _context } ));
+            })
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            return seeders;
+        }
+
+        private void Seed()
+        {
+            foreach (ISeeder seeder in _seeders.Values)
+            {
+                seeder.Seed();
+            }
+        }
+
+        private void Seed(string seederName)
+        {
+            if (!_seeders.ContainsKey(seederName))
+            {
+                throw new Exception($"Seeder {seederName} not found");
+            }
+            _seeders[seederName].Seed();
+        }
+
+        public void Execute(params string[] args)
+        {
+            if(args.Length == 0)
+            {
+                return;
+            }
+            else if (args.Length == 1)
+            {
+                if (args[0] == "seeder")
+                {
+                    Seed();
+                }
+            }
+            else
+            {
+                if (args[0] != "seeder")
+                {
+                    return;
+                }
+                foreach (string seederName in args.Skip(1))
+                {
+                    Seed(seederName);
+                }
+            }
+        }
+    }
+}

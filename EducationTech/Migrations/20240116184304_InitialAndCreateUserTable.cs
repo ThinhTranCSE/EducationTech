@@ -23,7 +23,9 @@ namespace EducationTech.Migrations
                     Email = table.Column<string>(type: "longtext", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Role = table.Column<int>(type: "int", nullable: false),
-                    AccessToken = table.Column<string>(type: "longtext", nullable: true)
+                    AccessToken = table.Column<string>(type: "longtext", nullable: true),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {

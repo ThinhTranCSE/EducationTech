@@ -1,19 +1,19 @@
 ﻿using EducationTech.Databases.Factories;
 using EducationTech.Databases.Providers.MySql;
 using EducationTech.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Extensions
 {
-    public static class WebApplicationBuilderExtensions
+    public static class DbContextOptionsBuilderExtendsions
     {
-        public static void ConfigureDatabase(this WebApplicationBuilder builder)
+        public static DbContextOptionsBuilder RegisterDbContext(this DbContextOptionsBuilder optionsBuilder, IConfiguration configuration)
         {
-            var configuration = builder.Configuration;
             var databaseType = configuration.GetSection("Database").GetSection("DatabaseType").Get<DatabaseType>();
             switch (databaseType)
             {
                 case DatabaseType.MySql:
-                    DbContextFactory.Instance.UseMySQL(builder);
+                    DbContextFactory.Instance.UseMySQL(optionsBuilder, configuration);
                     break;
                 case DatabaseType.SqlServer:
                     break;
@@ -24,7 +24,8 @@ namespace EducationTech.Extensions
                 default:
                     throw new ArgumentOutOfRangeException(databaseType.ToString());
             }
+
+            return optionsBuilder;
         }
     }
 }
-    

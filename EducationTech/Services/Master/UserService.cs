@@ -1,4 +1,5 @@
-﻿using EducationTech.Models.Master;
+﻿using EducationTech.DTOs.Masters.User;
+using EducationTech.Models.Master;
 using EducationTech.Repositories.Master.Interfaces;
 using EducationTech.Services.Master.Interfaces;
 
@@ -9,9 +10,10 @@ namespace EducationTech.Services.Master
         private readonly IUserRepository _userRepository;
 
         public UserService(IUserRepository userRepository) { _userRepository = userRepository; }
-        public async Task<User?> Get(int id)
+        public async Task<User?> GetUserById(Guid id)
         {
-            return await _userRepository.Get(id);
+            var users = await _userRepository.Get(new UserGetDto { Id = id });
+            return users.Count() > 0 ? users.First() : null;
         }
     }
 }

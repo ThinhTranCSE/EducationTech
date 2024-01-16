@@ -1,4 +1,5 @@
 ﻿using EducationTech.Databases;
+using EducationTech.Repositories.Abstracts;
 
 namespace EducationTech.Repositories.Abstract
 {

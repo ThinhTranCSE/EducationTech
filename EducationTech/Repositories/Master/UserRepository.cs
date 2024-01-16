@@ -4,54 +4,50 @@ using EducationTech.Models.Master;
 using EducationTech.Repositories.Abstract;
 using EducationTech.Repositories.Master.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
 
 namespace EducationTech.Repositories.Master
 {
     public class UserRepository : Repository, IUserRepository
     {
-        public DbSet<User> Query => _context.Users;
+        public DbSet<User> model => _context.Users;
         public UserRepository(MainDatabaseContext context) : base(context) { }
 
-        public async Task<User?> Get(int id)
+        public async Task<ICollection<User>> Get(UserGetDto getDto)
         {
-            return new User { Username = "Test username", DateOfBirth = new DateTime(2022, 12, 5)};
+            var query = model.AsQueryable();
+            if(getDto.Id != null)
+            {
+                query = query.Where(x => x.Id == getDto.Id);
+            }
+            if(getDto.Ids != null)
+            {
+                query = query.Where(x => getDto.Ids.Contains(x.Id));
+            }
+            if(getDto.Username != null)
+            {
+                query = query.Where(x => x.Username == getDto.Username);
+            }
+
+            return await query.ToListAsync();
         }
 
-        public Task<User?> GetById(int id)
+        public Task<User?> Insert(UserInsertDto insertDto)
         {
             throw new NotImplementedException();
         }
 
-        public Task<User?> GetByUsername(string username)
+        public Task<ICollection<User>> Insert(IEnumerable<UserInsertDto> insertDtos)
         {
             throw new NotImplementedException();
         }
 
-        public Task<User?> Insert(UserInsertDto model)
-        {
-            return Insert<UserInsertDto>(model);
-        }
-
-        public Task<User?> Insert<TInsertDto>(TInsertDto model)
+        public Task<User?> Update(UserUpdateDto dto)
         {
             throw new NotImplementedException();
         }
 
-        public Task<User?> Update(int id, UserUpdateDto model)
-        {
-            return Update<UserUpdateDto>(id, model);
-        }
-
-        public Task<User?> Update<TUpdateDto>(int id, TUpdateDto model)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<User?> Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<User[]> Get<TGetDto>(TGetDto model)
+        public Task<User?> Delete(UserDeleteDto dto)
         {
             throw new NotImplementedException();
         }

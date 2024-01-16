@@ -13,10 +13,10 @@ namespace EducationTech.Controllers.Master
             _userService = userService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllUsers()
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(Guid id)
         {
-            return await ExecuteAsync(async () => await _userService.Get(1));
+            return await ExecuteAsync(async () => await _userService.GetUserById(id));
         }
 
     }

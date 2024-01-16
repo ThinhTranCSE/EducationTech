@@ -28,6 +28,9 @@ namespace EducationTech.Migrations
                     b.Property<string>("AccessToken")
                         .HasColumnType("longtext");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime(6)");
 
@@ -43,6 +46,9 @@ namespace EducationTech.Migrations
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Username")
                         .IsRequired()

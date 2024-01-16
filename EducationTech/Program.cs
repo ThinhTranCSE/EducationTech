@@ -1,5 +1,6 @@
 using EducationTech.Databases;
 using EducationTech.Extensions;
+using EducationTech.Seeders;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Converters;
 
@@ -18,7 +19,7 @@ namespace EducationTech
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
             });
 
-            builder.ConfigureDatabase();
+            builder.Services.AddDbContext<MainDatabaseContext>();
             builder.Services.InjectServices();
             builder.Services.InjectRepositpories();
 
@@ -26,7 +27,16 @@ namespace EducationTech
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddScoped<ISeederExecutor, SeederExecutor>();
+
             var app = builder.Build();
+            
+            using(var scope = app.Services.CreateScope())
+            {
+                ISeederExecutor seederExecutor = scope.ServiceProvider.GetRequiredService<ISeederExecutor>();
+                seederExecutor.Execute(args);
+            }
+            
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

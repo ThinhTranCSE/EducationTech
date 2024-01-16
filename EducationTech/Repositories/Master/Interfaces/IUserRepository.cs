@@ -1,14 +1,17 @@
 ﻿using EducationTech.DTOs.Masters.User;
 using EducationTech.Models.Master;
+using EducationTech.Repositories.Abstract.Crud;
 using EducationTech.Repositories.Abstracts;
 
 namespace EducationTech.Repositories.Master.Interfaces
 {
-    public interface IUserRepository : IRepository<User>
+    public interface IUserRepository : 
+        IRepository<User>, 
+        IGet<User, UserGetDto>, 
+        IInsert<User, UserInsertDto>, 
+        IUpdate<User, UserUpdateDto>, 
+        IDelete<User, UserDeleteDto>
     {
-        Task<User?> GetByUsername(string username);
-        Task<User?> GetById(int id);
-        Task<User?> Insert(UserInsertDto model);
-        Task<User?> Update(int id, UserUpdateDto model);
+
     }
 }

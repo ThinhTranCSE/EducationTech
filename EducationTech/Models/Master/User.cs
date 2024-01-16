@@ -10,9 +10,10 @@ namespace EducationTech.Models.Master
     [Index(nameof(Username), IsUnique = true)]
     public class User : Model
     {
+        public override bool Timestamp => true;
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
-
         [Required(ErrorMessage = "Username is required")]
         [StringLength(50, ErrorMessage = "Username cannot be longer than 50 characters")]
         public string Username { get; set; } = "";
@@ -38,7 +39,7 @@ namespace EducationTech.Models.Master
 
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            OnModelCreating<User>(modelBuilder);
         }
     }
 }
