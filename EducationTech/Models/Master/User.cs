@@ -13,6 +13,7 @@ namespace EducationTech.Models.Master
         public override bool Timestamp => true;
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [ForeignKey(nameof(UserRole))]
         public Guid Id { get; set; }
         [Required(ErrorMessage = "Username is required")]
         [StringLength(50, ErrorMessage = "Username cannot be longer than 50 characters")]
@@ -31,15 +32,12 @@ namespace EducationTech.Models.Master
         [DataType(DataType.DateTime)]
         public DateTime? DateOfBirth { get; set; }
 
-        [Required(ErrorMessage = "Role is required")]
-        public Role Role { get; set; } = Role.Learner;
-
         [JsonIgnore]
         public string? AccessToken { get; set; }
 
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            OnModelCreating<User>(modelBuilder);
+            ConfigureSideEffects<User>(modelBuilder);
         }
     }
 }

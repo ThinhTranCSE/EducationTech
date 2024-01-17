@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using EducationTech.Databases;
-using EducationTech.Enums;
 using EducationTech.Models.Master;
 
 namespace EducationTech.Seeders.Seeds
@@ -19,13 +18,25 @@ namespace EducationTech.Seeders.Seeds
                 .RuleFor(x => x.Password, f => f.Internet.Password())
                 .RuleFor(x => x.DateOfBirth, f => f.Date.Past(20))
                 .RuleFor(x => x.Email, f => f.Person.Email)
-                .RuleFor(x => x.PhoneNumber, f => f.Person.Phone)
-                .RuleFor(x => x.Role, f => f.PickRandom<Role>());
+                .RuleFor(x => x.PhoneNumber, f => f.Person.Phone);
 
 
-            User[] users = dataGenerator.Generate(10).ToArray();
-            _context.Users.AddRange(users);
-            _context.SaveChanges();
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    User[] users = dataGenerator.Generate(10).ToArray();
+                    _context.Users.AddRange(users);
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch(Exception ex)
+                {
+                    transaction.Rollback();
+                }
+            }   
+            
         }
     }
 }

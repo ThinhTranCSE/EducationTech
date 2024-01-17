@@ -2,6 +2,6 @@
 {
     public interface ISeederExecutor
     {
-        void Execute(params string[] args);
+        void Execute(CancellationTokenSource tokenSource, params string[] args);
     }
 }

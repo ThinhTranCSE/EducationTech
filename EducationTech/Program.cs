@@ -30,11 +30,20 @@ namespace EducationTech
             builder.Services.AddScoped<ISeederExecutor, SeederExecutor>();
 
             var app = builder.Build();
-            
-            using(var scope = app.Services.CreateScope())
+
+            using (CancellationTokenSource cancellationTokenSource = new CancellationTokenSource())
             {
-                ISeederExecutor seederExecutor = scope.ServiceProvider.GetRequiredService<ISeederExecutor>();
-                seederExecutor.Execute(args);
+
+                CancellationToken cancellationToken = cancellationTokenSource.Token;
+                using(var scope = app.Services.CreateScope())
+                {
+                    ISeederExecutor seederExecutor = scope.ServiceProvider.GetRequiredService<ISeederExecutor>();
+                    seederExecutor.Execute(cancellationTokenSource, args);
+                }
+                if(cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
             }
             
 

@@ -26,7 +26,7 @@ namespace EducationTech.Models.Abstract
         public abstract void OnModelCreating(ModelBuilder modelBuilder);
         
 
-        protected void OnModelCreating<TModel>(ModelBuilder modelBuilder) where TModel : Model
+        protected void ConfigureSideEffects<TModel>(ModelBuilder modelBuilder) where TModel : Model
         {
             
             if(typeof(TModel).IsAbstract || typeof(TModel).IsInterface || !typeof(TModel).IsAssignableTo(typeof(Model)))

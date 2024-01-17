@@ -19,7 +19,6 @@ namespace EducationTech.Seeders
             IEnumerable<Type> seederTypes = typeof(ISeeder).Assembly.GetTypes()
                     .Where(t => !t.IsAbstract && !t.IsInterface)
                     .Where(t => t.IsAssignableTo(typeof(ISeeder)));
-            
 
             IDictionary<string, ISeeder> seeders = seederTypes.Select(t =>
             {
@@ -31,7 +30,7 @@ namespace EducationTech.Seeders
                 {
                     throw new Exception($"Seeder {t.Name} must implement ISeeder");
                 }
-                return new KeyValuePair<string, ISeeder>(t.GetType().Name, (ISeeder)Activator.CreateInstance(t, new object[] { _context } ));
+                return new KeyValuePair<string, ISeeder>(t.Name, (ISeeder)Activator.CreateInstance(t, new object[] { _context } ));
             })
             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             return seeders;
@@ -54,7 +53,7 @@ namespace EducationTech.Seeders
             _seeders[seederName].Seed();
         }
 
-        public void Execute(params string[] args)
+        public void Execute(CancellationTokenSource tokenSource, params string[] args)
         {
             if(args.Length == 0)
             {
@@ -66,6 +65,7 @@ namespace EducationTech.Seeders
                 {
                     Seed();
                 }
+                tokenSource.Cancel();
             }
             else
             {
@@ -77,6 +77,7 @@ namespace EducationTech.Seeders
                 {
                     Seed(seederName);
                 }
+                tokenSource.Cancel();
             }
         }
     }
