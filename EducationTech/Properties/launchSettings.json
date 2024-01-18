@@ -2,7 +2,6 @@
   "profiles": {
     "EducationTech": {
       "commandName": "Project",
-      "commandLineArgs": "seeder",
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {

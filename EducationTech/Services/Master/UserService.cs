@@ -12,7 +12,7 @@ namespace EducationTech.Services.Master
         public UserService(IUserRepository userRepository) { _userRepository = userRepository; }
         public async Task<User?> GetUserById(Guid id)
         {
-            var users = await _userRepository.Get(new UserGetDto { Id = id });
+            var users = await _userRepository.Get(new User_GetDto { Id = id });
             return users.Count() > 0 ? users.First() : null;
         }
     }

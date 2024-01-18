@@ -1,6 +1,6 @@
 ﻿namespace EducationTech.DTOs.Masters.User
 {
-    public class UserInsertDto
+    public class User_DeleteDto
     {
     }
 }

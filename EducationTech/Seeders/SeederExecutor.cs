@@ -6,15 +6,15 @@ namespace EducationTech.Seeders
     public class SeederExecutor : ISeederExecutor
     {
         private readonly MainDatabaseContext _context;
-        private readonly IDictionary<string, ISeeder> _seeders;
+        private IDictionary<string, ISeeder> _seeders { get; set; }
 
         public SeederExecutor(MainDatabaseContext context)
         {
             _context = context;
-            _seeders = RegisterSeeders();
+
         }
 
-        public IDictionary<string, ISeeder> RegisterSeeders()
+        public IDictionary<string, ISeeder> RegisterSeeders(IServiceScope scope)
         {
             IEnumerable<Type> seederTypes = typeof(ISeeder).Assembly.GetTypes()
                     .Where(t => !t.IsAbstract && !t.IsInterface)
@@ -22,18 +22,21 @@ namespace EducationTech.Seeders
 
             IDictionary<string, ISeeder> seeders = seederTypes.Select(t =>
             {
-                if(t.IsAbstract || t.IsInterface)
+                if (t.IsAbstract || t.IsInterface)
                 {
                     throw new Exception($"Seeder {t.Name} cannot be abstract or interface");
                 }
-                if(!t.IsAssignableTo(typeof(ISeeder)))
+                if (!t.IsAssignableTo(typeof(ISeeder)))
                 {
                     throw new Exception($"Seeder {t.Name} must implement ISeeder");
                 }
-                return new KeyValuePair<string, ISeeder>(t.Name, (ISeeder)Activator.CreateInstance(t, new object[] { _context } ));
+                return new KeyValuePair<string, ISeeder>(t.Name, (ISeeder)scope.ServiceProvider.GetRequiredService(t));
             })
             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            _seeders = seeders;
             return seeders;
+
+
         }
 
         private void Seed()
@@ -55,16 +58,17 @@ namespace EducationTech.Seeders
 
         public void Execute(CancellationTokenSource tokenSource, params string[] args)
         {
-            if(args.Length == 0)
+            if (args.Length == 0)
             {
                 return;
             }
             else if (args.Length == 1)
             {
-                if (args[0] == "seeder")
+                if (args[0] != "seeder")
                 {
-                    Seed();
+                    return;
                 }
+                Seed();
                 tokenSource.Cancel();
             }
             else

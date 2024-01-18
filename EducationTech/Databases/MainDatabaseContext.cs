@@ -2,6 +2,7 @@
 using EducationTech.Databases.Interceptors;
 using EducationTech.Extensions;
 using EducationTech.Models.Abstract;
+using EducationTech.Models.Business;
 using EducationTech.Models.Master;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,7 @@ namespace EducationTech.Databases
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<UserKey> UserKeys { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -7,11 +7,12 @@ namespace EducationTech.Repositories.Master.Interfaces
 {
     public interface IUserRepository : 
         IRepository<User>, 
-        IGet<User, UserGetDto>, 
-        IInsert<User, UserInsertDto>, 
-        IUpdate<User, UserUpdateDto>, 
-        IDelete<User, UserDeleteDto>
+        IGet<User, User_GetDto>, 
+        IInsert<User, User_InsertDto>, 
+        IUpdate<User, User_UpdateDto>, 
+        IDelete<User, User_DeleteDto>
     {
-
+        Task<User?> GetUserByUsername(string username);
+        Task<User?> GetUserById(Guid id);
     }
 }

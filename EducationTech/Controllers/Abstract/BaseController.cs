@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EducationTech.Exceptions.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EducationTech.Controllers.Abstract
 {
@@ -23,6 +24,10 @@ namespace EducationTech.Controllers.Abstract
                 {
                     return BadRequest(new ResponseMessage { Status = 400, Message = "Failed" });
                 }
+            }
+            catch (HttpException ex)
+            {
+                return StatusCode(ex.StatusCode, new ResponseMessage { Status = ex.StatusCode, Message = ex.Message});
             }
             catch (Exception ex)
             {

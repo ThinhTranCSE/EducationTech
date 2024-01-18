@@ -8,9 +8,11 @@ namespace EducationTech.Controllers.Master
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly ILogger<UserController> _logger;
+        public UserController(IUserService userService, ILogger<UserController> logger)
         {
             _userService = userService;
+            _logger = logger;
         }
 
         [HttpGet("{id}")]

@@ -1,6 +1,6 @@
 ﻿namespace EducationTech.DTOs.Masters.User
 {
-    public class UserUpdateDto
+    public class User_UpdateDto
     {
     }
 }

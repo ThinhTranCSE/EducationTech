@@ -1,42 +1,35 @@
 ﻿using Bogus;
 using EducationTech.Databases;
+using EducationTech.DTOs.Business.Auth;
+using EducationTech.DTOs.Masters.User;
 using EducationTech.Models.Master;
+using EducationTech.Services.Business.Interfaces;
+using EducationTech.Services.Master.Interfaces;
+using EducationTech.Utilities.Interfaces;
 
 namespace EducationTech.Seeders.Seeds
 {
     public class UserSeeder : Seeder
     {
-        public UserSeeder(MainDatabaseContext context) : base(context)
+        private readonly IAuthService _authService;
+        public UserSeeder(MainDatabaseContext context, IAuthService authService) : base(context)
         {
+            _authService = authService;
         }
 
         public override void Seed()
         {
-            Faker<User> dataGenerator = new Faker<User>();
+            var dataGenerator = new Faker<RegisterDto>();
             dataGenerator
                 .RuleFor(x => x.Username, f => f.Person.UserName)
-                .RuleFor(x => x.Password, f => f.Internet.Password())
+                .RuleFor(x => x.Password, "12345678")
                 .RuleFor(x => x.DateOfBirth, f => f.Date.Past(20))
                 .RuleFor(x => x.Email, f => f.Person.Email)
                 .RuleFor(x => x.PhoneNumber, f => f.Person.Phone);
 
-
-            using(var transaction = _context.Database.BeginTransaction())
-            {
-                try
-                {
-                    User[] users = dataGenerator.Generate(10).ToArray();
-                    _context.Users.AddRange(users);
-                    _context.SaveChanges();
-
-                    transaction.Commit();
-                }
-                catch(Exception ex)
-                {
-                    transaction.Rollback();
-                }
-            }   
-            
+            var users = dataGenerator.Generate(5);
+            var createdUsers = users.Select(u => _authService.Register(u));
+            Task.WaitAll(createdUsers.ToArray());
         }
     }
 }
