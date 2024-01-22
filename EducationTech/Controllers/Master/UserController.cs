@@ -18,9 +18,9 @@ namespace EducationTech.Controllers.Master
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById(Guid id)
+        public async Task<User?> GetUserById(Guid id)
         {
-            return await ExecuteAsync(async () => await _userService.GetUserById(id));
+            return await _userService.GetUserById(id);
         }
 
     }

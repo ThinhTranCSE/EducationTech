@@ -1,13 +1,18 @@
+using EducationTech.Controllers.Abstract;
 using EducationTech.Databases;
 using EducationTech.Extensions;
+using EducationTech.Middlewares;
 using EducationTech.Seeders;
 using EducationTech.Utilities;
 using EducationTech.Utilities.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Text;
+using System;
+using System.Diagnostics;
 
 namespace EducationTech
 {
@@ -22,6 +27,7 @@ namespace EducationTech
             builder.Services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
             builder.Services.AddDbContext<MainDatabaseContext>();
@@ -63,7 +69,13 @@ namespace EducationTech
 
             builder.Services.AddScoped<ISeederExecutor, SeederExecutor>();
             builder.Services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+                })
                 .AddJwtBearer(options =>
                 {
                     var scope = builder.Services.BuildServiceProvider().CreateScope();
@@ -81,20 +93,20 @@ namespace EducationTech
                         ClockSkew = TimeSpan.Zero
                     };
 
-
+                    
                 });
 
             builder.Services.ApplyPolicies();
-            
 
 
-            var app = builder.Build();
+
 
             using (var cancellationTokenSource = new CancellationTokenSource())
             {
 
                 CancellationToken cancellationToken = cancellationTokenSource.Token;
-                using (var scope = app.Services.CreateScope())
+                var providers = builder.Services.BuildServiceProvider();
+                using (var scope = providers.CreateScope())
                 {
                     ISeederExecutor seederExecutor = scope.ServiceProvider.GetRequiredService<ISeederExecutor>();
                     seederExecutor.RegisterSeeders(scope);
@@ -106,6 +118,9 @@ namespace EducationTech
                 }
             }
 
+            var app = builder.Build();
+
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -116,8 +131,13 @@ namespace EducationTech
 
             app.UseHttpsRedirection();
 
+            app.UseMiddleware<ExceptionMiddleware>();
+            app.UseMiddleware<HttpExceptionMiddleware>();
+            app.UseMiddleware<ResponseRestructureMiddleware>();
+
             app.UseAuthentication();
             app.UseAuthorization();
+
 
             app.MapControllers();
 

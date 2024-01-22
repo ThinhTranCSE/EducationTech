@@ -1,3 +1,4 @@
+using EducationTech.Exceptions.Http;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,7 @@ namespace EducationTech.Controllers
             
         }
 
+        //[AllowAnonymous]
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
@@ -38,11 +40,12 @@ namespace EducationTech.Controllers
             .ToArray();
         }
 
-        [Authorize(Policy = "AdminOnly")]
+
+        [AllowAnonymous]
         [HttpGet("request")]
         public string GetRequest()
         {
-
+            throw new Exception("something");
             return "cc";
         }
     }

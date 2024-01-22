@@ -3,6 +3,7 @@ using EducationTech.Exceptions.Http;
 using EducationTech.Models.Master;
 using EducationTech.Utilities.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace EducationTech.Controllers.Abstract
 {
@@ -18,7 +19,7 @@ namespace EducationTech.Controllers.Abstract
         {
             get
             {
-                _currentUser = _currentUser ?? GetUserFromToken(HttpContext?.Request?.Headers?.Authorization);
+                _currentUser ??= GetUserFromToken(HttpContext?.Request?.Headers?.Authorization);
 
                 return _currentUser;
             }
@@ -53,7 +54,7 @@ namespace EducationTech.Controllers.Abstract
             }
             catch (HttpException ex)
             {
-                return StatusCode(ex.StatusCode, new ResponseMessage { Status = ex.StatusCode, Message = ex.Message});
+                return StatusCode(ex.StatusCode, new ResponseMessage { Status = ex.StatusCode, Message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -79,11 +80,19 @@ namespace EducationTech.Controllers.Abstract
             return _context.Users.Where(u => u.Id ==  userId).FirstOrDefault();
         }
    
-        protected class ResponseMessage
-        {
-            public int Status { get; set; } = 200;
-            public object? Message { get; set; } = null;
-            public object? Data { get; set; } = null;
-        }
+    }
+    public class ResponseMessage
+    {
+        [JsonProperty("status", NullValueHandling = NullValueHandling.Ignore)]
+        public int Status { get; set; } = 200;
+
+        [JsonProperty("message", NullValueHandling = NullValueHandling.Ignore)]
+        public object? Message { get; set; } = null;
+
+        [JsonProperty("data", NullValueHandling = NullValueHandling.Ignore)]
+        public object? Data { get; set; } = null;
+
+        [JsonProperty("errors", NullValueHandling = NullValueHandling.Ignore)]
+        public object? Errors { get; set; } = null;
     }
 }
