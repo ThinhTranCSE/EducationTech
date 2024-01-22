@@ -118,6 +118,16 @@ namespace EducationTech
                 }
             }
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: "_myAllowSpecificOrigins",
+                                  policy =>
+                                  {
+                                      policy.WithOrigins("*");
+                                  });
+            });
+
+
             var app = builder.Build();
 
 
@@ -130,6 +140,9 @@ namespace EducationTech
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("_myAllowSpecificOrigins");
+
 
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseMiddleware<HttpExceptionMiddleware>();
