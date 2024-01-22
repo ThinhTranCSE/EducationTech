@@ -68,7 +68,7 @@ namespace EducationTech
                 {
                     var scope = builder.Services.BuildServiceProvider().CreateScope();
 
-                    var authUltils = scope.ServiceProvider.GetRequiredService<IAuthUltils>();
+                    var authUltils = scope.ServiceProvider.GetRequiredService<IAuthUtils>();
                     options.TokenValidationParameters = new()
                     {
                         ValidateIssuer = false,
@@ -83,6 +83,9 @@ namespace EducationTech
 
 
                 });
+
+            builder.Services.ApplyPolicies();
+            
 
 
             var app = builder.Build();

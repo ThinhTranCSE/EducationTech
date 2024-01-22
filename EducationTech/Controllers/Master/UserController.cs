@@ -1,6 +1,8 @@
 ﻿using EducationTech.Controllers.Abstract;
+using EducationTech.Databases;
 using EducationTech.Models.Master;
 using EducationTech.Services.Master.Interfaces;
+using EducationTech.Utilities.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationTech.Controllers.Master
@@ -9,7 +11,7 @@ namespace EducationTech.Controllers.Master
     {
         private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
-        public UserController(IUserService userService, ILogger<UserController> logger)
+        public UserController(IUserService userService, ILogger<UserController> logger, MainDatabaseContext context, IAuthUtils authUtils) : base(context, authUtils)
         {
             _userService = userService;
             _logger = logger;

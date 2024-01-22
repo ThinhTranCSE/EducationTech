@@ -11,27 +11,32 @@ using System.Security.Cryptography;
 
 namespace EducationTech.Utilities
 {
-    public class AuthUltils : IAuthUltils
+    public class AuthUtils : IAuthUtils
     {
         private readonly IConfiguration _configuration;
         private readonly MainDatabaseContext _context;
         private readonly IUserRepository _userRepository;
 
-        public AuthUltils(IConfiguration configuration, MainDatabaseContext context, IUserRepository userRepository)
+        private readonly string _expiredAccessTime;
+        private readonly string _expiredRefreshTime;
+        public AuthUtils(IConfiguration configuration, MainDatabaseContext context, IUserRepository userRepository)
         {
             _configuration = configuration;
             _context = context;
             _userRepository = userRepository;
+
+            _expiredAccessTime = _configuration.GetValue<string>("JWT:ExpiredAccessTime");
+            _expiredRefreshTime = _configuration.GetValue<string>("JWT:ExpiredRefreshTime");
         }
-       
-        public string GenerateToken(IEnumerable<Claim> claims, SecurityKey privateKey)
+
+        public string GenerateToken(IEnumerable<Claim> claims, SecurityKey privateKey, bool isRefresh = false)
         {
             var jwtTokenHanlder = new JwtSecurityTokenHandler();
-            
+
             var tokenDescription = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = StringToDateTime(isRefresh ? _expiredRefreshTime : _expiredAccessTime),
                 SigningCredentials = new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256)
             };
 
@@ -44,31 +49,53 @@ namespace EducationTech.Utilities
             Guid? userId = GetUserIdFromToken(token);
             if (userId == null)
             {
-                return Array.Empty<SecurityKey>();
+                yield break;
             }
             User user = _context.Users.Include(u => u.UserKey).FirstOrDefault(u => u.Id == userId);
             if (user == null)
             {
-                return Array.Empty<SecurityKey>();
+                yield break;
             }
             string publicKey = user.UserKey?.PublicKey;
             if (publicKey == null)
             {
-                return Array.Empty<SecurityKey>();
+                yield break;
             }
             var rsa = RSA.Create();
             rsa.FromXmlString(publicKey);
 
             var privateKey = new RsaSecurityKey(rsa);
-            return new List<SecurityKey>() { privateKey };
+            yield return privateKey;
         }
 
-        private Guid? GetUserIdFromToken(string token)
+        public Guid? GetUserIdFromToken(string token)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = jwtTokenHandler.ReadJwtToken(token);
             var userId = jwtToken.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
             return userId != null ? Guid.Parse(userId) : null;
+        }
+
+        private DateTime? StringToDateTime(string value)
+        {
+            if (value == null || value.Length < 2)
+            {
+                return null;
+            }
+            string unit = value.Substring(value.Length - 1);
+            switch (unit)
+            {
+                case "d":
+                    return DateTime.UtcNow.AddDays(int.Parse(value.Substring(0, value.Length - 1)));
+                case "h":
+                    return DateTime.UtcNow.AddHours(int.Parse(value.Substring(0, value.Length - 1)));
+                case "m":
+                    return DateTime.UtcNow.AddMinutes(int.Parse(value.Substring(0, value.Length - 1)));
+                case "s":
+                    return DateTime.UtcNow.AddSeconds(int.Parse(value.Substring(0, value.Length - 1)));
+            }
+
+            return DateTime.Parse(value);
         }
     }
 }

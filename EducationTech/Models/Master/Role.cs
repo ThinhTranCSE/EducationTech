@@ -15,7 +15,7 @@ namespace EducationTech.Models.Master
         [Required(ErrorMessage = "Role must have specific name")]
         public string Name { get; set; } = "";
 
-        public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<Role>(modelBuilder);

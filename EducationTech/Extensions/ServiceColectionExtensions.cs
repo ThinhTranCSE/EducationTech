@@ -1,8 +1,11 @@
-﻿using EducationTech.Repositories.Abstracts;
+﻿using EducationTech.Policies.Abstract;
+using EducationTech.Repositories.Abstracts;
 using EducationTech.Seeders;
 using EducationTech.Services.Abstract;
 using EducationTech.Utilities.Abstract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using System.Reflection;
 
 namespace EducationTech.Extensions
@@ -53,9 +56,9 @@ namespace EducationTech.Extensions
 
         public static IServiceCollection InjectUtilities(this IServiceCollection services)
         {
-            var utilityInterfaceTypes = typeof(IUltils).Assembly
+            var utilityInterfaceTypes = typeof(IUtils).Assembly
                 .GetTypes()
-                .Where(x => x.IsInterface && x.GetInterfaces().Contains(typeof(IUltils)))
+                .Where(x => x.IsInterface && x.GetInterfaces().Contains(typeof(IUtils)))
                 .ToList();
             utilityInterfaceTypes.ForEach(utilityInterface =>
             {
@@ -94,5 +97,24 @@ namespace EducationTech.Extensions
 
             return services;
         }
+
+        public static IServiceCollection ApplyPolicies(this IServiceCollection services)
+        {
+            var policies = typeof(IPolicy).Assembly.GetTypes()
+                .Where(t => !t.IsAbstract && !t.IsInterface)
+                .Where(t => t.IsAssignableTo(typeof(IPolicy)))
+                .Select(t => (IPolicy)Activator.CreateInstance(t))
+                .ToList();
+
+            services.AddAuthorization(options =>
+            {
+                policies.ForEach(policy =>
+                {
+                    options.AddPolicy(policy.PolicyName, builder => policy.ApplyRequirements(builder));
+                });
+            });
+
+            return services;
+        } 
     }
 }

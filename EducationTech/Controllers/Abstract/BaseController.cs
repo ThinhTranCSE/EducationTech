@@ -1,4 +1,7 @@
-﻿using EducationTech.Exceptions.Http;
+﻿using EducationTech.Databases;
+using EducationTech.Exceptions.Http;
+using EducationTech.Models.Master;
+using EducationTech.Utilities.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationTech.Controllers.Abstract
@@ -7,6 +10,29 @@ namespace EducationTech.Controllers.Abstract
     [Route("api/v1/[controller]")]
     public abstract class BaseController : ControllerBase
     {
+        private readonly MainDatabaseContext _context;
+        private readonly IAuthUtils _authUtils;
+
+        private User? _currentUser { get; set; }
+        public User? CurrentUser
+        {
+            get
+            {
+                _currentUser = _currentUser ?? GetUserFromToken(HttpContext?.Request?.Headers?.Authorization);
+
+                return _currentUser;
+            }
+
+            private set {  _currentUser = value; }
+        }
+
+        public BaseController(MainDatabaseContext context, IAuthUtils authUtils)
+        {
+            _context = context;
+            _authUtils = authUtils;
+        }
+
+
         protected async Task<IActionResult> ExecuteAsync(Func<Task<object?>> executedFunction)
         {
             try
@@ -41,6 +67,16 @@ namespace EducationTech.Controllers.Abstract
                     },
                 });
             }
+        }
+
+        private User? GetUserFromToken(string token)
+        {
+            if(string.IsNullOrEmpty(token))
+            {
+                return null;
+            }
+            Guid? userId = _authUtils.GetUserIdFromToken(token.Split(" ")[1]);
+            return _context.Users.Where(u => u.Id ==  userId).FirstOrDefault();
         }
    
         protected class ResponseMessage

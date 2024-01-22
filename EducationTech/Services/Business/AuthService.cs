@@ -6,10 +6,12 @@ using EducationTech.Models.Business;
 using EducationTech.Models.Master;
 using EducationTech.Repositories.Business.Interfaces;
 using EducationTech.Repositories.Master.Interfaces;
+using EducationTech.Services.Abstract;
 using EducationTech.Services.Business.Interfaces;
 using EducationTech.Utilities.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.Collections.Immutable;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
@@ -17,21 +19,21 @@ namespace EducationTech.Services.Business
 {
     public class AuthService : IAuthService
     {
-        private readonly MainDatabaseContext _context;
-        private readonly IAuthUltils _authUltils;
         private readonly IEncryptionUtils _encryptionUtils;
         private readonly IUserRepository _userRepository;
         private readonly IUserKeyRepository _userKeyRepository;
+        protected readonly IAuthUtils _authUtils;
+        protected readonly MainDatabaseContext _context;
         public AuthService(
             MainDatabaseContext context,
-            IAuthUltils authUltils,
+            IAuthUtils authUtils,
             IEncryptionUtils encryptionUtils,
             IUserRepository userRepository,
             IUserKeyRepository userKeyRepository
-            )
+            ) 
         {
             _context = context;
-            _authUltils = authUltils;
+            _authUtils = authUtils;
             _userRepository = userRepository;
             _encryptionUtils = encryptionUtils;
             _userKeyRepository = userKeyRepository;
@@ -50,13 +52,16 @@ namespace EducationTech.Services.Business
                 return null;
             }
 
-            Claim[] accessClaims = new Claim[]
+            var accessClaims = new Claim[]
             {
                 new Claim("sub", user.Id.ToString()),
-                new Claim("roles", JsonConvert.SerializeObject(user.UserRoles.Select(r => r.Role.Name).ToList()))
-            };
+            }
+            .Concat(
+                user.UserRoles.Select(r => new Claim("roles", r.Role.Name))
+             )
+            .ToArray();
 
-            Claim[] refreshClaims = new Claim[]
+            var refreshClaims = new Claim[]
             {
                 new Claim("sub", user.Id.ToString()),
                 new Claim("refresh", "true")
@@ -92,8 +97,8 @@ namespace EducationTech.Services.Business
 
 
 
-            var accessToken = _authUltils.GenerateToken(accessClaims, new RsaSecurityKey(rsa));
-            var refreshToken = _authUltils.GenerateToken(refreshClaims, new RsaSecurityKey(rsa));
+            var accessToken = _authUtils.GenerateToken(accessClaims, new RsaSecurityKey(rsa));
+            var refreshToken = _authUtils.GenerateToken(refreshClaims, new RsaSecurityKey(rsa), true);
 
             return new TokensReponseDto
             {
@@ -114,8 +119,7 @@ namespace EducationTech.Services.Business
 
         public async Task<User?> Register(RegisterDto registerDto)
         {
-            byte[] salt;
-            string hashedPassword = _encryptionUtils.HashPassword(registerDto.Password, out salt);
+            string hashedPassword = _encryptionUtils.HashPassword(registerDto.Password, out var salt);
 
             User? createdUser = await _userRepository.Insert(new User_InsertDto()
             {

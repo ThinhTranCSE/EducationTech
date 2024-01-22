@@ -14,6 +14,7 @@ namespace EducationTech.Utilities
         private int _iterations { get; set; }
         private HashAlgorithmName _hashAlgorithm { get; set; }
 
+
         public EncryptionUtils(IConfiguration configuration)
         {
             _configuration = configuration;

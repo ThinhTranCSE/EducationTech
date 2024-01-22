@@ -2,7 +2,7 @@
 
 namespace EducationTech.Utilities.Interfaces
 {
-    public interface IEncryptionUtils : IUltils
+    public interface IEncryptionUtils : IUtils
     {
         string HashPassword(string password, out byte[] salt);
 

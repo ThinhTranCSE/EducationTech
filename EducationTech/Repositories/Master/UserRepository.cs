@@ -35,6 +35,7 @@ namespace EducationTech.Repositories.Master
 
             return await query
                 .Include(x => x.UserRoles)
+                .ThenInclude(r => r.Role)
                 .Include(x => x.UserKey)
                 .ToListAsync();
         }

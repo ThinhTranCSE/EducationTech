@@ -4,9 +4,11 @@ using System.Security.Claims;
 
 namespace EducationTech.Utilities.Interfaces
 {
-    public interface IAuthUltils : IUltils
+    public interface IAuthUtils : IUtils
     {
-        string GenerateToken(IEnumerable<Claim> claims, SecurityKey privateKey);
+        string GenerateToken(IEnumerable<Claim> claims, SecurityKey privateKey, bool isRefresh = false);
         IEnumerable<SecurityKey> KeysResolver(string token, SecurityToken securityToken, string kid, TokenValidationParameters validationParameters);
+        public Guid? GetUserIdFromToken(string token);
+
     }
 }

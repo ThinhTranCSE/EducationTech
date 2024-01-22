@@ -1,6 +1,6 @@
 ﻿namespace EducationTech.Utilities.Abstract
 {
-    public interface IUltils
+    public interface IUtils
     {
     }
 }

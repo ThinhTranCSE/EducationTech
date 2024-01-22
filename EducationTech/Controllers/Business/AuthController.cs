@@ -1,6 +1,8 @@
 ﻿using EducationTech.Controllers.Abstract;
+using EducationTech.Databases;
 using EducationTech.DTOs.Business.Auth;
 using EducationTech.Services.Business.Interfaces;
+using EducationTech.Utilities.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationTech.Controllers.Business
@@ -9,7 +11,7 @@ namespace EducationTech.Controllers.Business
     {
         private readonly IAuthService _authService;
         private readonly ILogger<AuthController> _logger;
-        public AuthController(IAuthService authService, ILogger<AuthController> logger)
+        public AuthController(IAuthService authService, ILogger<AuthController> logger, MainDatabaseContext context, IAuthUtils authUtils) : base(context, authUtils)
         {
             _authService = authService;
             _logger = logger;
