@@ -3,10 +3,12 @@ using EducationTech.Databases;
 using EducationTech.Models.Master;
 using EducationTech.Services.Master.Interfaces;
 using EducationTech.Utilities.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationTech.Controllers.Master
 {
+    [Authorize]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
@@ -23,5 +25,10 @@ namespace EducationTech.Controllers.Master
             return await _userService.GetUserById(id);
         }
 
+        [HttpGet("me")]
+        public async Task<User?> GetCurrentUser()
+        {
+            return CurrentUser;
+        }
     }
 }

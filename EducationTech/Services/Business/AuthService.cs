@@ -104,7 +104,6 @@ namespace EducationTech.Services.Business
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
-                User = user
             };
         }
 
