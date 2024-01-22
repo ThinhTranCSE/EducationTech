@@ -103,7 +103,8 @@ namespace EducationTech.Services.Business
             return new TokensReponseDto
             {
                 AccessToken = accessToken,
-                RefreshToken = refreshToken
+                RefreshToken = refreshToken,
+                User = user
             };
         }
 
