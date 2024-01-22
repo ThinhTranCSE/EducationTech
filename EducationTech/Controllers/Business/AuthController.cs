@@ -18,9 +18,9 @@ namespace EducationTech.Controllers.Business
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto loginDto)
+        public async Task<TokensReponseDto> Login(LoginDto loginDto)
         {
-            return await ExecuteAsync(async () => await _authService.Login(loginDto));
+            return await _authService.Login(loginDto);
         }
     }
 }
