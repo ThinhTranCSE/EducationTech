@@ -5,6 +5,7 @@ using EducationTech.Services.Abstract;
 using EducationTech.Utilities.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System.Net;
 using System.Reflection;
 
@@ -116,5 +117,7 @@ namespace EducationTech.Extensions
 
             return services;
         } 
+
+        
     }
 }

@@ -13,6 +13,7 @@ using Newtonsoft.Json.Converters;
 using System.Text;
 using System;
 using System.Diagnostics;
+using Serilog;
 
 namespace EducationTech
 {
@@ -21,6 +22,9 @@ namespace EducationTech
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.ConfigureLogging();
+
             builder.Configuration.AddUserSecrets<Program>();
             // Add services to the container.
 
@@ -31,10 +35,11 @@ namespace EducationTech
             });
 
             builder.Services.AddDbContext<MainDatabaseContext>();
-            builder.Services.InjectServices();
-            builder.Services.InjectRepositpories();
-            builder.Services.InjectUtilities();
-            builder.Services.InjectSeeders();
+            builder.Services
+                .InjectServices()
+                .InjectRepositpories()
+                .InjectUtilities()
+                .InjectSeeders();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -141,6 +146,7 @@ namespace EducationTech
                     .AllowAnyMethod();
             });
 
+            app.UseSerilogRequestLogging();
 
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseMiddleware<HttpExceptionMiddleware>();
