@@ -1,10 +1,10 @@
 ﻿using Bogus;
+using EducationTech.Business.DTOs.Business.Auth;
+using EducationTech.Business.Services.Business.Interfaces;
 using EducationTech.Databases;
-using EducationTech.DTOs.Business.Auth;
-using EducationTech.DTOs.Masters.User;
-using EducationTech.Models.Master;
-using EducationTech.Services.Business.Interfaces;
-using EducationTech.Services.Master.Interfaces;
+using EducationTech.Business.DTOs.Masters.User;
+using EducationTech.Business.Models.Master;
+using EducationTech.Business.Services.Master.Interfaces;
 using EducationTech.Utilities.Interfaces;
 
 namespace EducationTech.Seeders.Seeds

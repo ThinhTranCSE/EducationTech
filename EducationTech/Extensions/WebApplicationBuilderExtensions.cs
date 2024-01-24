@@ -1,4 +1,4 @@
-﻿using EducationTech.Services.Abstract;
+﻿using EducationTech.Business.Services.Abstract;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
@@ -25,34 +25,37 @@ namespace EducationTech.Extensions
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("System", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
-                .Enrich.WithMachineName()
                 .Enrich.WithProcessId()
                 .Enrich.WithProcessName()
+                .Enrich.WithThreadId()
                 .WriteTo.Async(a =>
                 {
                     a.Logger(lc =>
                     {
-                        lc.MinimumLevel.Debug()
-                            .WriteTo.Console(
-                              theme: AnsiConsoleTheme.Literate,
-                              outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
-                            );
+                        lc.WriteTo.Console(
+                            theme: AnsiConsoleTheme.Literate,
+                            outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}"
+
+                            )
+                        .MinimumLevel.Debug();
+                        
                     });
 
                     a.Logger(lc =>
                     {
-                        lc.MinimumLevel.Information()
-                            .WriteTo.Logger(lc =>
-                            {
-                                lc.MinimumLevel.Information()
-                                  .WriteTo.File(
-                                    new RenderedCompactJsonFormatter(),
-                                    "Logs/log-.txt",
-                                    rollingInterval: RollingInterval.Day,
-                                    fileSizeLimitBytes: 10000000,
-                                    rollOnFileSizeLimit: true
-                                    ) ;
-                             });
+                        lc.WriteTo.Logger(lc =>
+                        {
+                            lc.MinimumLevel.Information()
+                              .WriteTo.File(
+                                new RenderedCompactJsonFormatter(),
+                                "Logs/log-.txt",
+                                rollingInterval: RollingInterval.Day,
+                                fileSizeLimitBytes: 10000000,
+                                rollOnFileSizeLimit: true
+                                );
+                        })
+                        .MinimumLevel.Information();
+
                     });
 
                     a.Logger(lc =>
@@ -67,8 +70,9 @@ namespace EducationTech.Extensions
             var logger = loggerConfiguration.CreateLogger();
 
             Log.Logger = logger;
-
             builder.Logging.AddSerilog(logger);
+
+            builder.Services.AddSingleton<Serilog.ILogger>(logger);
             return builder;
         }
 

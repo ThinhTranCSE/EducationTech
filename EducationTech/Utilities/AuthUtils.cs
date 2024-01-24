@@ -1,7 +1,7 @@
 ﻿using Bogus.Extensions.UnitedKingdom;
+using EducationTech.Business.Models.Master;
+using EducationTech.Business.Repositories.Master.Interfaces;
 using EducationTech.Databases;
-using EducationTech.Models.Master;
-using EducationTech.Repositories.Master.Interfaces;
 using EducationTech.Utilities.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

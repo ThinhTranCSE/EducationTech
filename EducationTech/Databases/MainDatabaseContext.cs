@@ -1,9 +1,9 @@
-﻿using EducationTech.Databases.Factories;
+﻿using EducationTech.Business.Models.Abstract;
+using EducationTech.Business.Models.Business;
+using EducationTech.Business.Models.Master;
+using EducationTech.Databases.Factories;
 using EducationTech.Databases.Interceptors;
 using EducationTech.Extensions;
-using EducationTech.Models.Abstract;
-using EducationTech.Models.Business;
-using EducationTech.Models.Master;
 using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Databases

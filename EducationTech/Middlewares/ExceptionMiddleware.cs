@@ -1,8 +1,7 @@
-﻿using EducationTech.Controllers.Abstract;
+﻿using EducationTech.Business.Controllers.Abstract;
 using EducationTech.Exceptions.Http;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.IO.Pipelines;
@@ -13,22 +12,23 @@ namespace EducationTech.Middlewares
 {
     internal class ExceptionMiddleware
     {
-        private readonly RequestDelegate next;
-
-        public ExceptionMiddleware(RequestDelegate next)
+        private readonly RequestDelegate _next;
+        private readonly Serilog.ILogger _logger;
+        public ExceptionMiddleware(RequestDelegate next, Serilog.ILogger logger)
         {
-            this.next = next;
+            _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
         {
             try
             {
-                await next.Invoke(context);
+                await _next.Invoke(context);
             }
             catch (Exception exception)
             {
-
+                _logger.Error(exception, exception.Message);
                 var responseFeature = context.Features.Get<IHttpResponseFeature>();
                 responseFeature.ReasonPhrase = exception.Message;
 

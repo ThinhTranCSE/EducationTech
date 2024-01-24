@@ -1,4 +1,4 @@
-﻿using EducationTech.Controllers.Abstract;
+﻿using EducationTech.Business.Controllers.Abstract;
 using EducationTech.Exceptions.Http;
 using Microsoft.AspNetCore.Http.Features;
 using MySqlX.XDevAPI.Common;
@@ -31,6 +31,7 @@ namespace EducationTech.Middlewares
                 responseFeature.ReasonPhrase = httpException.Message;
 
                 var response = context.Response;
+                
 
                 var responseStructure = new ResponseMessage
                 {

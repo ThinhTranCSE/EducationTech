@@ -1,6 +1,6 @@
-﻿using EducationTech.Databases;
+﻿using EducationTech.Business.Models.Master;
+using EducationTech.Databases;
 using EducationTech.Enums;
-using EducationTech.Models.Master;
 
 namespace EducationTech.Seeders.Seeds
 {

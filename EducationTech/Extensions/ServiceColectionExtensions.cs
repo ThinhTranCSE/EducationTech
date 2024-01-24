@@ -1,7 +1,7 @@
-﻿using EducationTech.Policies.Abstract;
-using EducationTech.Repositories.Abstracts;
+﻿using EducationTech.Auth.Policies.Abstract;
+using EducationTech.Business.Repositories.Abstract;
+using EducationTech.Business.Services.Abstract;
 using EducationTech.Seeders;
-using EducationTech.Services.Abstract;
 using EducationTech.Utilities.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;

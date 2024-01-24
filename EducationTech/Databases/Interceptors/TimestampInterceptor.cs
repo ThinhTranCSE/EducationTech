@@ -1,4 +1,4 @@
-﻿using EducationTech.Models.Abstract;
+﻿using EducationTech.Business.Models.Abstract;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 

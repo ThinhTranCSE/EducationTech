@@ -1,4 +1,4 @@
-using EducationTech.Controllers.Abstract;
+using EducationTech.Business.Controllers.Abstract;
 using EducationTech.Databases;
 using EducationTech.Extensions;
 using EducationTech.Middlewares;
@@ -14,6 +14,11 @@ using System.Text;
 using System;
 using System.Diagnostics;
 using Serilog;
+using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
+using EducationTech.Exceptions.Http;
+using System.Net;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EducationTech
 {
@@ -32,7 +37,19 @@ namespace EducationTech
             {
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var errors = context.ModelState.Keys
+                                            .SelectMany(key => context.ModelState[key].Errors.Select(x => $"{key}: {x.ErrorMessage}"))
+                                            .ToArray();
+                    throw new HttpException(HttpStatusCode.BadRequest, JsonConvert.SerializeObject(errors));
+                    
+                };
             });
+            
 
             builder.Services.AddDbContext<MainDatabaseContext>();
             builder.Services
@@ -139,6 +156,8 @@ namespace EducationTech
 
             app.UseHttpsRedirection();
 
+
+
             app.UseCors(buidler =>
             {
                 buidler.WithOrigins("*")
@@ -146,6 +165,7 @@ namespace EducationTech
                     .AllowAnyMethod();
             });
 
+            app.UseMiddleware<RequestLogContextMiddleware>();
             app.UseSerilogRequestLogging();
 
             app.UseMiddleware<ExceptionMiddleware>();

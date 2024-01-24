@@ -1,5 +1,7 @@
-﻿using EducationTech.Controllers.Abstract;
+﻿using EducationTech.Business.Controllers.Abstract;
+using EducationTech.Exceptions.Http;
 using Newtonsoft.Json;
+using System.Net;
 using System.Text;
 
 namespace EducationTech.Middlewares
@@ -24,6 +26,22 @@ namespace EducationTech.Middlewares
                     context.Response.Body = memStream;
                     //continue up the pipeline
                     await next(context);
+
+                    int code = context.Response.StatusCode;
+                    if(code >= 300)
+                    {
+                        if(code == 401)
+                        {
+                            throw new HttpException(HttpStatusCode.Unauthorized, "Unauthorized");
+                        }
+                        else if(code == 403)
+                        {
+                            throw new HttpException(HttpStatusCode.Forbidden, "Forbidden");
+                        }
+                        throw new HttpException(code, "Something went wrong");
+                    }
+
+
                     //back from upstream call.
                     //memory stream now hold the response data
                     //reset position to read data stored in response stream
