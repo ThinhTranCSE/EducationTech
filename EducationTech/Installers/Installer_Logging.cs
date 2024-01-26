@@ -1,16 +1,18 @@
-﻿using EducationTech.Business.Services.Abstract;
+﻿using Serilog.Events;
 using Serilog;
-using Serilog.Events;
-using Serilog.Formatting.Compact;
-using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
-using System.Runtime.Serialization;
+using Serilog.Formatting.Compact;
 
-namespace EducationTech.Extensions
+namespace EducationTech.Installers
 {
-    public static class WebApplicationBuilderExtensions
+    public class Installer_Logging : IInstaller
     {
-        public static WebApplicationBuilder ConfigureLogging(this WebApplicationBuilder builder)
+        public IServiceCollection InstallServicesToServiceCollection(IServiceCollection services, IConfiguration configuration)
+        {
+            return services;
+        }
+
+        public WebApplicationBuilder InstallServicesToWebApplicationBuilder(WebApplicationBuilder builder, IConfiguration configuration)
         {
             builder.Logging.ClearProviders();
             builder.Host.UseSerilog();
@@ -38,7 +40,7 @@ namespace EducationTech.Extensions
 
                             )
                         .MinimumLevel.Debug();
-                        
+
                     });
 
                     a.Logger(lc =>
@@ -65,7 +67,7 @@ namespace EducationTech.Extensions
                     });
 
                 });
-                
+
 
             var logger = loggerConfiguration.CreateLogger();
 
@@ -82,6 +84,6 @@ namespace EducationTech.Extensions
             {
                 Directory.CreateDirectory(folderName);
             }
-        }   
+        }
     }
 }

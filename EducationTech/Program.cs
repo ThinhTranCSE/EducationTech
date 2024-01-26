@@ -19,6 +19,7 @@ using System.Net.Mime;
 using EducationTech.Exceptions.Http;
 using System.Net;
 using Microsoft.Extensions.DependencyInjection;
+using EducationTech.Installers;
 
 namespace EducationTech
 {
@@ -27,100 +28,9 @@ namespace EducationTech
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            builder.ConfigureLogging();
-
             builder.Configuration.AddUserSecrets<Program>();
-            // Add services to the container.
 
-            builder.Services.AddControllers().AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.Converters.Add(new StringEnumConverter());
-                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            })
-            .ConfigureApiBehaviorOptions(options =>
-            {
-                options.InvalidModelStateResponseFactory = context =>
-                {
-                    var errors = context.ModelState.Keys
-                                            .SelectMany(key => context.ModelState[key].Errors.Select(x => $"{key}: {x.ErrorMessage}"))
-                                            .ToArray();
-                    throw new HttpException(HttpStatusCode.BadRequest, JsonConvert.SerializeObject(errors));
-                    
-                };
-            });
-            
-
-            builder.Services.AddDbContext<MainDatabaseContext>();
-            builder.Services
-                .InjectServices()
-                .InjectRepositpories()
-                .InjectUtilities()
-                .InjectSeeders();
-
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(opt =>
-            {
-                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "EducationTech", Version = "v1" });
-                opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Description = "Please enter token",
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.Http,
-                    BearerFormat = "JWT",
-                    Scheme = "bearer"
-                });
-
-                opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type=ReferenceType.SecurityScheme,
-                                Id="Bearer"
-                            }
-                        },
-                        Array.Empty<string>()
-                    }
-                });
-            });
-
-            builder.Services.AddScoped<ISeederExecutor, SeederExecutor>();
-            builder.Services
-                .AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-                })
-                .AddJwtBearer(options =>
-                {
-                    var scope = builder.Services.BuildServiceProvider().CreateScope();
-
-                    var authUltils = scope.ServiceProvider.GetRequiredService<IAuthUtils>();
-                    options.TokenValidationParameters = new()
-                    {
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        RequireSignedTokens = true,
-                        IssuerSigningKeyResolver = authUltils.KeysResolver,
-
-                        ClockSkew = TimeSpan.Zero
-                    };
-
-                    
-                });
-
-            builder.Services.ApplyPolicies();
-
-
+            builder.InstallServices(builder.Configuration);
 
 
             using (var cancellationTokenSource = new CancellationTokenSource())
@@ -140,12 +50,7 @@ namespace EducationTech
                 }
             }
 
-            builder.Services.AddCors();
-
-
             var app = builder.Build();
-
-
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
