@@ -1,4 +1,4 @@
-﻿namespace EducationTech.Seeders
+﻿namespace EducationTech.Databases.Seeders
 {
     public interface ISeederExecutor
     {

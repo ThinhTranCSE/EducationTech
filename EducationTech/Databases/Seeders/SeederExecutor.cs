@@ -1,7 +1,7 @@
 ﻿using EducationTech.Databases;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace EducationTech.Seeders
+namespace EducationTech.Databases.Seeders
 {
     public class SeederExecutor : ISeederExecutor
     {

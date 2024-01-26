@@ -2,7 +2,6 @@ using EducationTech.Business.Controllers.Abstract;
 using EducationTech.Databases;
 using EducationTech.Extensions;
 using EducationTech.Middlewares;
-using EducationTech.Seeders;
 using EducationTech.Utilities;
 using EducationTech.Utilities.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,6 +19,7 @@ using EducationTech.Exceptions.Http;
 using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using EducationTech.Installers;
+using EducationTech.Databases.Seeders;
 
 namespace EducationTech
 {

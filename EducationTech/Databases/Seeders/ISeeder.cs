@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace EducationTech.Seeders
+namespace EducationTech.Databases.Seeders
 {
     public interface ISeeder
     {

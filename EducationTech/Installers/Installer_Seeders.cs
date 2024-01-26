@@ -1,4 +1,4 @@
-﻿using EducationTech.Seeders;
+﻿using EducationTech.Databases.Seeders;
 
 namespace EducationTech.Installers
 {

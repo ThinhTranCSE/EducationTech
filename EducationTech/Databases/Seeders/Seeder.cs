@@ -1,7 +1,7 @@
 ﻿using EducationTech.Databases;
 using Microsoft.EntityFrameworkCore;
 
-namespace EducationTech.Seeders
+namespace EducationTech.Databases.Seeders
 {
     public abstract class Seeder : ISeeder
     {

@@ -6,8 +6,9 @@ using EducationTech.Business.DTOs.Masters.User;
 using EducationTech.Business.Models.Master;
 using EducationTech.Business.Services.Master.Interfaces;
 using EducationTech.Utilities.Interfaces;
+using EducationTech.Databases.Seeders;
 
-namespace EducationTech.Seeders.Seeds
+namespace EducationTech.Databases.Seeders.Seeds
 {
     public class UserSeeder : Seeder
     {
