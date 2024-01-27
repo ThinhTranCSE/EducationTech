@@ -27,6 +27,18 @@ namespace EducationTech.Middlewares
             }
             catch (HttpException httpException)
             {
+                //read the request body
+                //var request = context.Request;
+                //var requestBody = string.Empty;
+                //request.EnableBuffering();
+                //request.Body.Position = 0;
+                //using (var reader = new StreamReader(request.Body, Encoding.UTF8))
+                //{
+                //    requestBody = await reader.ReadToEndAsync();
+                //}
+                //request.Body.Position = 0;
+               
+
                 var responseFeature = context.Features.Get<IHttpResponseFeature>();
                 responseFeature.ReasonPhrase = httpException.Message;
 

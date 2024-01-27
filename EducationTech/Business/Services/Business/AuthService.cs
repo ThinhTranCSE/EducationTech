@@ -14,6 +14,8 @@ using Newtonsoft.Json;
 using System.Collections.Immutable;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using EducationTech.Exceptions.Http;
+using System.Net;
 
 namespace EducationTech.Business.Services.Business
 {
@@ -22,14 +24,17 @@ namespace EducationTech.Business.Services.Business
         private readonly IEncryptionUtils _encryptionUtils;
         private readonly IUserRepository _userRepository;
         private readonly IUserKeyRepository _userKeyRepository;
-        protected readonly IAuthUtils _authUtils;
-        protected readonly MainDatabaseContext _context;
+        private readonly IAuthUtils _authUtils;
+        private readonly MainDatabaseContext _context;
+        private readonly ICacheService _cacheService;   
+        
         public AuthService(
             MainDatabaseContext context,
             IAuthUtils authUtils,
             IEncryptionUtils encryptionUtils,
             IUserRepository userRepository,
-            IUserKeyRepository userKeyRepository
+            IUserKeyRepository userKeyRepository,
+            ICacheService cacheService
             )
         {
             _context = context;
@@ -37,6 +42,7 @@ namespace EducationTech.Business.Services.Business
             _userRepository = userRepository;
             _encryptionUtils = encryptionUtils;
             _userKeyRepository = userKeyRepository;
+            _cacheService = cacheService;
         }
 
         public async Task<TokensReponseDto> Login(LoginDto loginDto)
@@ -45,11 +51,12 @@ namespace EducationTech.Business.Services.Business
 
             if (user == null)
             {
-                return null;
+                throw new HttpException(HttpStatusCode.Unauthorized, "Username do not exist");
             }
             if (!_encryptionUtils.VerifyPassword(loginDto.Password, user.Password, user.Salt))
             {
-                return null;
+                throw new HttpException(HttpStatusCode.Unauthorized, "Wrong password");
+
             }
 
             var accessClaims = new Claim[]
@@ -87,7 +94,10 @@ namespace EducationTech.Business.Services.Business
 
                 }
                 await _context.SaveChangesAsync();
+
                 await transaction.CommitAsync();
+
+                await _cacheService.SetAsync($"UserKey_{user.Id}", user.UserKey.PublicKey, TimeSpan.FromMinutes(10));
             }
             catch (Exception e)
             {

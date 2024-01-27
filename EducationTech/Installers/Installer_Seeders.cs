@@ -1,4 +1,5 @@
 ﻿using EducationTech.Databases.Seeders;
+using Serilog;
 
 namespace EducationTech.Installers
 {
@@ -8,7 +9,7 @@ namespace EducationTech.Installers
         {
             services.AddScoped<ISeederExecutor, SeederExecutor>();
 
-            var seederTypes = typeof(ISeeder).Assembly.GetTypes()
+            var seederTypes = typeof(ISeeder).Assembly.ExportedTypes
                     .Where(t => !t.IsAbstract && !t.IsInterface)
                     .Where(t => t.IsAssignableTo(typeof(ISeeder)))
                     .ToList();
@@ -26,6 +27,7 @@ namespace EducationTech.Installers
                 services.AddScoped(t);
             });
 
+            //Log.Information("Installed Seeders");
             return services;
         }
 

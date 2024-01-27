@@ -1,4 +1,5 @@
 ﻿using EducationTech.Databases;
+using Serilog;
 
 namespace EducationTech.Installers
 {
@@ -9,7 +10,7 @@ namespace EducationTech.Installers
 
             services.AddDbContext<MainDatabaseContext>();
 
-
+            //Log.Information("Installed Database");
             return services;
         }
 

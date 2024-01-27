@@ -32,24 +32,8 @@ namespace EducationTech
 
             builder.InstallServices(builder.Configuration);
 
-
-            using (var cancellationTokenSource = new CancellationTokenSource())
-            {
-
-                CancellationToken cancellationToken = cancellationTokenSource.Token;
-                var providers = builder.Services.BuildServiceProvider();
-                using (var scope = providers.CreateScope())
-                {
-                    ISeederExecutor seederExecutor = scope.ServiceProvider.GetRequiredService<ISeederExecutor>();
-                    seederExecutor.RegisterSeeders(scope);
-                    seederExecutor.Execute(cancellationTokenSource, args);
-                }
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
-            }
-
+            HandleSeederCommand(builder, args);
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -84,6 +68,26 @@ namespace EducationTech
             app.MapControllers();
 
             app.Run();
+        }
+
+        private static void HandleSeederCommand(WebApplicationBuilder builder, string[] args)
+        {
+            using (var cancellationTokenSource = new CancellationTokenSource())
+            {
+
+                CancellationToken cancellationToken = cancellationTokenSource.Token;
+                var providers = builder.Services.BuildServiceProvider();
+                using (var scope = providers.CreateScope())
+                {
+                    ISeederExecutor seederExecutor = scope.ServiceProvider.GetRequiredService<ISeederExecutor>();
+                    seederExecutor.RegisterSeeders(scope);
+                    seederExecutor.Execute(cancellationTokenSource, args);
+                }
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+            }
         }
     }
 }

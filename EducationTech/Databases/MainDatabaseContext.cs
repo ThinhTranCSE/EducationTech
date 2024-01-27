@@ -26,7 +26,12 @@ namespace EducationTech.Databases
         {
             optionsBuilder
                 .RegisterDbContext(_configuration)
-                .AddInterceptors(new SoftDeleteInterceptor(), new TimestampInterceptor());
+                .AddInterceptors(
+                    new SoftDeleteInterceptor(), 
+                    new TimestampInterceptor(), 
+                    new LogSlowQueriesInterceptor(500),
+                    new LogQueriesInterceptor()
+                );
 
             base.OnConfiguring(optionsBuilder);
         }

@@ -1,3 +1,4 @@
+using EducationTech.Annotations;
 using EducationTech.Exceptions.Http;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -23,12 +24,13 @@ namespace EducationTech.Business.Controllers
         {
             _logger = logger;
 
-
+            
         }
 
-        //[AllowAnonymous]
+        [AllowAnonymous]
         //[Authorize(Policy = "AdminOnly")]
         [HttpGet(Name = "GetWeatherForecast")]
+        [Cache(1000)]
         public IEnumerable<WeatherForecast> Get()
         {
 

@@ -1,9 +1,11 @@
 ﻿using Bogus.Extensions.UnitedKingdom;
 using EducationTech.Business.Models.Master;
 using EducationTech.Business.Repositories.Master.Interfaces;
+using EducationTech.Business.Services.Business.Interfaces;
 using EducationTech.Databases;
 using EducationTech.Utilities.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,15 +17,15 @@ namespace EducationTech.Utilities
     {
         private readonly IConfiguration _configuration;
         private readonly MainDatabaseContext _context;
-        private readonly IUserRepository _userRepository;
+        private readonly ICacheService _cacheService;
 
         private readonly string _expiredAccessTime;
         private readonly string _expiredRefreshTime;
-        public AuthUtils(IConfiguration configuration, MainDatabaseContext context, IUserRepository userRepository)
+        public AuthUtils(IConfiguration configuration, MainDatabaseContext context, ICacheService cacheService)
         {
             _configuration = configuration;
             _context = context;
-            _userRepository = userRepository;
+            _cacheService = cacheService;
 
             _expiredAccessTime = _configuration.GetValue<string>("JWT:ExpiredAccessTime");
             _expiredRefreshTime = _configuration.GetValue<string>("JWT:ExpiredRefreshTime");
@@ -51,16 +53,20 @@ namespace EducationTech.Utilities
             {
                 yield break;
             }
-            User user = _context.Users.Include(u => u.UserKey).FirstOrDefault(u => u.Id == userId);
-            if (user == null)
+            string cacheKey = $"UserKey_{userId}";
+            
+            string? publicKey = _cacheService.TryGetAndSetAsync<string>(cacheKey, async () =>
             {
-                yield break;
-            }
-            string publicKey = user.UserKey?.PublicKey;
-            if (publicKey == null)
-            {
-                yield break;
-            }
+                User user = _context.Users.Include(u => u.UserKey).FirstOrDefault(u => u.Id == userId);
+                return user?.UserKey?.PublicKey;
+            }, 
+            TimeSpan.FromMinutes(10))
+                .GetAwaiter()
+                .GetResult();
+
+
+            if (publicKey == null) yield break;
+            
             var rsa = RSA.Create();
             rsa.FromXmlString(publicKey);
 

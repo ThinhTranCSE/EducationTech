@@ -1,4 +1,5 @@
 ﻿using EducationTech.Auth.Policies.Abstract;
+using Serilog;
 
 namespace EducationTech.Installers
 {
@@ -6,7 +7,7 @@ namespace EducationTech.Installers
     {
         public IServiceCollection InstallServicesToServiceCollection(IServiceCollection services, IConfiguration configuration)
         {
-            var policies = typeof(IPolicy).Assembly.GetTypes()
+            var policies = typeof(IPolicy).Assembly.ExportedTypes
                 .Where(t => !t.IsAbstract && !t.IsInterface)
                 .Where(t => t.IsAssignableTo(typeof(IPolicy)))
                 .Select(t => (IPolicy)Activator.CreateInstance(t))
@@ -20,6 +21,7 @@ namespace EducationTech.Installers
                 });
             });
 
+            //Log.Information("Installed Policies");
             return services;
         }
 

@@ -1,6 +1,7 @@
 ﻿using EducationTech.Utilities;
 using EducationTech.Utilities.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Serilog;
 
 namespace EducationTech.Installers
 {
@@ -35,6 +36,7 @@ namespace EducationTech.Installers
                    };
                });
 
+            //Log.Information("Installed Authentication");
             return services;
         }
 

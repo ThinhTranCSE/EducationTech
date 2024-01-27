@@ -1,4 +1,5 @@
 ﻿using EducationTech.Utilities.Abstract;
+using Serilog;
 
 namespace EducationTech.Installers
 {
@@ -6,8 +7,7 @@ namespace EducationTech.Installers
     {
         public IServiceCollection InstallServicesToServiceCollection(IServiceCollection services, IConfiguration configuration)
         {
-            var utilityInterfaceTypes = typeof(IUtils).Assembly
-                .GetTypes()
+            var utilityInterfaceTypes = typeof(IUtils).Assembly.ExportedTypes
                 .Where(x => x.IsInterface && x.GetInterfaces().Contains(typeof(IUtils)))
                 .ToList();
             utilityInterfaceTypes.ForEach(utilityInterface =>
@@ -21,6 +21,7 @@ namespace EducationTech.Installers
                 }
             });
 
+            //Log.Information("Installed Utilities");
             return services;
         }
 

@@ -1,4 +1,5 @@
 ﻿using EducationTech.Business.Repositories.Abstract;
+using Serilog;
 
 namespace EducationTech.Installers
 {
@@ -6,8 +7,7 @@ namespace EducationTech.Installers
     {
         public IServiceCollection InstallServicesToServiceCollection(IServiceCollection services, IConfiguration configuration)
         {
-            var repositoryInterfaceTypes = typeof(IRepository<>).Assembly
-                .GetTypes()
+            var repositoryInterfaceTypes = typeof(IRepository<>).Assembly.ExportedTypes
                 .Where(x => x.IsInterface && x.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRepository<>)))
                 .ToList();
             repositoryInterfaceTypes.ForEach(repositoryInterface =>
@@ -21,6 +21,7 @@ namespace EducationTech.Installers
                 }
             });
 
+            //Log.Information("Installed Repositories");
             return services;
         }
 

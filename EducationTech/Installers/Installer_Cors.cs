@@ -1,4 +1,6 @@
-﻿namespace EducationTech.Installers
+﻿using Serilog;
+
+namespace EducationTech.Installers
 {
     public class Installer_Cors : IInstaller
     {
@@ -6,6 +8,7 @@
         {
             services.AddCors();
 
+            //Log.Information("Installed Cors");
             return services;
 
         }

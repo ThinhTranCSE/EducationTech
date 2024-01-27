@@ -1,11 +1,12 @@
 ﻿using EducationTech.Exceptions.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Serilog;
 using System.Net;
 
 namespace EducationTech.Installers
 {
-    public class Installer_Controller : IInstaller
+    public class Installer_Controllers : IInstaller
     {
         public IServiceCollection InstallServicesToServiceCollection(IServiceCollection services, IConfiguration configuration)
         {
@@ -28,6 +29,7 @@ namespace EducationTech.Installers
                 };
             });
 
+            //Log.Information("Installed Controllers");
             return services;
         }
 

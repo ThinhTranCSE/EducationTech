@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using Serilog;
 
 namespace EducationTech.Installers
 {
@@ -37,6 +38,7 @@ namespace EducationTech.Installers
                 });
             });
 
+            //Log.Information("Installed Swagger");
             return services;
         }
 
