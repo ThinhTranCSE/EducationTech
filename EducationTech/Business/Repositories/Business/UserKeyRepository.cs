@@ -13,12 +13,12 @@ namespace EducationTech.Business.Repositories.Business
         {
         }
 
-        public DbSet<UserKey> model => _context.UserKeys;
+        public DbSet<UserKey> Model => _context.UserKeys;
 
 
         public async Task<UserKey?> Insert(UserKey_InsertDto insertDto)
         {
-            var userKey = await model.AddAsync(new UserKey
+            var userKey = await Model.AddAsync(new UserKey
             {
                 PublicKey = insertDto.PublicKey,
                 UserId = insertDto.UserId

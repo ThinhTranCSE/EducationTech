@@ -12,12 +12,12 @@ namespace EducationTech.Business.Repositories.Master
 {
     public class UserRepository : Repository, IUserRepository
     {
-        public DbSet<User> model => _context.Users;
+        public DbSet<User> Model => _context.Users;
         public UserRepository(MainDatabaseContext context) : base(context) { }
 
         public async Task<ICollection<User>> Get(User_GetDto getDto)
         {
-            var query = model
+            var query = Model
                 .AsQueryable();
 
             if (getDto.Id != null)
@@ -46,7 +46,7 @@ namespace EducationTech.Business.Repositories.Master
             {
                 try
                 {
-                    if (model.Any(u => u.Username == insertDto.Username))
+                    if (Model.Any(u => u.Username == insertDto.Username))
                     {
                         throw new HttpException(HttpStatusCode.Conflict, "Username already exists");
                     }
@@ -60,7 +60,7 @@ namespace EducationTech.Business.Repositories.Master
                         PhoneNumber = insertDto.PhoneNumber
                     };
 
-                    var userInsert = model.Add(user);
+                    var userInsert = Model.Add(user);
                     _context.SaveChanges();
                     transaction.Commit();
 

@@ -16,6 +16,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using EducationTech.Exceptions.Http;
 using System.Net;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Business.Services.Business
 {
@@ -117,14 +118,106 @@ namespace EducationTech.Business.Services.Business
             };
         }
 
-        public Task<bool?> Logout(Guid userId)
+        public async Task<bool?> Logout(Guid userId)
         {
-            throw new NotImplementedException();
+            User? user = await _userRepository.Model
+                .Include(u => u.UserKey)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            if(user == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "User not found");
+            }
+
+            //if user and key not null, then remove key from db and cache
+            using(var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    if (user.UserKey == null)
+                    {
+                        throw new  HttpException(HttpStatusCode.NotFound, "User did not login");
+                    }
+                    _context.UserKeys.Remove(user.UserKey);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    await _cacheService.RemoveAsync($"UserKey_{user.Id}");
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    throw e;
+                }
+            }
         }
 
-        public Task<TokensReponseDto> RefreshExpiredTokens(Guid userId)
+        public async Task<TokensReponseDto> RefreshExpiredTokens(Guid userId)
         {
-            throw new NotImplementedException();
+            User? user = await _userRepository.Model
+                .Include(u => u.UserKey)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "User not found");
+            }
+
+            var accessClaims = new Claim[]
+            {
+                new Claim("sub", user.Id.ToString()),
+            }
+            .Concat(
+                user.UserRoles.Select(r => new Claim("roles", r.Role.Name))
+             )
+            .ToArray();
+
+            var refreshClaims = new Claim[]
+            {
+                new Claim("sub", user.Id.ToString()),
+                new Claim("refresh", "true")
+            };
+
+            using var rsa = RSA.Create();
+
+            var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                if (user.UserKey == null)
+                {
+                    var userKey = await _userKeyRepository.Insert(new UserKey_InsertDto()
+                    {
+                        UserId = user.Id,
+                        PublicKey = rsa.ToXmlString(false)
+                    });
+                    user.UserKey = userKey;
+                }
+                else
+                {
+                    user.UserKey.PublicKey = rsa.ToXmlString(false);
+
+                }
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                await _cacheService.SetAsync($"UserKey_{user.Id}", user.UserKey.PublicKey, TimeSpan.FromMinutes(10));
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                throw e;
+            }
+
+
+
+            var accessToken = _authUtils.GenerateToken(accessClaims, new RsaSecurityKey(rsa));
+            var refreshToken = _authUtils.GenerateToken(refreshClaims, new RsaSecurityKey(rsa), true);
+
+            return new TokensReponseDto
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+            };
         }
 
         public async Task<User?> Register(RegisterDto registerDto)
