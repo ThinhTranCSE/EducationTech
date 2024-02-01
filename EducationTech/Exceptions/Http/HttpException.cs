@@ -3,7 +3,7 @@
 namespace EducationTech.Exceptions.Http
 {
     [Serializable]
-    internal class HttpException : Exception
+    public class HttpException : Exception
     {
         private readonly int _httpStatusCode;
 

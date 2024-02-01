@@ -121,9 +121,10 @@ namespace EducationTech.Business.Services.Business
 
         public async Task<bool?> Logout(Guid userId)
         {
-            User? user = await _userRepository.Model
+            User? user = (await _userRepository.Get())
+                .AsQueryable()
                 .Include(u => u.UserKey)
-                .FirstOrDefaultAsync(u => u.Id == userId);
+                .FirstOrDefault(u => u.Id == userId);
             if(user == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "User not found");
