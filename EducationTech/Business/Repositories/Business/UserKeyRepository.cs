@@ -15,17 +15,53 @@ namespace EducationTech.Business.Repositories.Business
 
         public DbSet<UserKey> Model => _context.UserKeys;
 
+        public Task<UserKey?> Delete(UserKey_DeleteDto deleteDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserKey?> Delete(UserKey deleteObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<UserKey>> Get()
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<UserKey?> Insert(UserKey_InsertDto insertDto)
         {
-            var userKey = await Model.AddAsync(new UserKey
+            var userKey = new UserKey
             {
                 PublicKey = insertDto.PublicKey,
                 UserId = insertDto.UserId
-            });
-            return userKey.Entity;
+            };
+            await Model.AddAsync(userKey);
+
+            return userKey;
         }
-        public Task<ICollection<UserKey>> Insert(IEnumerable<UserKey_InsertDto> insertDtos)
+        public Task<IEnumerable<UserKey>> Insert(IEnumerable<UserKey_InsertDto> insertDtos)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserKey?> Insert(UserKey insertObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<UserKey>> Insert(IEnumerable<UserKey> insertObjects)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserKey?> Update(UserKey_UpdateDto updateDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserKey?> Update(UserKey updateObject)
         {
             throw new NotImplementedException();
         }

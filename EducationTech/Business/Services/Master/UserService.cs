@@ -5,6 +5,7 @@ using EducationTech.Databases;
 using EducationTech.Business.DTOs.Masters.User;
 using EducationTech.Business.Services.Abstract;
 using EducationTech.Utilities.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Business.Services.Master
 {
@@ -22,8 +23,13 @@ namespace EducationTech.Business.Services.Master
 
         public async Task<User?> GetUserById(Guid id)
         {
-            var users = await _userRepository.Get(new User_GetDto { Id = id });
-            return users.Count > 0 ? users.First() : null;
+            var users = (await _userRepository.Get())
+                .AsQueryable()
+                .Where(x => x.Id == id)
+                .Include(x => x.UserKey)
+                .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role);
+            return users.FirstOrDefault();
         }
     }
 }

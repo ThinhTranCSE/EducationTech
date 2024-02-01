@@ -17,6 +17,7 @@ using System.Security.Cryptography;
 using EducationTech.Exceptions.Http;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
+using EducationTech.Business.Repositories.Abstract;
 
 namespace EducationTech.Business.Services.Business
 {
@@ -26,8 +27,8 @@ namespace EducationTech.Business.Services.Business
         private readonly IUserRepository _userRepository;
         private readonly IUserKeyRepository _userKeyRepository;
         private readonly IAuthUtils _authUtils;
-        private readonly MainDatabaseContext _context;
         private readonly ICacheService _cacheService;   
+        private readonly MainDatabaseContext _context;
         
         public AuthService(
             MainDatabaseContext context,
@@ -82,7 +83,7 @@ namespace EducationTech.Business.Services.Business
             {
                 if (user.UserKey == null)
                 {
-                    var userKey = await _userKeyRepository.Insert(new UserKey_InsertDto()
+                    var userKey = await _userKeyRepository.Insert(new UserKey()
                     {
                         UserId = user.Id,
                         PublicKey = rsa.ToXmlString(false)
@@ -98,12 +99,12 @@ namespace EducationTech.Business.Services.Business
 
                 await transaction.CommitAsync();
 
-                await _cacheService.SetAsync($"UserKey_{user.Id}", user.UserKey.PublicKey, TimeSpan.FromMinutes(10));
+                await _cacheService.SetAsync($"UserKey_{user.Id}", user.UserKey?.PublicKey, TimeSpan.FromMinutes(10));
             }
             catch (Exception e)
             {
                 await transaction.RollbackAsync();
-                throw e;
+                throw;
             }
 
 
@@ -129,27 +130,27 @@ namespace EducationTech.Business.Services.Business
             }
 
             //if user and key not null, then remove key from db and cache
-            using(var transaction = await _context.Database.BeginTransactionAsync())
+            var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                try
+                if (user.UserKey == null)
                 {
-                    if (user.UserKey == null)
-                    {
-                        throw new  HttpException(HttpStatusCode.NotFound, "User did not login");
-                    }
-                    _context.UserKeys.Remove(user.UserKey);
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
+                    throw new  HttpException(HttpStatusCode.NotFound, "User did not login");
+                }
+                await _userKeyRepository.Delete(user.UserKey);
+                    
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
 
-                    await _cacheService.RemoveAsync($"UserKey_{user.Id}");
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    await transaction.RollbackAsync();
-                    throw e;
-                }
+                await _cacheService.RemoveAsync($"UserKey_{user.Id}");
+                return true;
             }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+            
         }
 
         public async Task<TokensReponseDto> RefreshExpiredTokens(Guid userId)
@@ -184,7 +185,7 @@ namespace EducationTech.Business.Services.Business
             {
                 if (user.UserKey == null)
                 {
-                    var userKey = await _userKeyRepository.Insert(new UserKey_InsertDto()
+                    var userKey = await _userKeyRepository.Insert(new UserKey()
                     {
                         UserId = user.Id,
                         PublicKey = rsa.ToXmlString(false)
@@ -205,7 +206,7 @@ namespace EducationTech.Business.Services.Business
             catch (Exception e)
             {
                 await transaction.RollbackAsync();
-                throw e;
+                throw;
             }
 
 
@@ -222,22 +223,42 @@ namespace EducationTech.Business.Services.Business
 
         public async Task<User?> Register(RegisterDto registerDto)
         {
-            string hashedPassword = _encryptionUtils.HashPassword(registerDto.Password, out var salt);
-
-            User? createdUser = await _userRepository.Insert(new User_InsertDto()
+            User? user = await _userRepository.GetUserByUsername(registerDto.Username);
+            if (user != null)
             {
-                Username = registerDto.Username,
-                Password = hashedPassword,
+                throw new HttpException(HttpStatusCode.Conflict, "Username already exists");
+            }
 
-                PhoneNumber = registerDto.PhoneNumber,
-                Email = registerDto.Email,
-                DateOfBirth = registerDto.DateOfBirth,
+            var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                string hashedPassword = _encryptionUtils.HashPassword(registerDto.Password, out var salt);
 
-                Salt = salt
+                User? createdUser = await _userRepository.Insert(new User()
+                {
+                    Username = registerDto.Username,
+                    Password = hashedPassword,
 
-            });
+                    PhoneNumber = registerDto.PhoneNumber,
+                    Email = registerDto.Email,
+                    DateOfBirth = registerDto.DateOfBirth,
 
-            return createdUser;
+                    Salt = salt
+
+                });
+
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                return createdUser;
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+            
         }
     }
 }

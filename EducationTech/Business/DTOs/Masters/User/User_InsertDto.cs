@@ -16,8 +16,5 @@ namespace EducationTech.Business.DTOs.Masters.User
 
         public DateTime? DateOfBirth { get; set; }
 
-        [Required]
-        public byte[] Salt { get; set; }
-
     }
 }
