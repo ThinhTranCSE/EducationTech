@@ -1,0 +1,38 @@
+name: auto-deploy
+
+on:
+  workflow_run:
+    workflows: [".NET"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }} #hostname of server
+          username: ${{ secrets.USERNAME }} #username login to server
+          password: ${{ secrets.PASSWORD }} #password login to server
+          port: ${{ secrets.PORT }} #port of server - often port is 22
+          script: | # run with multiple script
+            cd ~/app/
+            if [ -d "./EducationTech" ]; then
+              echo "Repository already exists, pulling changes" |
+              cd ./EducationTech |
+              git pull |
+            else |
+              echo "Repository does not exist, cloning" |
+              git clone https://github.com/ThinhTranCSE/EducationTech.git |
+              cd ./EducationTech
+            fi
+            cd ./EducationTech
+            tmux attach-session -t EducationTech
+            tmux send-keys -t EducationTech C-c
+            dotnet run
+            
+            
+            
