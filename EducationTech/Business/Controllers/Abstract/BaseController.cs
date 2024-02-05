@@ -34,43 +34,43 @@ namespace EducationTech.Business.Controllers.Abstract
         }
 
 
-        protected async Task<IActionResult> ExecuteAsync(Func<Task<object?>> executedFunction)
-        {
-            try
-            {
-                var result = await executedFunction();
-                if (result != null)
-                {
-                    if (result is bool && !(bool)result)
-                    {
-                        return BadRequest(new ResponseMessage { Status = 400, Message = "Failed" });
-                    }
-                    return Ok(new ResponseMessage { Status = 200, Message = "Success", Data = result });
-                }
-                else
-                {
-                    return BadRequest(new ResponseMessage { Status = 400, Message = "Failed" });
-                }
-            }
-            catch (HttpException ex)
-            {
-                return StatusCode(ex.StatusCode, new ResponseMessage { Status = ex.StatusCode, Message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new ResponseMessage
-                {
-                    Status = 500,
-                    Message = new
-                    {
-                        ex.Message,
-                        ex.StackTrace
-                    },
-                });
-            }
-        }
+        //protected async Task<IActionResult> ExecuteAsync(Func<Task<object?>> executedFunction)
+        //{
+        //    try
+        //    {
+        //        var result = await executedFunction();
+        //        if (result != null)
+        //        {
+        //            if (result is bool && !(bool)result)
+        //            {
+        //                return BadRequest(new ResponseMessage { Status = 400, Message = "Failed" });
+        //            }
+        //            return Ok(new ResponseMessage { Status = 200, Message = "Success", Data = result });
+        //        }
+        //        else
+        //        {
+        //            return BadRequest(new ResponseMessage { Status = 400, Message = "Failed" });
+        //        }
+        //    }
+        //    catch (HttpException ex)
+        //    {
+        //        return StatusCode(ex.StatusCode, new ResponseMessage { Status = ex.StatusCode, Message = ex.Message });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new ResponseMessage
+        //        {
+        //            Status = 500,
+        //            Message = new
+        //            {
+        //                ex.Message,
+        //                ex.StackTrace
+        //            },
+        //        });
+        //    }
+        //}
 
-        private User? GetUserFromToken(string token)
+        private User? GetUserFromToken(string? token)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -80,19 +80,5 @@ namespace EducationTech.Business.Controllers.Abstract
             return _context.Users.Where(u => u.Id == userId).FirstOrDefault();
         }
 
-    }
-    public class ResponseMessage
-    {
-        [JsonProperty("status", NullValueHandling = NullValueHandling.Ignore)]
-        public int Status { get; set; } = 200;
-
-        [JsonProperty("message", NullValueHandling = NullValueHandling.Ignore)]
-        public object? Message { get; set; } = null;
-
-        [JsonProperty("data", NullValueHandling = NullValueHandling.Ignore)]
-        public object? Data { get; set; } = null;
-
-        [JsonProperty("errors", NullValueHandling = NullValueHandling.Ignore)]
-        public object? Errors { get; set; } = null;
     }
 }
