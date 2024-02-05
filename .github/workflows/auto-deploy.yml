@@ -21,4 +21,4 @@ jobs:
           script: | # run with multiple script
             cd ~/app/
             ./terminate_script.sh
-            nohup ./start_script.sh
+            nohup ./start_script.sh &
