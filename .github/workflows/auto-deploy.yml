@@ -34,6 +34,3 @@ jobs:
             tmux send-keys -t EducationTech C-c
             dotnet restore
             dotnet run
-            
-            
-            
