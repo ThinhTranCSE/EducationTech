@@ -43,7 +43,7 @@ namespace EducationTech
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
 
 
