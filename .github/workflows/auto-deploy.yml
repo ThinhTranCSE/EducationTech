@@ -20,18 +20,5 @@ jobs:
           port: ${{ secrets.PORT }} #port of server - often port is 22
           script: | # run with multiple script
             cd ~/app/
-            if [ -d "./EducationTech" ]
-            then
-              echo "Repository already exists, pulling changes"
-              cd ./EducationTech
-              git pull
-            else
-              echo "Repository does not exist, cloning"
-              git clone https://github.com/ThinhTranCSE/EducationTech.git
-              cd ./EducationTech
-            fi;
-            cd ./EducationTech
-            tmux attach-session -t EducationTech
-            tmux send-keys -t EducationTech C-c
-            dotnet restore
-            dotnet run
+            ./terminate_script.sh
+            nohup ./start_script.sh
