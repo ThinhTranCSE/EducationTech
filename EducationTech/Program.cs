@@ -20,6 +20,7 @@ using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using EducationTech.Installers;
 using EducationTech.Databases.Seeders;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace EducationTech
 {
@@ -43,7 +44,10 @@ namespace EducationTech
                 app.UseSwaggerUI();
             }
 
-            //app.UseHttpsRedirection();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
 
 
