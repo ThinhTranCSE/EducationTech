@@ -1,11 +1,10 @@
 ﻿using Bogus.Extensions.UnitedKingdom;
 using EducationTech.Business.Models.Master;
-using EducationTech.Business.Repositories.Master.Interfaces;
 using EducationTech.Business.Services.Business.Interfaces;
 using EducationTech.Databases;
+using EducationTech.Enums;
 using EducationTech.Utilities.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,7 +14,7 @@ namespace EducationTech.Utilities
 {
     public class AuthUtils : IAuthUtils
     {
-        private readonly IConfiguration _configuration;
+            private readonly IConfiguration _configuration;
         private readonly MainDatabaseContext _context;
         private readonly ICacheService _cacheService;
 
@@ -102,6 +101,15 @@ namespace EducationTech.Utilities
             }
 
             return DateTime.Parse(value);
+        }
+        public User? GetUserFromToken(string? token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return null;
+            }
+            Guid? userId = GetUserIdFromToken(token.Split(" ")[1]);
+            return _context.Users.Where(u => u.Id == userId).FirstOrDefault();
         }
     }
 }

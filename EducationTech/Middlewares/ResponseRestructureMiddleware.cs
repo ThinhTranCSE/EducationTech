@@ -16,6 +16,8 @@ namespace EducationTech.Middlewares
 
         public async Task Invoke(HttpContext context)
         {
+
+
             Stream originalBody = context.Response.Body;
             try
             {
@@ -48,7 +50,8 @@ namespace EducationTech.Middlewares
                     memStream.Position = 0;
                     responseBody = new StreamReader(memStream).ReadToEnd();
                 }//dispose of previous memory stream. 
-                 //lets convert responseBody to something we can use
+
+                //lets convert responseBody to something we can use
                 var data = JsonConvert.DeserializeObject(responseBody);
                 //create your wrapper response and convert to JSON
                 var responseStructure = new ResponseMessage()

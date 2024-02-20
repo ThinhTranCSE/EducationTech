@@ -19,7 +19,7 @@ namespace EducationTech.Business.Controllers.Abstract
         {
             get
             {
-                _currentUser ??= GetUserFromToken(HttpContext?.Request?.Headers?.Authorization);
+                _currentUser ??= _authUtils.GetUserFromToken(HttpContext?.Request?.Headers?.Authorization);
 
                 return _currentUser;
             }
@@ -69,16 +69,5 @@ namespace EducationTech.Business.Controllers.Abstract
         //        });
         //    }
         //}
-
-        private User? GetUserFromToken(string? token)
-        {
-            if (string.IsNullOrEmpty(token))
-            {
-                return null;
-            }
-            Guid? userId = _authUtils.GetUserIdFromToken(token.Split(" ")[1]);
-            return _context.Users.Where(u => u.Id == userId).FirstOrDefault();
-        }
-
     }
 }
