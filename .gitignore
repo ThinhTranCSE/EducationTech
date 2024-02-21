@@ -397,6 +397,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-./EducationTech/Logs/*
-./EducationTech/Static/*
-*.png
+./EducationTech/Static/
+./EducationTech/Logs/
