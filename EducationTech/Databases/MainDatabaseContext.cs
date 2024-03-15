@@ -20,6 +20,11 @@ namespace EducationTech.Databases
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<UserKey> UserKeys { get; set; }
+        public DbSet<Permission> Permissions { get; set; } 
+        public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<LearnerCourse> LearnerCourses { get; set; }
+        public DbSet<InstructorApproved> InstructorApproveds { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

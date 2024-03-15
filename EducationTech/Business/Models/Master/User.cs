@@ -27,13 +27,14 @@ namespace EducationTech.Business.Models.Master
         public DateTime? DateOfBirth { get; set; }
 
         public byte[] Salt { get; set; }
-        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 
+        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
         public virtual UserKey? UserKey { get; set; }
 
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<User>(modelBuilder);
+
         }
     }
 }

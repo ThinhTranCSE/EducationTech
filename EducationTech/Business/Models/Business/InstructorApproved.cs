@@ -1,23 +1,26 @@
 ﻿using EducationTech.Business.Models.Abstract;
+using EducationTech.Business.Models.Master;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EducationTech.Business.Models.Master
+namespace EducationTech.Business.Models.Business
 {
-    public class Role : Model
+    public class InstructorApproved : Model
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Role must have specific name")]
-        public string Name { get; set; } = "";
+        public Guid AdminId { get; set; }
+        public virtual User Admin { get; set; }
 
-        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public Guid InstructorId { get; set; }
+        public virtual User Instructor { get; set; }
+
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            ConfigureSideEffects<Role>(modelBuilder);
+            ConfigureSideEffects<InstructorApproved>(modelBuilder);
         }
     }
 }

@@ -49,6 +49,7 @@ namespace EducationTech.Business.Models.Abstract
             {
                 model.HasQueryFilter(c => c.DeletedAt == null);
             }
+            
 
         }
 

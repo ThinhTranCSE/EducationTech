@@ -6,21 +6,23 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationTech.Business.Models.Business
 {
-    public class UserKey : Model
+    public class LearnerCourse : Model
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public string PublicKey { get; set; }
+        public int LearnerId { get; set; }
+        public virtual User Learner { get; set; }
 
-        public Guid UserId { get; set; }
+        public int CourseId { get; set; }
+        public virtual Course Course { get; set; }
 
-        public virtual User User { get; set; }
+        public double Rate { get; set; }
 
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            ConfigureSideEffects<UserKey>(modelBuilder);
+            ConfigureSideEffects<LearnerCourse>(modelBuilder);
         }
     }
 }

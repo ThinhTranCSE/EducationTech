@@ -68,6 +68,10 @@ namespace EducationTech.Middlewares
                     await output.CopyToAsync(originalBody);
                 }//dispose of output stream
             }
+            catch(Exception ex)
+            {
+                throw;
+            }
             finally
             {
                 //and finally, reset the stream for downstream calls

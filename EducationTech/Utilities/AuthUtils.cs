@@ -14,7 +14,7 @@ namespace EducationTech.Utilities
 {
     public class AuthUtils : IAuthUtils
     {
-            private readonly IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
         private readonly MainDatabaseContext _context;
         private readonly ICacheService _cacheService;
 
@@ -109,7 +109,8 @@ namespace EducationTech.Utilities
                 return null;
             }
             Guid? userId = GetUserIdFromToken(token.Split(" ")[1]);
-            return _context.Users.Where(u => u.Id == userId).FirstOrDefault();
+            return _context.Users
+                .Where(u => u.Id == userId).FirstOrDefault();
         }
     }
 }

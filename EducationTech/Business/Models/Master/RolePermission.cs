@@ -5,19 +5,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationTech.Business.Models.Master
 {
-    public class Role : Model
+    public class RolePermission : Model
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
         public int Id { get; set; }
+        public int RoleId { get; set; }
+        public int PermissionId { get; set; }
 
-        [Required(ErrorMessage = "Role must have specific name")]
-        public string Name { get; set; } = "";
 
-        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public virtual Role Role { get; set; }
+        public  virtual Permission Permission { get; set; }
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            ConfigureSideEffects<Role>(modelBuilder);
+            ConfigureSideEffects<RolePermission>(modelBuilder);
         }
     }
 }

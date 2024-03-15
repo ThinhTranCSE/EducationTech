@@ -1,4 +1,5 @@
 using EducationTech.Annotations;
+using EducationTech.Business.Services.Business.Interfaces;
 using EducationTech.Exceptions.Http;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -19,11 +20,12 @@ namespace EducationTech.Business.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IFileService _fileService;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IFileService fileService)
         {
             _logger = logger;
-
+            _fileService = fileService;
             
         }
 
@@ -50,6 +52,14 @@ namespace EducationTech.Business.Controllers
         {
             throw new Exception("something");
             return "cc";
+        }
+
+        [AllowAnonymous]
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
+        {
+            var result = await _fileService.UploadFileAsync(file);
+            return Ok(new { result });
         }
     }
 }

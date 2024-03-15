@@ -1,20 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EducationTech.Business.Models.Abstract;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace EducationTech.Business.Repositories.Abstract
 {
     public interface IRepository<T>
-        where T : class
+        where T : Model
     {
         DbSet<T> Model { get; }
 
-        Task<IEnumerable<T>> Get();
+        Task<IQueryable<T>> GetMany(Expression<Func<T, bool>>? filter = null, bool tracked = true, bool executed = false);
+        Task<T?> Get(Expression<Func<T, bool>> filter, bool tracked = true);
 
-        Task<T?> Insert(T insertObject);
+        Task<IQueryable<T>> Insert(IEnumerable<T> entities);
+        Task<T?> Insert(T entity);
 
-        Task<IEnumerable<T>> Insert(IEnumerable<T> insertObjects);
+        Task<T?> Update(T entity);
 
-        Task<T?> Update(T updateObject);
-
-        Task<T?> Delete(T deleteObject);
+        Task<T?> Delete(T entity);
     }
 }

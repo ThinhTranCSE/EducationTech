@@ -14,6 +14,7 @@ namespace EducationTech
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Configuration.AddUserSecrets<Program>();
+            builder.Services.AddSingleton<GlobalUsings>();
 
             builder.InstallServices(builder.Configuration);
 
@@ -81,8 +82,10 @@ namespace EducationTech
         private static async Task TestConvertVideo(WebApplication app)
         {
             var converter = new VideoConverter();
-            await converter.From(Path.Combine(app.Environment.ContentRootPath, "Static", "video.mp4"))
-                .To(Path.Combine(app.Environment.ContentRootPath, "Static", "ClipTest"))
+            var globalUsings = app.Services.GetRequiredService<GlobalUsings>();
+            var contentRootPath = globalUsings.ContentRootPath; 
+            await converter.From(Path.Combine(contentRootPath, "Static", "video.mp4"))
+                .To(Path.Combine(contentRootPath, "Static", "ClipTest"))
                 .ProcessAsync();
         }
     }

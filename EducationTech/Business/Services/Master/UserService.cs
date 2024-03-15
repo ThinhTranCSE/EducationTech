@@ -23,9 +23,7 @@ namespace EducationTech.Business.Services.Master
 
         public async Task<User?> GetUserById(Guid id)
         {
-            var users = (await _userRepository.Get())
-                .AsQueryable()
-                .Where(x => x.Id == id)
+            var users = (await _userRepository.GetMany(x => x.Id == id))
                 .Include(x => x.UserKey)
                 .Include(x => x.UserRoles)
                 .ThenInclude(x => x.Role);

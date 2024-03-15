@@ -5,19 +5,22 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationTech.Business.Models.Master
 {
-    public class Role : Model
+    public class CourseSection : Model
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Role must have specific name")]
-        public string Name { get; set; } = "";
+        public int CourseId { get; set; }
 
-        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public string Title { get; set; }
+        public int Order { get; set; } 
+
+
+        public virtual Course Course { get; set; }
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            ConfigureSideEffects<Role>(modelBuilder);
+            ConfigureSideEffects<CourseSection>(modelBuilder);
         }
     }
 }
