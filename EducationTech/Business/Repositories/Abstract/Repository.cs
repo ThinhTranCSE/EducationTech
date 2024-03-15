@@ -99,14 +99,17 @@ namespace EducationTech.Business.Repositories.Abstract
         }
         public virtual async Task<T?> Delete(T entity)
         {
-            if (entity.SoftDelete)
+            try
             {
-                entity.DeletedAt = DateTimeOffset.Now;
-                return await Update(entity);
+                _context.Entry(entity).State = EntityState.Deleted;
+                await _context.SaveChangesAsync();
+                return entity;
+
             }
-            _context.Entry(entity).State = EntityState.Deleted;
-            await _context.SaveChangesAsync();
-            return entity;
+            catch (Exception e)
+            {
+                throw;
+            }
         }
     }
 }
