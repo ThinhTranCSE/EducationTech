@@ -15,12 +15,12 @@ namespace EducationTech.Utilities
     public class AuthUtils : IAuthUtils
     {
         private readonly IConfiguration _configuration;
-        private readonly MainDatabaseContext _context;
+        private readonly EducationTechContext _context;
         private readonly ICacheService _cacheService;
 
         private readonly string _expiredAccessTime;
         private readonly string _expiredRefreshTime;
-        public AuthUtils(IConfiguration configuration, MainDatabaseContext context, ICacheService cacheService)
+        public AuthUtils(IConfiguration configuration, EducationTechContext context, ICacheService cacheService)
         {
             _configuration = configuration;
             _context = context;

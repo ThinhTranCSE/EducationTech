@@ -3,6 +3,7 @@ using System;
 using EducationTech.Databases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EducationTech.Migrations
 {
     [DbContext(typeof(EducationTechContext))]
-    partial class MainDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240318010721_MigrateDiagramToTable")]
+    partial class MigrateDiagramToTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,49 +121,6 @@ namespace EducationTech.Migrations
                     b.ToTable("LearnerCourses");
                 });
 
-            modelBuilder.Entity("EducationTech.Business.Models.Business.Question", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("QuizId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Solution")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuizId");
-
-                    b.ToTable("Question");
-                });
-
-            modelBuilder.Entity("EducationTech.Business.Models.Business.Quiz", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("LessonId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TimeLimit")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LessonId");
-
-                    b.ToTable("Quiz");
-                });
-
             modelBuilder.Entity("EducationTech.Business.Models.Business.Topic", b =>
                 {
                     b.Property<int>("Id")
@@ -210,26 +169,6 @@ namespace EducationTech.Migrations
                         .IsUnique();
 
                     b.ToTable("UserKeys");
-                });
-
-            modelBuilder.Entity("EducationTech.Business.Models.Business.Video", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("LessonId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LessonId");
-
-                    b.ToTable("Video");
                 });
 
             modelBuilder.Entity("EducationTech.Business.Models.Master.Course", b =>
@@ -507,28 +446,6 @@ namespace EducationTech.Migrations
                     b.Navigation("Learner");
                 });
 
-            modelBuilder.Entity("EducationTech.Business.Models.Business.Question", b =>
-                {
-                    b.HasOne("EducationTech.Business.Models.Business.Quiz", "Quiz")
-                        .WithMany()
-                        .HasForeignKey("QuizId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Quiz");
-                });
-
-            modelBuilder.Entity("EducationTech.Business.Models.Business.Quiz", b =>
-                {
-                    b.HasOne("EducationTech.Business.Models.Master.Lesson", "Lesson")
-                        .WithMany()
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lesson");
-                });
-
             modelBuilder.Entity("EducationTech.Business.Models.Business.Topic", b =>
                 {
                     b.HasOne("EducationTech.Business.Models.Business.Comunity", "Comunity")
@@ -557,17 +474,6 @@ namespace EducationTech.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("EducationTech.Business.Models.Business.Video", b =>
-                {
-                    b.HasOne("EducationTech.Business.Models.Master.Lesson", "Lesson")
-                        .WithMany()
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lesson");
                 });
 
             modelBuilder.Entity("EducationTech.Business.Models.Master.Course", b =>

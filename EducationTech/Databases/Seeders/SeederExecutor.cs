@@ -5,10 +5,10 @@ namespace EducationTech.Databases.Seeders
 {
     public class SeederExecutor : ISeederExecutor
     {
-        private readonly MainDatabaseContext _context;
+        private readonly EducationTechContext _context;
         private IDictionary<string, ISeeder> _seeders { get; set; }
 
-        public SeederExecutor(MainDatabaseContext context)
+        public SeederExecutor(EducationTechContext context)
         {
             _context = context;
 

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EducationTech.Migrations
 {
-    [DbContext(typeof(MainDatabaseContext))]
+    [DbContext(typeof(EducationTechContext))]
     [Migration("20240116184304_InitialAndCreateUserTable")]
     partial class InitialAndCreateUserTable
     {

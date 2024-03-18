@@ -5,9 +5,9 @@ namespace EducationTech.Databases.Seeders
 {
     public abstract class Seeder : ISeeder
     {
-        protected readonly MainDatabaseContext _context;
+        protected readonly EducationTechContext _context;
 
-        protected Seeder(MainDatabaseContext context)
+        protected Seeder(EducationTechContext context)
         {
             _context = context;
         }

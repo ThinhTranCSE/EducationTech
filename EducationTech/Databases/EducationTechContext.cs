@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Databases
 {
-    public class MainDatabaseContext : DbContext
+    public class EducationTechContext : DbContext
     {
         private readonly IConfiguration _configuration;
-        public MainDatabaseContext(DbContextOptions<MainDatabaseContext> options, IConfiguration configuration) : base(options)
+        public EducationTechContext(DbContextOptions<EducationTechContext> options, IConfiguration configuration) : base(options)
         {
             _configuration = configuration;
         }
@@ -25,6 +25,17 @@ namespace EducationTech.Databases
         public DbSet<Course> Courses { get; set; }
         public DbSet<LearnerCourse> LearnerCourses { get; set; }
         public DbSet<InstructorApproved> InstructorApproveds { get; set; }
+        public DbSet<CourseSection> CourseSections { get; set; }
+        public DbSet<Lesson> Lessons { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Comunity> Comunities { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Quiz> Quizzes { get; set; }    
+        public DbSet<Topic> Topics { get; set; }
+        public DbSet<Video> Videos { get; set; }
+
+
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

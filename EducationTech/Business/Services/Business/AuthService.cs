@@ -28,10 +28,10 @@ namespace EducationTech.Business.Services.Business
         private readonly IUserKeyRepository _userKeyRepository;
         private readonly IAuthUtils _authUtils;
         private readonly ICacheService _cacheService;   
-        private readonly MainDatabaseContext _context;
+        private readonly EducationTechContext _context;
         
         public AuthService(
-            MainDatabaseContext context,
+            EducationTechContext context,
             IAuthUtils authUtils,
             IEncryptionUtils encryptionUtils,
             IUserRepository userRepository,

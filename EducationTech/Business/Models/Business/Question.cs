@@ -3,25 +3,25 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EducationTech.Business.Models.Master
+namespace EducationTech.Business.Models.Business
 {
-    public class Lesson : Model
+    public class Question : Model
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public int CourseSectionId { get; set; }
+        public int QuizId { get; set; }
 
-        public string Title { get; set; }
+        public string Content { get; set; }   
 
-        public int Order { get; set; }
+        public string Solution { get; set; }
 
-        public string Type { get; set; }
-        public virtual CourseSection CourseSection { get; set; }
+        public virtual Quiz Quiz { get; set; }
+
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            ConfigureSideEffects<Lesson>(modelBuilder);
+            ConfigureSideEffects<Question>(modelBuilder);
         }
     }
 }

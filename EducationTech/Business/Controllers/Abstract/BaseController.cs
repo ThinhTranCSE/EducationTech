@@ -11,7 +11,7 @@ namespace EducationTech.Business.Controllers.Abstract
     [Route("api/v1/[controller]")]
     public abstract class BaseController : ControllerBase
     {
-        private readonly MainDatabaseContext _context;
+        private readonly EducationTechContext _context;
         private readonly IAuthUtils _authUtils;
 
         private User? _currentUser { get; set; }
@@ -27,7 +27,7 @@ namespace EducationTech.Business.Controllers.Abstract
             private set { _currentUser = value; }
         }
 
-        public BaseController(MainDatabaseContext context, IAuthUtils authUtils)
+        public BaseController(EducationTechContext context, IAuthUtils authUtils)
         {
             _context = context;
             _authUtils = authUtils;

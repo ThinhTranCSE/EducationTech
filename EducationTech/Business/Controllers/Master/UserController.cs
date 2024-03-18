@@ -13,7 +13,7 @@ namespace EducationTech.Business.Controllers.Master
     {
         private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
-        public UserController(IUserService userService, ILogger<UserController> logger, MainDatabaseContext context, IAuthUtils authUtils) : base(context, authUtils)
+        public UserController(IUserService userService, ILogger<UserController> logger, EducationTechContext context, IAuthUtils authUtils) : base(context, authUtils)
         {
             _userService = userService;
             _logger = logger;

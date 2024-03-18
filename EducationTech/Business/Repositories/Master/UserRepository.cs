@@ -19,7 +19,7 @@ namespace EducationTech.Business.Repositories.Master
         public override DbSet<User> Model => _context.Users;
 
 
-        public UserRepository(MainDatabaseContext context, IEncryptionUtils encryptionUtils) : base(context)
+        public UserRepository(EducationTechContext context, IEncryptionUtils encryptionUtils) : base(context)
         {
             _encryptionUtils = encryptionUtils;
         }

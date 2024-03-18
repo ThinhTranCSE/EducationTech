@@ -24,7 +24,7 @@ namespace EducationTech.Testing.Units.Services
     public class AuthServiceTests
     {
         private AuthService _authService; 
-        private Mock<MainDatabaseContext> _mainDbContextMock;
+        private Mock<EducationTechContext> _mainDbContextMock;
         private Mock<IAuthUtils> _authUtils;
         private Mock<IEncryptionUtils> _encryptionUtils;
         private Mock<IUserRepository> _userRepository;
@@ -38,8 +38,8 @@ namespace EducationTech.Testing.Units.Services
             dbCxtTransactionMock.Setup(x => x.CommitAsync(CancellationToken.None)).Returns(Task.CompletedTask);
             var dbFacadeMock = new Mock<DatabaseFacade>(new Mock<DbContext>().Object);
             dbFacadeMock.Setup(x => x.BeginTransactionAsync(CancellationToken.None)).ReturnsAsync(dbCxtTransactionMock.Object);
-            _mainDbContextMock = new Mock<MainDatabaseContext>(
-                new DbContextOptionsBuilder<MainDatabaseContext>().Options,
+            _mainDbContextMock = new Mock<EducationTechContext>(
+                new DbContextOptionsBuilder<EducationTechContext>().Options,
                 new Mock<IConfiguration>().Object
                 );
             _mainDbContextMock.Setup(x => x.Database).Returns(dbFacadeMock.Object);

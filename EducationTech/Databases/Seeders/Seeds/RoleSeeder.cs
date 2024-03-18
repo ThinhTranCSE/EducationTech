@@ -7,7 +7,7 @@ namespace EducationTech.Databases.Seeders.Seeds
 {
     public class RoleSeeder : Seeder
     {
-        public RoleSeeder(MainDatabaseContext context) : base(context)
+        public RoleSeeder(EducationTechContext context) : base(context)
         {
         }
 

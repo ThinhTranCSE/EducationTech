@@ -9,7 +9,7 @@ namespace EducationTech.Business.Repositories.Business
 {
     public class UserKeyRepository : Repository<UserKey>, IUserKeyRepository
     {
-        public UserKeyRepository(MainDatabaseContext context) : base(context)
+        public UserKeyRepository(EducationTechContext context) : base(context)
         {
         }
 

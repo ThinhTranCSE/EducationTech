@@ -9,9 +9,9 @@ namespace EducationTech.Business.Repositories.Abstract
     public abstract class Repository<T> : IRepository<T>
         where T : Model
     {
-        protected readonly MainDatabaseContext _context;
+        protected readonly EducationTechContext _context;
 
-        protected Repository(MainDatabaseContext context) { _context = context; }
+        protected Repository(EducationTechContext context) { _context = context; }
 
         public abstract DbSet<T> Model { get; }
 
