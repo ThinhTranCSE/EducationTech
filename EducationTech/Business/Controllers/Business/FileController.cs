@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace EducationTech.Business.Controllers.Business
 {
-    //[Authorize]
+    [Authorize]
     public class FileController : BaseController
     {
         private readonly IFileService _fileService;
@@ -42,8 +42,8 @@ namespace EducationTech.Business.Controllers.Business
         public async Task<IActionResult> GetPlaylist(string streamId)
         {
             //return m3u8 file at result
-            var response = await _fileService.GetPlaylist(streamId);
-            return File(response.Content.ReadAsByteArrayAsync().Result, "application/x-mpegURL");
+            var fileContent = await _fileService.GetPlaylist(streamId);
+            return File(fileContent.Content, fileContent.ContentType);
         }
 
         [HttpGet("Streams/{streamId}/{segmentName}.ts")]
@@ -51,8 +51,8 @@ namespace EducationTech.Business.Controllers.Business
         public async Task<IActionResult> GetSegment(string streamId, string segmentName)
         {
             //return ts file at result
-            var response = await _fileService.GetSegment(streamId, segmentName);
-            return File(response.Content.ReadAsByteArrayAsync().Result, "video/MP2T");
+            var fileContent = await _fileService.GetSegment(streamId, segmentName);
+            return File(fileContent.Content, fileContent.ContentType);
         }
 
         [HttpGet("{fileId}")]
