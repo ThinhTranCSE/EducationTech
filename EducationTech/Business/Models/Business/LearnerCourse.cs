@@ -12,7 +12,7 @@ namespace EducationTech.Business.Models.Business
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public int LearnerId { get; set; }
+        public Guid LearnerId { get; set; }
         public virtual User Learner { get; set; }
 
         public int CourseId { get; set; }

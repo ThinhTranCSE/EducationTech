@@ -16,7 +16,10 @@ namespace EducationTech.Business.Models.Business
 
         public string Url { get; set; }
 
+        public Guid FileId { get; set; }
         public virtual Lesson Lesson { get; set; }
+
+        public virtual UploadedFile File { get; set; }
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<Video>(modelBuilder);

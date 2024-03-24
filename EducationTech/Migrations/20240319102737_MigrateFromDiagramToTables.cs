@@ -6,7 +6,7 @@ using MySql.EntityFrameworkCore.Metadata;
 
 namespace EducationTech.Migrations
 {
-    public partial class MigrateDiagramToTable : Migration
+    public partial class MigrateFromDiagramToTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -78,7 +78,31 @@ namespace EducationTech.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Comunity",
+                name: "UploadedFiles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    OriginalFileName = table.Column<string>(type: "longtext", nullable: false),
+                    Size = table.Column<long>(type: "bigint", nullable: false),
+                    Path = table.Column<string>(type: "longtext", nullable: false),
+                    IsCompleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsPublic = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UploadedFiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UploadedFiles_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Comunities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -87,9 +111,9 @@ namespace EducationTech.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Comunity", x => x.Id);
+                    table.PrimaryKey("PK_Comunities", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comunity_Courses_CourseId",
+                        name: "FK_Comunities_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id",
@@ -98,7 +122,7 @@ namespace EducationTech.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "CourseSection",
+                name: "CourseSections",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -109,9 +133,9 @@ namespace EducationTech.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CourseSection", x => x.Id);
+                    table.PrimaryKey("PK_CourseSections", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CourseSection_Courses_CourseId",
+                        name: "FK_CourseSections_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id",
@@ -125,8 +149,7 @@ namespace EducationTech.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    LearnerId = table.Column<int>(type: "int", nullable: false),
-                    LearnerId1 = table.Column<Guid>(type: "char(36)", nullable: false),
+                    LearnerId = table.Column<Guid>(type: "char(36)", nullable: false),
                     CourseId = table.Column<int>(type: "int", nullable: false),
                     Rate = table.Column<double>(type: "double", nullable: false)
                 },
@@ -140,8 +163,8 @@ namespace EducationTech.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LearnerCourses_Users_LearnerId1",
-                        column: x => x.LearnerId1,
+                        name: "FK_LearnerCourses_Users_LearnerId",
+                        column: x => x.LearnerId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -176,7 +199,7 @@ namespace EducationTech.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Topic",
+                name: "Topics",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -188,15 +211,15 @@ namespace EducationTech.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Topic", x => x.Id);
+                    table.PrimaryKey("PK_Topics", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Topic_Comunity_ComunityId",
+                        name: "FK_Topics_Comunities_ComunityId",
                         column: x => x.ComunityId,
-                        principalTable: "Comunity",
+                        principalTable: "Comunities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Topic_Users_UserId",
+                        name: "FK_Topics_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -205,7 +228,7 @@ namespace EducationTech.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Lesson",
+                name: "Lessons",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -217,18 +240,18 @@ namespace EducationTech.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Lesson", x => x.Id);
+                    table.PrimaryKey("PK_Lessons", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Lesson_CourseSection_CourseSectionId",
+                        name: "FK_Lessons_CourseSections_CourseSectionId",
                         column: x => x.CourseSectionId,
-                        principalTable: "CourseSection",
+                        principalTable: "CourseSections",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Comment",
+                name: "Comments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -242,21 +265,21 @@ namespace EducationTech.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Comment", x => x.Id);
+                    table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comment_Comment_RepliedCommentId",
+                        name: "FK_Comments_Comments_RepliedCommentId",
                         column: x => x.RepliedCommentId,
-                        principalTable: "Comment",
+                        principalTable: "Comments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Comment_Topic_TopicId",
+                        name: "FK_Comments_Topics_TopicId",
                         column: x => x.TopicId,
-                        principalTable: "Topic",
+                        principalTable: "Topics",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Comment_Users_UserId",
+                        name: "FK_Comments_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -264,24 +287,95 @@ namespace EducationTech.Migrations
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "Quizzes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    LessonId = table.Column<int>(type: "int", nullable: false),
+                    TimeLimit = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Quizzes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Quizzes_Lessons_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "Lessons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Videos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    LessonId = table.Column<int>(type: "int", nullable: false),
+                    Url = table.Column<string>(type: "longtext", nullable: false),
+                    FileId = table.Column<Guid>(type: "char(36)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Videos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Videos_Lessons_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "Lessons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Videos_UploadedFiles_FileId",
+                        column: x => x.FileId,
+                        principalTable: "UploadedFiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Questions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    QuizId = table.Column<int>(type: "int", nullable: false),
+                    Content = table.Column<string>(type: "longtext", nullable: false),
+                    Solution = table.Column<string>(type: "longtext", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Questions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Questions_Quizzes_QuizId",
+                        column: x => x.QuizId,
+                        principalTable: "Quizzes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
             migrationBuilder.CreateIndex(
-                name: "IX_Comment_RepliedCommentId",
-                table: "Comment",
+                name: "IX_Comments_RepliedCommentId",
+                table: "Comments",
                 column: "RepliedCommentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comment_TopicId",
-                table: "Comment",
+                name: "IX_Comments_TopicId",
+                table: "Comments",
                 column: "TopicId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comment_UserId",
-                table: "Comment",
+                name: "IX_Comments_UserId",
+                table: "Comments",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comunity_CourseId",
-                table: "Comunity",
+                name: "IX_Comunities_CourseId",
+                table: "Comunities",
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
@@ -290,8 +384,8 @@ namespace EducationTech.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseSection_CourseId",
-                table: "CourseSection",
+                name: "IX_CourseSections_CourseId",
+                table: "CourseSections",
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
@@ -310,14 +404,24 @@ namespace EducationTech.Migrations
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LearnerCourses_LearnerId1",
+                name: "IX_LearnerCourses_LearnerId",
                 table: "LearnerCourses",
-                column: "LearnerId1");
+                column: "LearnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Lesson_CourseSectionId",
-                table: "Lesson",
+                name: "IX_Lessons_CourseSectionId",
+                table: "Lessons",
                 column: "CourseSectionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Questions_QuizId",
+                table: "Questions",
+                column: "QuizId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Quizzes_LessonId",
+                table: "Quizzes",
+                column: "LessonId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RolePermissions_PermissionId",
@@ -330,20 +434,35 @@ namespace EducationTech.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Topic_ComunityId",
-                table: "Topic",
+                name: "IX_Topics_ComunityId",
+                table: "Topics",
                 column: "ComunityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Topic_UserId",
-                table: "Topic",
+                name: "IX_Topics_UserId",
+                table: "Topics",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UploadedFiles_UserId",
+                table: "UploadedFiles",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Videos_FileId",
+                table: "Videos",
+                column: "FileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Videos_LessonId",
+                table: "Videos",
+                column: "LessonId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Comment");
+                name: "Comments");
 
             migrationBuilder.DropTable(
                 name: "InstructorApproveds");
@@ -352,22 +471,34 @@ namespace EducationTech.Migrations
                 name: "LearnerCourses");
 
             migrationBuilder.DropTable(
-                name: "Lesson");
+                name: "Questions");
 
             migrationBuilder.DropTable(
                 name: "RolePermissions");
 
             migrationBuilder.DropTable(
-                name: "Topic");
+                name: "Videos");
 
             migrationBuilder.DropTable(
-                name: "CourseSection");
+                name: "Topics");
+
+            migrationBuilder.DropTable(
+                name: "Quizzes");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
 
             migrationBuilder.DropTable(
-                name: "Comunity");
+                name: "UploadedFiles");
+
+            migrationBuilder.DropTable(
+                name: "Comunities");
+
+            migrationBuilder.DropTable(
+                name: "Lessons");
+
+            migrationBuilder.DropTable(
+                name: "CourseSections");
 
             migrationBuilder.DropTable(
                 name: "Courses");

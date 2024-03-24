@@ -34,6 +34,7 @@ namespace EducationTech.Databases
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Video> Videos { get; set; }
 
+        public DbSet<UploadedFile> UploadedFiles { get; set; }
 
 
 

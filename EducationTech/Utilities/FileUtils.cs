@@ -4,6 +4,8 @@ namespace EducationTech.Utilities
 {
     public class FileUtils : IFileUtils
     {
+
+
         public async Task<string> SaveFileAsync(string filePath, Stream fileStream)
         {
             try
@@ -59,6 +61,32 @@ namespace EducationTech.Utilities
             {
                 throw;
             }
+        }
+
+        public async Task<bool> DeleteFileAsync(string filePath)
+        {
+            try
+            {
+                File.Delete(filePath);
+                return true;
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<byte[]> GetFileContentAsync(string filePath)
+        {
+            try
+            {
+                return await File.ReadAllBytesAsync(filePath);
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+
         }
     }
 }

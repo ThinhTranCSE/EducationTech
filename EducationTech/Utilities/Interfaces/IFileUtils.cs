@@ -7,5 +7,10 @@ namespace EducationTech.Utilities.Interfaces
         Task<string> SaveFileAsync(string filePath, Stream fileStream);
         Task<string> SaveFileAsync(string filePath, byte[] fileBytes);
         Task<string> SaveFileAsync(string filePath, IFormFile file);
+
+        Task<byte[]> GetFileContentAsync(string filePath);
+
+        Task<bool> DeleteFileAsync(string filePath);
+
     }
 }

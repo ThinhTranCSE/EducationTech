@@ -56,7 +56,7 @@ namespace EducationTech.Middlewares
 
                 response.StatusCode = httpException.StatusCode;
                 response.ContentType = "application/json";
-
+                response.ContentLength = buffer.Length;
 
                 await response.WriteAsync(json);
             }

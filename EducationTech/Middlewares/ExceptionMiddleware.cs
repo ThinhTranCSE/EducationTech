@@ -45,7 +45,7 @@ namespace EducationTech.Middlewares
 
                 response.StatusCode = 500;
                 response.ContentType = "application/json";
-
+                response.ContentLength = buffer.Length;
 
                 await response.WriteAsync(json);
             }

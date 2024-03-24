@@ -1,4 +1,5 @@
-﻿using EducationTech.Business.Controllers.Abstract;
+﻿using EducationTech.Annotations;
+using EducationTech.Business.Controllers.Abstract;
 using EducationTech.Exceptions.Http;
 using Newtonsoft.Json;
 using System.Net;
@@ -16,6 +17,18 @@ namespace EducationTech.Middlewares
 
         public async Task Invoke(HttpContext context)
         {
+            // Check if the action method has the SkipMiddlewareAttribute
+            var endpoint = context.GetEndpoint();
+            if (endpoint != null)
+            {
+                var skipAttribute = endpoint.Metadata.GetMetadata<SkipRestructurePhaseAttribute>();
+                if (skipAttribute != null)
+                {
+                    await next(context);
+                    return; // Skip the middleware
+                }
+            }
+
 
 
             Stream originalBody = context.Response.Body;
@@ -24,7 +37,7 @@ namespace EducationTech.Middlewares
                 string responseBody = null;
                 using (var memStream = new MemoryStream())
                 {
-                    //Replace stream for upstream calls.
+                    //Replace stream f or upstream calls.
                     context.Response.Body = memStream;
                     //continue up the pipeline
                     await next(context);
