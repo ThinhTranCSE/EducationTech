@@ -121,7 +121,7 @@ namespace EducationTech.Business.Services.Business
 
         public async Task<bool?> Logout(Guid userId)
         {
-            User? user = (await _userRepository.GetMany(u => u.Id == userId))
+            User? user = (await _userRepository.Get(u => u.Id == userId))
                 .Include(u => u.UserKey)
                 .FirstOrDefault();
             if(user == null)

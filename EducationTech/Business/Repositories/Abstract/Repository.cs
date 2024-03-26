@@ -1,6 +1,7 @@
 ﻿using EducationTech.Business.Models.Abstract;
 using EducationTech.Databases;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
 
@@ -14,8 +15,14 @@ namespace EducationTech.Business.Repositories.Abstract
         protected Repository(EducationTechContext context) { _context = context; }
 
         public abstract DbSet<T> Model { get; }
+        public EntityEntry<T> Entry(T entity)
+        {
+            _context.Database.BeginTransaction();
+            return _context.Entry(entity);
 
-        public virtual async Task<IQueryable<T>> GetMany(Expression<Func<T, bool>>? filter = null, bool tracked = true, bool executed = false)
+        }
+
+        public virtual async Task<IQueryable<T>> Get(Expression<Func<T, bool>>? filter = null, bool tracked = true, bool executed = false)
         {
             try
             {
@@ -36,7 +43,7 @@ namespace EducationTech.Business.Repositories.Abstract
             }
         }
 
-        public virtual async Task<T?> Get(Expression<Func<T, bool>> filter , bool tracked = true)
+        public virtual async Task<T?> GetSingle(Expression<Func<T, bool>> filter , bool tracked = true)
         {
             try
             {
@@ -56,12 +63,15 @@ namespace EducationTech.Business.Repositories.Abstract
         }
 
 
-        public virtual async Task<IQueryable<T>> Insert(IEnumerable<T> entities)
+        public virtual async Task<IQueryable<T>> Insert(IEnumerable<T> entities, bool executed = false)
         {
             try
             {
                 await Model.AddRangeAsync(entities);
-                await _context.SaveChangesAsync();  
+                if (executed)
+                {
+                    await _context.SaveChangesAsync();  
+                }
                 return entities.AsQueryable();
             }
             catch (Exception e)
@@ -70,12 +80,15 @@ namespace EducationTech.Business.Repositories.Abstract
             }
         }
 
-        public virtual async Task<T?> Insert(T entity)
+        public virtual async Task<T?> Insert(T entity, bool executed = false)
         {
             try
             {
                 _context.Entry(entity).State = EntityState.Added;
-                await _context.SaveChangesAsync();
+                if(executed)
+                {
+                    await _context.SaveChangesAsync();
+                }
                 return entity;
             }
             catch (Exception e)
@@ -84,12 +97,15 @@ namespace EducationTech.Business.Repositories.Abstract
             }
         }
 
-        public virtual async Task<T?> Update(T entity)
+        public virtual async Task<T?> Update(T entity, bool executed = false)
         {
             try
             {
                 _context.Entry(entity).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
+                if (executed)
+                {
+                    await _context.SaveChangesAsync();
+                }
                 return entity;
             }
             catch (Exception e)
@@ -97,14 +113,34 @@ namespace EducationTech.Business.Repositories.Abstract
                 throw;
             }
         }
-        public virtual async Task<T?> Delete(T entity)
+        public virtual async Task<T?> Delete(T entity, bool executed = false)
         {
             try
             {
                 _context.Entry(entity).State = EntityState.Deleted;
-                await _context.SaveChangesAsync();
+                if (executed)
+                {
+                    await _context.SaveChangesAsync();
+                }
                 return entity;
 
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
+        public virtual async Task<IQueryable<T>> Delete(IEnumerable<T> entities, bool executed = false)
+        {
+            try
+            {
+                _context.RemoveRange(entities);
+                if (executed)
+                {
+                    await _context.SaveChangesAsync();
+                }
+                return entities.AsQueryable();
             }
             catch (Exception e)
             {
@@ -112,4 +148,6 @@ namespace EducationTech.Business.Repositories.Abstract
             }
         }
     }
+
+    
 }

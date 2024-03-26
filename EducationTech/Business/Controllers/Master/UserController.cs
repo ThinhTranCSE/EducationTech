@@ -1,4 +1,6 @@
-﻿using EducationTech.Business.Controllers.Abstract;
+﻿using EducationTech.Annotations;
+using EducationTech.Business.Controllers.Abstract;
+using EducationTech.Business.DTOs.Masters.User;
 using EducationTech.Business.Models.Master;
 using EducationTech.Business.Services.Master.Interfaces;
 using EducationTech.Databases;
@@ -8,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EducationTech.Business.Controllers.Master
 {
-    [Authorize]
+    //[Authorize]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
@@ -29,6 +31,12 @@ namespace EducationTech.Business.Controllers.Master
         public async Task<User?> GetCurrentUser()
         {
             return CurrentUser;
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<User?> UpdateUser(Guid id, [FromBody] User_UpdateDto updateDto)
+        {
+            return await _userService.UpdateUser(id, updateDto, CurrentUser);
         }
     }
 }

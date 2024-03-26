@@ -30,7 +30,7 @@ namespace EducationTech.Business.Services.Business
 
         public async Task<File_GetFileContentDto> GetFile(Guid fileId)
         {
-            var fileEntity = await _uploaedFileRepository.Get(f => f.Id == fileId);
+            var fileEntity = await _uploaedFileRepository.GetSingle(f => f.Id == fileId);
             if (fileEntity == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "File not found");
@@ -143,7 +143,7 @@ namespace EducationTech.Business.Services.Business
 
         public async Task<File_MergeResponseDto> MergeFile(Guid fileId)
         {
-            var fileEntity = await _uploaedFileRepository.Get(f => f.Id == fileId);
+            var fileEntity = await _uploaedFileRepository.GetSingle(f => f.Id == fileId);
             if (fileEntity == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "File not found");

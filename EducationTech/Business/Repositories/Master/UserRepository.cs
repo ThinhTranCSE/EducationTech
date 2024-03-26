@@ -22,11 +22,12 @@ namespace EducationTech.Business.Repositories.Master
         public UserRepository(EducationTechContext context, IEncryptionUtils encryptionUtils) : base(context)
         {
             _encryptionUtils = encryptionUtils;
+            
         }
 
         public async Task<User?> GetUserByUsername(string username)
         {
-            var users = (await GetMany(x => x.Username == username))
+            var users = (await Get(x => x.Username == username))
                 .Include(x => x.UserKey)
                 .Include(x => x.UserRoles)
                     .ThenInclude(r => r.Role);
@@ -37,11 +38,13 @@ namespace EducationTech.Business.Repositories.Master
 
         public async Task<User?> GetUserById(Guid id)
         {
-            var users = (await GetMany(x => Guid.Equals(x.Id, id)))
+            var users = (await Get(x => Guid.Equals(x.Id, id)))
                 .Include(x => x.UserKey)
                 .Include(x => x.UserRoles)
                     .ThenInclude(r => r.Role);
             return await users.FirstOrDefaultAsync();
         }
+
+       
     }
 }

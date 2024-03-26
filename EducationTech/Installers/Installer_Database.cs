@@ -10,6 +10,7 @@ namespace EducationTech.Installers
 
             services.AddDbContext<EducationTechContext>();
 
+            services.AddScoped<ITransactionManager, TransactionManager>();
             //Log.Information("Installed Database");
             return services;
         }

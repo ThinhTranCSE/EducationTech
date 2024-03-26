@@ -6,28 +6,100 @@ using EducationTech.Business.DTOs.Masters.User;
 using EducationTech.Business.Services.Abstract;
 using EducationTech.Utilities.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using EducationTech.Exceptions.Http;
+using System.Net;
 
 namespace EducationTech.Business.Services.Master
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-
-        public UserService(
-            IUserRepository userRepository
-            )
+        private readonly IRoleRepository _roleRepository;
+        private readonly ITransactionManager _transactionManager;
+        private readonly IUserRoleRepository _userRoleRepository;
+        public UserService(ITransactionManager transactionFactory, IUserRepository userRepository, IRoleRepository roleRepository, IUserRoleRepository userRoleRepository)
         {
             _userRepository = userRepository;
+            _roleRepository = roleRepository;
+            _transactionManager = transactionFactory;
+            _userRoleRepository = userRoleRepository;
         }
 
 
         public async Task<User?> GetUserById(Guid id)
         {
-            var users = (await _userRepository.GetMany(x => x.Id == id))
-                .Include(x => x.UserKey)
-                .Include(x => x.UserRoles)
-                .ThenInclude(x => x.Role);
-            return users.FirstOrDefault();
+            var user = (await _userRepository.Get(u => u.Id == id))
+                .Include(u => u.Roles)
+                .FirstOrDefault();
+
+            return user;
+        }
+
+        public async Task<User?> UpdateUser(Guid userId, User_UpdateDto updateDto, User currentUser)
+        {
+
+            try
+            {
+                var user = (await _userRepository.Get(u => u.Id == userId))
+                    .Include(u => u.Roles)
+                    .Include(u => u.UserRoles)
+                    .FirstOrDefault();
+
+                if (user == null)
+                {
+                    throw new HttpException(HttpStatusCode.NotFound, "User not found");
+                }
+                _userRepository.Entry(currentUser)
+                    .Collection(u => u.Roles)
+                    .Load();
+
+                var adminRole = await _roleRepository.GetSingle(r => r.Name == "Admin");
+                if(!currentUser.Roles.Any(r => r.Id == adminRole!.Id) && currentUser.Id != userId)
+                {
+                    throw new HttpException(HttpStatusCode.Unauthorized, "Not have permission to change information");
+                }
+
+                user.PhoneNumber = updateDto.PhoneNumber ?? user.PhoneNumber;
+                user.Email = updateDto.Email ?? user.Email;
+                user.DateOfBirth = updateDto.DateOfBirth ?? user.DateOfBirth;
+                
+                
+                if (updateDto.RoleIds != null)
+                {
+                    var currentRoleIds = user.Roles.Select(r => r.Id).ToArray();
+
+                    var roleAddedIds = updateDto.RoleIds.Except(currentRoleIds).ToArray();
+                    var roleRemovedIds = currentRoleIds.Except(updateDto.RoleIds).ToArray();
+
+                    IEnumerable<UserRole> roleAddeds = roleAddedIds.Select(roleId =>
+                    {
+                        return new UserRole
+                        {
+                            UserId = userId,
+                            RoleId = roleId
+                        };
+                    });
+
+                    IEnumerable<UserRole> roleRemoveds = user.UserRoles.Where(ur =>
+                    {
+                        return roleRemovedIds.Contains(ur.RoleId);   
+                    });
+
+                    await Task.WhenAll(
+                        _userRoleRepository.Insert(roleAddeds),
+                        _userRoleRepository.Delete(roleRemoveds)
+                    );
+
+                }
+                await _userRepository.Update(user);
+                _transactionManager.SaveChanges();
+
+                return user;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
     }
 }

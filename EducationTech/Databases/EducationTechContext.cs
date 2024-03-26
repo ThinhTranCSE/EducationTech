@@ -59,6 +59,7 @@ namespace EducationTech.Databases
             //builder.ApplyConfigurationsFromAssembly(typeof(MainDatabaseContext).Assembly);
             InvokeModelCreating(builder);
             base.OnModelCreating(builder);
+
         }
 
         private void InvokeModelCreating(ModelBuilder builder)
