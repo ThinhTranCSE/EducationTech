@@ -32,12 +32,12 @@ namespace EducationTech.Business.Models.Master
         public byte[] Salt { get; set; }
 
         [IgnoreDataMember]
-        public virtual ICollection<UserRole> UserRoles { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 
-        public virtual ICollection<Role> Roles { get; set; }
+        public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
 
         [IgnoreDataMember]
-        public virtual UserKey UserKey { get; set; }
+        public virtual UserKey UserKey { get; set; } = null!;
 
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
