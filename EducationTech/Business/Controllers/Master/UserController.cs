@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EducationTech.Business.Controllers.Master
 {
-    //[Authorize]
+    [Authorize]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
