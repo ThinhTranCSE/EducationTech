@@ -8,8 +8,9 @@ namespace EducationTech.Installers
         public IServiceCollection InstallServicesToServiceCollection(IServiceCollection services, IConfiguration configuration)
         {
 
-            services.AddDbContext<MainDatabaseContext>();
+            services.AddDbContext<EducationTechContext>();
 
+            services.AddScoped<ITransactionManager, TransactionManager>();
             //Log.Information("Installed Database");
             return services;
         }

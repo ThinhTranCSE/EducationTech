@@ -1,20 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EducationTech.Business.Models.Abstract;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Linq.Expressions;
 
 namespace EducationTech.Business.Repositories.Abstract
 {
     public interface IRepository<T>
-        where T : class
+        where T : Model
     {
         DbSet<T> Model { get; }
 
-        Task<IEnumerable<T>> Get();
+        EntityEntry<T> Entry(T entity);
+        Task<IQueryable<T>> Get(Expression<Func<T, bool>>? filter = null, bool tracked = true, bool executed = false);
+        Task<T?> GetSingle(Expression<Func<T, bool>> filter, bool tracked = true);
 
-        Task<T?> Insert(T insertObject);
+        Task<IQueryable<T>> Insert(IEnumerable<T> entities, bool executed = false);
+        Task<T?> Insert(T entity, bool executed = false);
 
-        Task<IEnumerable<T>> Insert(IEnumerable<T> insertObjects);
+        Task<T?> Update(T entity, bool executed = false);
 
-        Task<T?> Update(T updateObject);
+        Task<T?> Delete(T entity, bool executed = false);
 
-        Task<T?> Delete(T deleteObject);
+        Task<IQueryable<T>> Delete(IEnumerable<T> entities, bool executed = false);
     }
 }

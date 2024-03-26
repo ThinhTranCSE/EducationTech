@@ -15,7 +15,7 @@ namespace EducationTech.Business.Controllers.Business
     {
         private readonly IAuthService _authService;
         private readonly ILogger<AuthController> _logger;
-        public AuthController(IAuthService authService, ILogger<AuthController> logger, MainDatabaseContext context, IAuthUtils authUtils) : base(context, authUtils)
+        public AuthController(IAuthService authService, ILogger<AuthController> logger, EducationTechContext context, IAuthUtils authUtils) : base(context, authUtils)
         {
             _authService = authService;
             _logger = logger;

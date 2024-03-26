@@ -3,8 +3,10 @@ using EducationTech.Business.Models.Business;
 using EducationTech.Enums;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Pqc.Crypto.Bike;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace EducationTech.Business.Models.Master
 {
@@ -26,14 +28,30 @@ namespace EducationTech.Business.Models.Master
 
         public DateTime? DateOfBirth { get; set; }
 
+        [JsonIgnore]
         public byte[] Salt { get; set; }
-        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 
-        public virtual UserKey? UserKey { get; set; }
+        [IgnoreDataMember]
+        public virtual ICollection<UserRole> UserRoles { get; set; }
+
+        public virtual ICollection<Role> Roles { get; set; }
+
+        [IgnoreDataMember]
+        public virtual UserKey UserKey { get; set; }
 
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<User>(modelBuilder);
+            modelBuilder.Entity<User>()
+                .HasMany(x => x.Roles)
+                .WithMany(x => x.Users)
+                .UsingEntity<UserRole>(
+                    ur => ur.HasOne(x => x.Role).WithMany(x => x.UserRoles),
+                    ur => ur.HasOne(x => x.User).WithMany(x => x.UserRoles)
+                )
+                .ToTable(nameof(UserRoles));
+                
+
         }
     }
 }

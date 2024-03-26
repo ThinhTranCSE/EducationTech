@@ -14,7 +14,6 @@ namespace EducationTech.Business.Models.Business
 
         public string PublicKey { get; set; }
 
-        [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
 
         public virtual User User { get; set; }

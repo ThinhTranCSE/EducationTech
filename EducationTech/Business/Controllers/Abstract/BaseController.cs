@@ -11,7 +11,7 @@ namespace EducationTech.Business.Controllers.Abstract
     [Route("api/v1/[controller]")]
     public abstract class BaseController : ControllerBase
     {
-        private readonly MainDatabaseContext _context;
+        private readonly EducationTechContext _context;
         private readonly IAuthUtils _authUtils;
 
         private User? _currentUser { get; set; }
@@ -19,7 +19,7 @@ namespace EducationTech.Business.Controllers.Abstract
         {
             get
             {
-                _currentUser ??= GetUserFromToken(HttpContext?.Request?.Headers?.Authorization);
+                _currentUser ??= _authUtils.GetUserFromToken(HttpContext?.Request?.Headers?.Authorization);
 
                 return _currentUser;
             }
@@ -27,7 +27,7 @@ namespace EducationTech.Business.Controllers.Abstract
             private set { _currentUser = value; }
         }
 
-        public BaseController(MainDatabaseContext context, IAuthUtils authUtils)
+        public BaseController(EducationTechContext context, IAuthUtils authUtils)
         {
             _context = context;
             _authUtils = authUtils;
@@ -69,16 +69,5 @@ namespace EducationTech.Business.Controllers.Abstract
         //        });
         //    }
         //}
-
-        private User? GetUserFromToken(string? token)
-        {
-            if (string.IsNullOrEmpty(token))
-            {
-                return null;
-            }
-            Guid? userId = _authUtils.GetUserIdFromToken(token.Split(" ")[1]);
-            return _context.Users.Where(u => u.Id == userId).FirstOrDefault();
-        }
-
     }
 }

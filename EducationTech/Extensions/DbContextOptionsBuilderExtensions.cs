@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Extensions
 {
-    public static class DbContextOptionsBuilderExtendsions
+    public static class DbContextOptionsBuilderExtensions
     {
         public static DbContextOptionsBuilder RegisterDbContext(this DbContextOptionsBuilder optionsBuilder, IConfiguration configuration)
         {

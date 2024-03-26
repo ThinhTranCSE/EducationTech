@@ -13,7 +13,7 @@ namespace EducationTech.Databases.Seeders.Seeds
     public class UserSeeder : Seeder
     {
         private readonly IAuthService _authService;
-        public UserSeeder(MainDatabaseContext context, IAuthService authService) : base(context)
+        public UserSeeder(EducationTechContext context, IAuthService authService) : base(context)
         {
             _authService = authService;
         }

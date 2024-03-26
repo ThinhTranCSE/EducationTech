@@ -1,26 +1,10 @@
-using EducationTech.Business.Controllers.Abstract;
-using EducationTech.Databases;
+using EducationTech.Databases.Seeders;
 using EducationTech.Extensions;
+using EducationTech.Installers;
 using EducationTech.Middlewares;
 using EducationTech.Utilities;
-using EducationTech.Utilities.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-
-using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System.Text;
-using System;
-using System.Diagnostics;
-using Serilog;
-using Microsoft.AspNetCore.Mvc;
-using System.Net.Mime;
-using EducationTech.Exceptions.Http;
-using System.Net;
-using Microsoft.Extensions.DependencyInjection;
-using EducationTech.Installers;
-using EducationTech.Databases.Seeders;
 using Microsoft.AspNetCore.HttpOverrides;
+using Serilog;
 
 namespace EducationTech
 {
@@ -30,11 +14,12 @@ namespace EducationTech
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Configuration.AddUserSecrets<Program>();
+            builder.Services.AddSingleton<GlobalUsings>();
 
             builder.InstallServices(builder.Configuration);
 
             HandleSeederCommand(builder, args);
-            
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -49,8 +34,6 @@ namespace EducationTech
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-
-
             app.UseCors(buidler =>
             {
                 buidler.WithOrigins("*")
@@ -63,11 +46,13 @@ namespace EducationTech
 
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseMiddleware<HttpExceptionMiddleware>();
-            app.UseMiddleware<ResponseRestructureMiddleware>();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.ConfigureStaticFiles();
+
+            app.UseMiddleware<ResponseRestructureMiddleware>();
 
             app.MapControllers();
 
@@ -92,6 +77,16 @@ namespace EducationTech
                     return;
                 }
             }
+        }
+
+        private static async Task TestConvertVideo(WebApplication app)
+        {
+            var converter = new VideoConverter();
+            var globalUsings = app.Services.GetRequiredService<GlobalUsings>();
+            var contentRootPath = globalUsings.ContentRootPath; 
+            await converter.From(Path.Combine(contentRootPath, "Static", "video.mp4"))
+                .To(Path.Combine(contentRootPath, "Static", "ClipTest"))
+                .ProcessAsync();
         }
     }
 }
