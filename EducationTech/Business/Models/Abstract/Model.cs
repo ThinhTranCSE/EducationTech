@@ -49,9 +49,32 @@ namespace EducationTech.Business.Models.Abstract
             {
                 model.HasQueryFilter(c => c.DeletedAt == null);
             }
-            
-
         }
 
+        public void Map<TDto>(TDto dto) 
+            where TDto : class 
+        {
+            //use reflection to map properties has the same name in dto to model
+            var modelProperties = GetType().GetProperties();
+            var dtoProperties = dto.GetType().GetProperties();
+            var dtoPropertiesDict = dtoProperties.ToDictionary(prop => prop.Name, prop => prop);
+
+            foreach (var modelProperty in modelProperties)
+            {
+                if(!dtoPropertiesDict.ContainsKey(modelProperty.Name))
+                {
+                    continue;
+                }
+                var dtoProperty = dtoPropertiesDict[modelProperty.Name];
+                if(dtoProperty.PropertyType == modelProperty.PropertyType)
+                {
+                    var value = dtoProperty.GetValue(dto);
+                    if(value != null)
+                    {
+                        modelProperty.SetValue(this, dtoProperty.GetValue(dto));
+                    }
+                }
+            }
+        }
     }
 }

@@ -59,10 +59,9 @@ namespace EducationTech.Business.Services.Master
                     throw new HttpException(HttpStatusCode.Unauthorized, "Not have permission to change information");
                 }
 
-                user.PhoneNumber = updateDto.PhoneNumber ?? user.PhoneNumber;
-                user.Email = updateDto.Email ?? user.Email;
-                user.DateOfBirth = updateDto.DateOfBirth ?? user.DateOfBirth;
-                
+
+                user.Map(updateDto);
+
                 
                 if (updateDto.RoleIds != null)
                 {
