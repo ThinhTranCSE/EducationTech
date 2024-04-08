@@ -97,8 +97,6 @@ namespace EducationTech.Installers
                         .Filter.ByIncludingOnly(Matching.WithProperty("LoggingContext", LoggingContext.Queries.ToString()))
                         .MinimumLevel.Debug();
                     });
-
-
                 });
 
 
