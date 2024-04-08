@@ -1,4 +1,4 @@
-﻿using EducationTech.Exceptions.Http;
+﻿using EducationTech.Business.Shared.Exceptions.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Serilog;

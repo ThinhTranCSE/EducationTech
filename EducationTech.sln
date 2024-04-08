@@ -7,7 +7,25 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EducationTech", "EducationT
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2A0BE34E-DBEE-440A-959D-03DD31DD0DEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EducationTech.Testing.Units", "EducationTech.Testing.Units\EducationTech.Testing.Units.csproj", "{F0E78E9B-475E-43DF-9A3E-C966239B57F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EducationTech.Testing.Units", "EducationTech.Testing.Units\EducationTech.Testing.Units.csproj", "{F0E78E9B-475E-43DF-9A3E-C966239B57F8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EducationTech.DataAccess.Core", "EducationTech.DataAccess\EducationTech.DataAccess.Core.csproj", "{08D26FEC-995C-489A-9C7E-D05A51607E46}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EducationTech.DataAccess.Entities", "EducationTech.DataAccess.Core\EducationTech.DataAccess.Entities.csproj", "{4DCA211A-9387-46DF-8B87-25C7C0333397}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EducationTech.DataAccess", "EducationTech.DataAccess.Repositories\EducationTech.DataAccess.csproj", "{C1FB2717-A4EE-4E4B-8137-0D0CEF5F14ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EducationTech.DataAccess.Seeders", "EducationTech.DataAccess.Seeders\EducationTech.DataAccess.Seeders.csproj", "{6BEF9711-44E4-41B4-B7A7-A0140DC119AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EducationTech.DataAccess.Shared", "EducationTech.DataAccess.Shared\EducationTech.DataAccess.Shared.csproj", "{DFE780DF-10AB-4BF0-8621-B5A8FBD5FA1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EducationTech.Shared", "EducationTech.Shared\EducationTech.Shared.csproj", "{C9FD2EF3-CBB6-4C0D-BA53-C22BC3BBFD76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EducationTech.Business", "EducationTech.Business\EducationTech.Business.csproj", "{CF72E64F-CCAB-437C-AE22-4279D2283C2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EducationTech.Business.Shared", "EducationTech.Business.DTOs\EducationTech.Business.Shared.csproj", "{2AD25604-6617-4E46-9BCE-56A9AE86E5DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EducationTech.Storage", "EducationTech.Storage\EducationTech.Storage.csproj", "{F2A1A1BA-2DA0-4642-BA55-F37A3E1AF59A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +41,42 @@ Global
 		{F0E78E9B-475E-43DF-9A3E-C966239B57F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0E78E9B-475E-43DF-9A3E-C966239B57F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0E78E9B-475E-43DF-9A3E-C966239B57F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08D26FEC-995C-489A-9C7E-D05A51607E46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08D26FEC-995C-489A-9C7E-D05A51607E46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08D26FEC-995C-489A-9C7E-D05A51607E46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08D26FEC-995C-489A-9C7E-D05A51607E46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DCA211A-9387-46DF-8B87-25C7C0333397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DCA211A-9387-46DF-8B87-25C7C0333397}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DCA211A-9387-46DF-8B87-25C7C0333397}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DCA211A-9387-46DF-8B87-25C7C0333397}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1FB2717-A4EE-4E4B-8137-0D0CEF5F14ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1FB2717-A4EE-4E4B-8137-0D0CEF5F14ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1FB2717-A4EE-4E4B-8137-0D0CEF5F14ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1FB2717-A4EE-4E4B-8137-0D0CEF5F14ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BEF9711-44E4-41B4-B7A7-A0140DC119AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BEF9711-44E4-41B4-B7A7-A0140DC119AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BEF9711-44E4-41B4-B7A7-A0140DC119AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BEF9711-44E4-41B4-B7A7-A0140DC119AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFE780DF-10AB-4BF0-8621-B5A8FBD5FA1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFE780DF-10AB-4BF0-8621-B5A8FBD5FA1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFE780DF-10AB-4BF0-8621-B5A8FBD5FA1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFE780DF-10AB-4BF0-8621-B5A8FBD5FA1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9FD2EF3-CBB6-4C0D-BA53-C22BC3BBFD76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9FD2EF3-CBB6-4C0D-BA53-C22BC3BBFD76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9FD2EF3-CBB6-4C0D-BA53-C22BC3BBFD76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9FD2EF3-CBB6-4C0D-BA53-C22BC3BBFD76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF72E64F-CCAB-437C-AE22-4279D2283C2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF72E64F-CCAB-437C-AE22-4279D2283C2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF72E64F-CCAB-437C-AE22-4279D2283C2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF72E64F-CCAB-437C-AE22-4279D2283C2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AD25604-6617-4E46-9BCE-56A9AE86E5DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AD25604-6617-4E46-9BCE-56A9AE86E5DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AD25604-6617-4E46-9BCE-56A9AE86E5DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AD25604-6617-4E46-9BCE-56A9AE86E5DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2A1A1BA-2DA0-4642-BA55-F37A3E1AF59A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2A1A1BA-2DA0-4642-BA55-F37A3E1AF59A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2A1A1BA-2DA0-4642-BA55-F37A3E1AF59A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2A1A1BA-2DA0-4642-BA55-F37A3E1AF59A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

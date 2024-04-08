@@ -1,8 +1,9 @@
-using EducationTech.Databases.Seeders;
+using EducationTech.DataAccess.Seeders;
 using EducationTech.Extensions;
 using EducationTech.Installers;
 using EducationTech.Middlewares;
-using EducationTech.Utilities;
+using EducationTech.Shared.Utilities;
+using EducationTech.Storage;
 using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
 

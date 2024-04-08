@@ -1,4 +1,4 @@
-﻿using EducationTech.Databases;
+﻿using EducationTech.DataAccess.Core;
 using Serilog;
 
 namespace EducationTech.Installers

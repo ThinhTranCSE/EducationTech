@@ -1,6 +1,6 @@
 ﻿using EducationTech.Annotations;
-using EducationTech.Business.Controllers.Abstract;
-using EducationTech.Exceptions.Http;
+using EducationTech.Business.Shared.Exceptions.Http;
+using EducationTech.Controllers.Abstract;
 using Newtonsoft.Json;
 using System.Net;
 using System.Text;

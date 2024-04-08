@@ -1,4 +1,4 @@
-﻿using EducationTech.Utilities.Abstract;
+﻿using EducationTech.Shared.Utilities.Abstract;
 using Serilog;
 
 namespace EducationTech.Installers

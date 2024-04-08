@@ -1,4 +1,5 @@
-﻿using EducationTech.Enums;
+﻿using EducationTech.DataAccess.Shared.Enums;
+using EducationTech.Enums;
 using Serilog;
 
 namespace EducationTech.Extensions

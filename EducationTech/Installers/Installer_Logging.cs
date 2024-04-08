@@ -7,6 +7,7 @@ using EducationTech.Extensions;
 using EducationTech.Enums;
 using System;
 using Serilog.Filters;
+using EducationTech.DataAccess.Shared.Enums;
 
 namespace EducationTech.Installers
 {

@@ -1,4 +1,4 @@
-﻿using EducationTech.Business.Repositories.Abstract;
+﻿using EducationTech.DataAccess.Abstract;
 using Serilog;
 
 namespace EducationTech.Installers

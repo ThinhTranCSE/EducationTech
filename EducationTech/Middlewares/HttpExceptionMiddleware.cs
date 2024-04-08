@@ -1,5 +1,5 @@
-﻿using EducationTech.Business.Controllers.Abstract;
-using EducationTech.Exceptions.Http;
+﻿using EducationTech.Business.Shared.Exceptions.Http;
+using EducationTech.Controllers.Abstract;
 using Microsoft.AspNetCore.Http.Features;
 using MySqlX.XDevAPI.Common;
 using Newtonsoft.Json;

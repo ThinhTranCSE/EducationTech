@@ -1,5 +1,4 @@
-﻿using EducationTech.Business.Controllers.Abstract;
-using EducationTech.Exceptions.Http;
+﻿using EducationTech.Controllers.Abstract;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.Features;
 using Newtonsoft.Json;

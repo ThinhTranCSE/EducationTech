@@ -1,5 +1,5 @@
-﻿using EducationTech.Utilities;
-using EducationTech.Utilities.Interfaces;
+﻿using EducationTech.Business.Business;
+using EducationTech.Business.Business.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Serilog;
 
@@ -9,7 +9,7 @@ namespace EducationTech.Installers
     {
         public IServiceCollection InstallServicesToServiceCollection(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IAuthUtils, AuthUtils>();
+            services.AddScoped<IAuthService, AuthService>();
             services
                .AddAuthentication(options =>
                {
@@ -22,7 +22,7 @@ namespace EducationTech.Installers
                {
                    var scope = services.BuildServiceProvider().CreateScope();
 
-                   var authUltils = scope.ServiceProvider.GetRequiredService<IAuthUtils>();
+                   var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
                    options.TokenValidationParameters = new()
                    {
                        ValidateIssuer = false,
@@ -30,7 +30,7 @@ namespace EducationTech.Installers
                        ValidateLifetime = true,
                        ValidateIssuerSigningKey = true,
                        RequireSignedTokens = true,
-                       IssuerSigningKeyResolver = authUltils.KeysResolver,
+                       IssuerSigningKeyResolver = authService.KeysResolver,
 
                        ClockSkew = TimeSpan.Zero
                    };

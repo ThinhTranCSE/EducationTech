@@ -1,6 +1,4 @@
-﻿using EducationTech.Business.Models.Master;
-using EducationTech.Exceptions.Http;
-using EducationTech.Utilities.Interfaces;
+﻿using EducationTech.Storage;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using System.Net;
@@ -15,7 +13,8 @@ namespace EducationTech.Extensions
         {
 
             //create directory for static files
-            string staticFilesPath = Path.Combine(app.Environment.ContentRootPath, "Static");
+            var globalUsing = new GlobalUsings();
+            string staticFilesPath = Path.Combine(globalUsing.ContentRootPath, "Static");
             if (!Directory.Exists(staticFilesPath))
             {
                 Directory.CreateDirectory(staticFilesPath);
