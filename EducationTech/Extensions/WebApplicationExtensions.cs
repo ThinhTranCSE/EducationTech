@@ -14,7 +14,7 @@ namespace EducationTech.Extensions
 
             //create directory for static files
             var globalUsing = new GlobalUsings();
-            string staticFilesPath = Path.Combine(globalUsing.ContentRootPath, "Static");
+            string staticFilesPath = Path.Combine(globalUsing.StorageRootPath, "Static");
             if (!Directory.Exists(staticFilesPath))
             {
                 Directory.CreateDirectory(staticFilesPath);

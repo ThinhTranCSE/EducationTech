@@ -84,7 +84,7 @@ namespace EducationTech
         {
             var converter = new VideoConverter();
             var globalUsings = app.Services.GetRequiredService<GlobalUsings>();
-            var contentRootPath = globalUsings.ContentRootPath; 
+            var contentRootPath = globalUsings.StorageRootPath; 
             await converter.From(Path.Combine(contentRootPath, "Static", "video.mp4"))
                 .To(Path.Combine(contentRootPath, "Static", "ClipTest"))
                 .ProcessAsync();
