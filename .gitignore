@@ -400,3 +400,5 @@ FodyWeavers.xsd
 
 EducationTech/Logs/
 EducationTech/Static/
+EducationTech.Storage/Logs/
+EducationTech.Storage/Static/
