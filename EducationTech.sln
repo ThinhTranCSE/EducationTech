@@ -27,8 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EducationTech.Business.Shar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EducationTech.Storage", "EducationTech.Storage\EducationTech.Storage.csproj", "{F2A1A1BA-2DA0-4642-BA55-F37A3E1AF59A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFactory", "TestFactory\TestFactory.csproj", "{74E147F9-F10B-4DCF-8850-78241E6A6D9A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,10 +77,6 @@ Global
 		{F2A1A1BA-2DA0-4642-BA55-F37A3E1AF59A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2A1A1BA-2DA0-4642-BA55-F37A3E1AF59A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2A1A1BA-2DA0-4642-BA55-F37A3E1AF59A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{74E147F9-F10B-4DCF-8850-78241E6A6D9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{74E147F9-F10B-4DCF-8850-78241E6A6D9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{74E147F9-F10B-4DCF-8850-78241E6A6D9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{74E147F9-F10B-4DCF-8850-78241E6A6D9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

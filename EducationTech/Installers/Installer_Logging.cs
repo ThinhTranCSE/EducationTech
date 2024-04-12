@@ -8,6 +8,7 @@ using EducationTech.Enums;
 using System;
 using Serilog.Filters;
 using EducationTech.DataAccess.Shared.Enums;
+using EducationTech.Storage;
 
 namespace EducationTech.Installers
 {
@@ -24,7 +25,8 @@ namespace EducationTech.Installers
             builder.Logging.ClearProviders();
             builder.Host.UseSerilog();
 
-            CreateFolder("Logs");
+            string storagePath = new GlobalUsings().StorageRootPath;
+            CreateFolder(Path.Combine(storagePath, "Logs"));
 
             var loggerConfiguration = new LoggerConfiguration();
 
@@ -50,11 +52,11 @@ namespace EducationTech.Installers
 
                     a.Logger(lc =>
                     {
-                        CreateFolder("Logs");
+                        CreateFolder(Path.Combine(storagePath, "Logs"));
                         lc
                         .WriteTo.File(
                                 new RenderedCompactJsonFormatter(),
-                                "Logs/log-.txt",
+                                Path.Combine(storagePath, "Logs","log-.txt"),
                                 rollingInterval: RollingInterval.Day,
                                 fileSizeLimitBytes: 10 * 1024 * 1024,
                                 rollOnFileSizeLimit: true
@@ -73,11 +75,11 @@ namespace EducationTech.Installers
 
                     a.Logger(lc =>
                     {
-                        CreateFolder("Logs/Database/SlowQueries");
+                        CreateFolder(Path.Combine(storagePath, "Logs/Database/SlowQueries"));
                         lc
                         .WriteTo.File(
                             new RenderedCompactJsonFormatter(),
-                            "Logs/Database/SlowQueries/slow-queries-.txt",
+                            Path.Combine(storagePath, "Logs", "Database", "SlowQueries", "slow-queries-.txt"),
                             rollingInterval: RollingInterval.Day,
                             fileSizeLimitBytes: 10 * 1024 * 1024
                             )
@@ -87,11 +89,11 @@ namespace EducationTech.Installers
 
                     a.Logger(lc =>
                     {
-                        CreateFolder("Logs/Database");
+                        CreateFolder(Path.Combine(storagePath, "Logs/Database"));
                         lc
                         .WriteTo.File(
                             new RenderedCompactJsonFormatter(),
-                            "Logs/Database/queries-.txt",
+                             Path.Combine(storagePath, "Logs", "Database", "queries-.txt"),
                             rollingInterval: RollingInterval.Day,
                             fileSizeLimitBytes: 10 * 1024 * 1024
                             )
