@@ -9,7 +9,6 @@ namespace EducationTech.Auth.Policies
     public class AdminOnlyPolicy : IPolicy
     {
         public string PolicyName => "AdminOnly";
-
         public AuthorizationPolicyBuilder ApplyRequirements(AuthorizationPolicyBuilder builder)
         {
             builder.RequireClaim("roles", nameof(RoleType.Admin));
