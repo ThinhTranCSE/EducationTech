@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EducationTech.Business\EducationTech.Business.csproj" />
-    <ProjectReference Include="..\EducationTech.DataAccess.Repositories\EducationTech.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

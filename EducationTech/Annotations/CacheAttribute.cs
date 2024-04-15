@@ -2,11 +2,8 @@
 using EducationTech.Configurations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
-using System.Net;
 using System.Text;
-using System.Web.Http.Filters;
 
 namespace EducationTech.Annotations
 {
