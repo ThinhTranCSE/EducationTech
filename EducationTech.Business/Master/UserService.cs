@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Net;
 using EducationTech.Business.Master.Interfaces;
-using EducationTech.Business.Shared.DTOs.Masters.User;
 using EducationTech.DataAccess.Master.Interfaces;
 using EducationTech.DataAccess.Core;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.Business.Shared.Exceptions.Http;
+using EducationTech.Business.Shared.DTOs.Masters.Users;
 
 namespace EducationTech.Business.Master
 {

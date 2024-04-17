@@ -1,8 +1,10 @@
 using EducationTech.Annotations;
 using EducationTech.Business.Business.Interfaces;
+using EducationTech.Shared.Utilities.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MimeDetective;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -18,18 +20,16 @@ namespace EducationTech.Controllers
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
         private readonly IFileService _fileService;
+        private readonly IFileUtils _fileUtils;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, IFileService fileService)
+        public WeatherForecastController(IFileService fileService, IFileUtils fileUtils)
         {
-            _logger = logger;
             _fileService = fileService;
-
+            _fileUtils = fileUtils;
         }
 
         [AllowAnonymous]
-        //[Authorize(Policy = "AdminOnly")]
         [HttpGet(Name = "GetWeatherForecast")]
         [Cache(1000)]
         public IEnumerable<WeatherForecast> Get()
@@ -53,11 +53,13 @@ namespace EducationTech.Controllers
             return "cc";
         }
 
+
         [AllowAnonymous]
-        [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
+        [HttpGet("test-inspect")]
+        public async Task<IActionResult> TestInspect()
         {
-            var result = await _fileService.UploadFileAsync(file);
+            string filePath = @"C:\Users\thinh\source\repos\EducationTech\EducationTech.Storage\Static\cut_100_first_bytes.py";
+            var result = await _fileUtils.InspectContent(filePath);
             return Ok(new { result });
         }
     }

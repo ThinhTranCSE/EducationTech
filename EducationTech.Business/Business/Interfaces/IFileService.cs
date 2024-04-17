@@ -7,12 +7,10 @@ namespace EducationTech.Business.Business.Interfaces
 {
     public interface IFileService : IService
     {
-        Task<string> UploadFileAsync(IFormFile file);
-        Task<File_PrepareResponseDto> PrepareUploadLargeFileAsync(string fileName, long fileSize, User userUpload);
-        Task<File_ChunkInfomationDto> UploadChunk(string chunkName, long chunkSize, IFormFile chunkFormFile);
-        Task<File_MergeResponseDto> MergeFile(Guid fileId);
+        Task<UploadedFile> UploadFile(IFormFile file, Guid userId);
+        Task<File_PrepareResponseDto> StartLargeFileUploadSession(string fileName, long fileSize, Guid userId);
+        Task<File_ChunkInfomationDto> UploadChunk(Guid sessionId, int index, IFormFile chunkFormFile);
         Task<File_GetFileContentDto> GetFile(Guid fileId);
-
         Task<File_GetFileContentDto> GetPlaylist(string streamId);
         Task<File_GetFileContentDto> GetSegment(string streamId, string segmentName);
     }

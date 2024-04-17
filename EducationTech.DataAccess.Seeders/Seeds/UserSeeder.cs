@@ -24,8 +24,8 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                 .RuleFor(x => x.PhoneNumber, f => f.Person.Phone);
 
             var users = dataGenerator.Generate(5);
-            var createdUsers = users.Select(u => _authService.Register(u));
-            Task.WaitAll(createdUsers.ToArray());
+            users.ForEach(u => _authService.Register(u).GetAwaiter().GetResult());
         }
     }
 }
+    

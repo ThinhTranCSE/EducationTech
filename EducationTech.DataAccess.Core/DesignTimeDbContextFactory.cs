@@ -25,22 +25,9 @@ namespace EducationTech.DataAccess.Core
                 .AddJsonFile(appjsonPath)
                 .Build();
             var optionsBuilder = new DbContextOptionsBuilder<EducationTechContext>();
-            var databaseType = configuration.GetSection("Database").GetSection("DatabaseType").Value.ToDatabaseType();
+            
+            optionsBuilder.RegisterDbContext(configuration);
 
-            switch (databaseType)
-            {
-                case DatabaseType.MySql:
-                    DbContextFactory.Instance.UseMySQL(optionsBuilder, configuration);
-                    break;
-                case DatabaseType.SqlServer:
-                    break;
-                case DatabaseType.PostgreSql:
-                    break;
-                case DatabaseType.Sqlite:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(databaseType.ToString());
-            }
             return new EducationTechContext(optionsBuilder.Options, configuration);
         }
     }

@@ -3,6 +3,7 @@ using System;
 using EducationTech.DataAccess.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EducationTech.Migrations
 {
     [DbContext(typeof(EducationTechContext))]
-    partial class MainDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240415112803_AddImageUrlFieldToCoursesTable")]
+    partial class AddImageUrlFieldToCoursesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -380,10 +382,6 @@ namespace EducationTech.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
-
-                    b.Property<string>("Extension")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("tinyint(1)");

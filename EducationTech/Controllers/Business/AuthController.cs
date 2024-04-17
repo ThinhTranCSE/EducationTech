@@ -21,20 +21,20 @@ namespace EducationTech.Controllers.Business
         }
 
         [AllowAnonymous]
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<TokensReponseDto> Login(LoginDto loginDto)
         {
             return await _authService.Login(loginDto);
         }
 
         [Authorize(Policy = "RefreshExpiredToken")]
-        [HttpPost("refresh")]
+        [HttpPost("Refresh")]
         public async Task<TokensReponseDto> Refresh()
         {
             return await _authService.RefreshExpiredTokens(CurrentUser.Id);
         }
 
-        [HttpDelete("logout")]
+        [HttpDelete("Logout")]
         public async Task<bool?> Logout()
         {
             return await _authService.Logout(CurrentUser.Id);
@@ -42,7 +42,7 @@ namespace EducationTech.Controllers.Business
         }
 
         [AllowAnonymous]
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<User?> Register(RegisterDto registerDto)
         {
             return await _authService.Register(registerDto);

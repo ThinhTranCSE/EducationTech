@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.Eventing.Reader;
 
-namespace EducationTech.Business.Shared.DTOs.Masters.User
+namespace EducationTech.Business.Shared.DTOs.Masters.Users
 {
     public class User_GetDto
     {

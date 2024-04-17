@@ -12,44 +12,56 @@ using System.Web;
 using EducationTech.Shared.Extensions;
 using Microsoft.AspNetCore.Http;
 using EducationTech.Storage;
+using EducationTech.Shared.DataStructures;
+using MySqlX.XDevAPI;
+using System.IO;
+using AutoMapper;
 
 namespace EducationTech.Business.Business
 {
     public class FileService : IFileService
     {
-        private const int CHUNK_SIZE = 1024 * 1024;
         private readonly IFileUtils _fileUtils;
         private readonly GlobalUsings _globalUsings;
-        private readonly IUploadedFileRepository _uploaedFileRepository;
-        private readonly ICacheService _cacheService;
+        private readonly IUploadedFileRepository _uploadedFileRepository;
+        private readonly UploadFileSessionManager _uploadFileSessionManager;
+        private readonly IMapper _mapper;
 
-        public FileService(IFileUtils fileUtils, GlobalUsings globalUsings, IUploadedFileRepository uploadedFileRepository, ICacheService cacheService)
+        public FileService(
+            IFileUtils fileUtils, 
+            GlobalUsings globalUsings, 
+            IUploadedFileRepository uploadedFileRepository, 
+            UploadFileSessionManager uploadFileSessionManager,
+            IMapper mapper
+            )
         {
             _fileUtils = fileUtils;
             _globalUsings = globalUsings;
-            _uploaedFileRepository = uploadedFileRepository;
-            _cacheService = cacheService;
-
+            _uploadedFileRepository = uploadedFileRepository;
+            _uploadFileSessionManager = uploadFileSessionManager;
+            _mapper = mapper;
         }
 
         public async Task<File_GetFileContentDto> GetFile(Guid fileId)
         {
-            var fileEntity = await _uploaedFileRepository.GetSingle(f => f.Id == fileId);
+            var fileEntity = await _uploadedFileRepository.GetSingle(f => f.Id == fileId);
             if (fileEntity == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "File not found");
             }
-            byte[] content = await _fileUtils.GetFileContentAsync(Path.Combine(_globalUsings.StaticFilesPath, fileEntity.Path));
+            string filePath = Path.Combine(_globalUsings.StaticFilesPath, fileEntity.Path);
+            byte[] content = await _fileUtils.GetFileContent(filePath);
+            string extension = fileEntity.Extension;
             return new File_GetFileContentDto
             {
                 Content = content,
-                ContentType = MimeTypesMap.GetMimeType(fileEntity.OriginalFileName)
+                ContentType = MimeTypesMap.GetMimeType(extension)
             };
         }
 
         public async Task<File_GetFileContentDto> GetPlaylist(string streamId)
         {
-            string streamDirectory = Path.Combine(_globalUsings.StaticFilesPath, "Streams", streamId);
+            string streamDirectory = Path.Combine(_globalUsings.StreamFilesPath, streamId);
 
             // Check if the directory exists
             if (!Directory.Exists(streamDirectory))
@@ -61,7 +73,7 @@ namespace EducationTech.Business.Business
             {
                 throw new HttpException(404);
             }
-            byte[] bytes = await _fileUtils.GetFileContentAsync(playlistFilePath);
+            byte[] bytes = await _fileUtils.GetFileContent(playlistFilePath);
 
             return new File_GetFileContentDto
             {
@@ -72,7 +84,7 @@ namespace EducationTech.Business.Business
 
         public async Task<File_GetFileContentDto> GetSegment(string streamId, string segmentName)
         {
-            string streamDirectory = Path.Combine(_globalUsings.StaticFilesPath, "Streams", streamId);
+            string streamDirectory = Path.Combine(_globalUsings.StreamFilesPath, streamId);
 
             // Check if the directory exists
             if (!Directory.Exists(streamDirectory))
@@ -84,7 +96,7 @@ namespace EducationTech.Business.Business
             {
                 throw new HttpException(404);
             }
-            byte[] bytes = await _fileUtils.GetFileContentAsync(playlistFilePath);
+            byte[] bytes = await _fileUtils.GetFileContent(playlistFilePath);
 
             return new File_GetFileContentDto
             {
@@ -93,113 +105,185 @@ namespace EducationTech.Business.Business
             };
 
         }
-
-        public async Task<File_PrepareResponseDto> PrepareUploadLargeFileAsync(string fileName, long fileSize, User userUpload)
+        public async Task<File_PrepareResponseDto> StartLargeFileUploadSession(string fileName, long fileSize, Guid userId)
         {
-            var file = await _uploaedFileRepository.Insert(new UploadedFile
-            {
-                OriginalFileName = fileName,
-                Size = fileSize,
-                IsCompleted = false,
-                IsPublic = false,
-                UserId = userUpload.Id,
-            });
-
-            var chunks = new List<File_ChunkInfomationDto>();
-            long remainingSize = fileSize;
-            long currentByte = 0;
-            for (int i = 0; remainingSize > 0; i++)
-            {
-                long chunkSize = Math.Min(remainingSize, CHUNK_SIZE);
-                chunks.Add(new File_ChunkInfomationDto
-                {
-                    ChunkName = $"{file!.Id}.part{i}",
-                    Start = currentByte,
-                    End = currentByte + chunkSize - 1,
-                    ChunkSize = chunkSize,
-                    Index = i
-                });
-                currentByte += chunkSize;
-                remainingSize -= chunkSize;
-            }
+            var startNewSessionResult = _uploadFileSessionManager.StartNewSession(userId, fileName, fileSize);
             return new File_PrepareResponseDto
             {
-                File = file,
-                Chunks = chunks
+                SessionId = startNewSessionResult.SessionId,
+                ChunkSize = startNewSessionResult.MaxChunkSize,
+                TotalChunks = startNewSessionResult.TotalChunks,
+                OriginalFileName = fileName
             };
         }
 
-        public async Task<File_ChunkInfomationDto> UploadChunk(string chunkName, long chunkSize, IFormFile chunkFormFile)
+        public async Task<File_ChunkInfomationDto> UploadChunk(Guid sessionId, int index, IFormFile chunkFormFile)
         {
-            if (chunkFormFile.Length != chunkSize)
+            if(chunkFormFile.Length == 0)
             {
-                throw new HttpException(HttpStatusCode.BadRequest, "ChunkFormfile size is different from chunkSize");
+                throw new HttpException(HttpStatusCode.BadRequest, "ChunkFormFile size is 0");
             }
-            string path = Path.Combine(_globalUsings.StaticFilesPath, "Temps", chunkName);
-            await _fileUtils.SaveFileAsync(path, chunkFormFile);
+            if(chunkFormFile.Length > _uploadFileSessionManager.MaxChunkSize)
+            {
+                throw new HttpException(HttpStatusCode.BadRequest, "ChunkFormFile size is greater than maximum chunk size");
+            }
+            
+            if (!_uploadFileSessionManager.IsSessionAvailable(sessionId))
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Session is not available");
+            }
+            
+            //prevent session dispose from cleaner thread
+            _uploadFileSessionManager.StartProcessing(sessionId);
+            
+            //save chunk file
+            int totalChunks = _uploadFileSessionManager.GetTotalChunks(sessionId);
+            string chunkName = $"{sessionId}.total{totalChunks}.part{index}";
+            string path = Path.Combine(_globalUsings.TempFilesPath, chunkName);
+            await _fileUtils.SaveFile(path, chunkFormFile);
+
+            //mark chunk as persisted
+            _uploadFileSessionManager.MarkChunkAsPersisted(sessionId, index);
+
+            //if all chunks are persisted, merge them to a single file
+            bool isSessionCompleted = _uploadFileSessionManager.IsSessionCompleted(sessionId);
+            if(isSessionCompleted)
+            {
+                await MergeFile(sessionId);
+            }
+
+            //cleaner thread can dispose session
+            _uploadFileSessionManager.StopProcessing(sessionId);
+
             return new File_ChunkInfomationDto
             {
-                ChunkName = chunkName,
                 ChunkSize = chunkFormFile.Length,
-                Index = chunkName.Split(".part")[1].ConvertTo<int>()
+                Index = index,
+                Progress = _uploadFileSessionManager.GetSessionProgress(sessionId),
+                IsSessionCompleted = isSessionCompleted
             };
         }
 
-        public async Task<File_MergeResponseDto> MergeFile(Guid fileId)
+        private async Task<bool> MergeFile(Guid sessionId)
         {
-            var fileEntity = await _uploaedFileRepository.GetSingle(f => f.Id == fileId);
-            if (fileEntity == null)
+            string tempDirectory = _globalUsings.TempFilesPath;
+            string[] chunkFiles = Directory.GetFiles(tempDirectory, $"{sessionId}.total*.part*", SearchOption.TopDirectoryOnly);
+            try
             {
-                throw new HttpException(HttpStatusCode.NotFound, "File not found");
-            }
-            string tempDirectory = Path.Combine(_globalUsings.StaticFilesPath, "Temps");
-            string[] chunkFiles = Directory.GetFiles(tempDirectory, $"{fileEntity.Id}.part*");
-            chunkFiles = chunkFiles.OrderBy(f =>
-            {
-                // Sort by index
-                return f.Split(".part")[1].ConvertTo<int>();
-            }).ToArray();
-            string orginalExtension = Path.GetExtension(fileEntity.OriginalFileName);
-
-            if (!Directory.Exists(Path.Combine(_globalUsings.StaticFilesPath, "Uploads")))
-            {
-                Directory.CreateDirectory(Path.Combine(_globalUsings.StaticFilesPath, "Uploads"));
-            }
-
-            using (var fileStream = new FileStream(Path.Combine(_globalUsings.StaticFilesPath, "Uploads", $"{fileEntity.Id}{orginalExtension}"), FileMode.Create))
-            {
-                foreach (string chunkFile in chunkFiles)
+                chunkFiles = chunkFiles.OrderBy(f =>
                 {
-                    using (var chunkFileStream = new FileStream(chunkFile, FileMode.Open))
+                    // Sort by index
+                    return f.Split(".part")[1].ConvertTo<int>();
+                }).ToArray();
+                if (chunkFiles.Length == 0)
+                {
+                    throw new HttpException(HttpStatusCode.BadRequest, "No chunk files found");
+                }
+
+                var fileInfo = _uploadFileSessionManager.GetSessionFileInfomation(sessionId);
+                string originalFileExtension = Path.GetExtension(fileInfo.OriginalFileName);
+                var inspectResult = await _fileUtils.InspectContent(chunkFiles[0]);
+                // Check if the extension of the original file matches the content
+                string? extension = inspectResult.Extension;
+                if (extension == null)
+                {
+                    throw new HttpException(HttpStatusCode.BadRequest, "File extension can not detect from file content");
+                }
+                if ($".{extension}" != originalFileExtension)
+                {
+                    throw new HttpException(HttpStatusCode.BadRequest, "Original file extesion doesn't macth with it content");
+                }
+
+                UploadedFile fileEntity = new UploadedFile
+                {
+                    OriginalFileName = fileInfo.OriginalFileName,
+                    Size = fileInfo.Size,
+                    Extension = inspectResult.Extension,
+                    IsCompleted = true,
+                    UserId = _uploadFileSessionManager.GetSessionOwner(sessionId)
+                };
+
+                await _uploadedFileRepository.Insert(fileEntity, true);
+
+                string categoryDirectory = _globalUsings.PathCollection[extension];
+                string fileName = $"{fileEntity.Id}.{extension}";
+
+                using (var fileStream = new FileStream(Path.Combine(categoryDirectory, fileName), FileMode.Create))
+                {
+                    foreach (string chunkFile in chunkFiles)
                     {
-                        await chunkFileStream.CopyToAsync(fileStream);
+                        using (var chunkFileStream = new FileStream(chunkFile, FileMode.Open))
+                        {
+                            await chunkFileStream.CopyToAsync(fileStream);
+                        }
+                    }
+                    if (fileStream.Length != fileEntity.Size)
+                    {
+                        throw new HttpException(HttpStatusCode.BadRequest, "File size is different from the original size");
                     }
                 }
-                if (fileStream.Length != fileEntity.Size)
-                {
-                    throw new HttpException(HttpStatusCode.BadRequest, "File size is different from the original size");
-                }
+                fileEntity.Path = Path.Combine(Path.GetFileName(categoryDirectory), fileName);
+                await _uploadedFileRepository.Update(fileEntity, true);
+
+                return true;
             }
-            fileEntity.IsCompleted = true;
-            fileEntity.Path = Path.Combine("Uploads", $"{fileEntity.Id}{orginalExtension}");
-            await _uploaedFileRepository.Update(fileEntity);
-
-            foreach (var chunkFile in chunkFiles)
+            catch (Exception ex)
             {
-                File.Delete(chunkFile);
+                throw;
             }
-
-            return new File_MergeResponseDto
+            finally
             {
-                File = fileEntity
-            };
-
+                await _fileUtils.DeleteFiles(chunkFiles);
+            }
         }
 
-        public async Task<string> UploadFileAsync(IFormFile file)
+        public async Task<UploadedFile> UploadFile(IFormFile file, Guid userId)
         {
-            string path = Path.Combine(_globalUsings.StaticFilesPath, "Uploads", file.FileName);
-            return await _fileUtils.SaveFileAsync(path, file);
+            if(file.Length == 0)
+            {
+                throw new HttpException(HttpStatusCode.BadRequest, "File size is 0");
+            }
+            if(file.Length > _globalUsings.UploadChunkSize)
+            {
+                throw new HttpException(HttpStatusCode.BadRequest, "File is large, please use method for large file");
+            }
+            var inspectResult = await _fileUtils.InspectContent(file);
+
+            string originalFileExtension = Path.GetExtension(file.FileName);
+            // Check if the extension of the original file matches the content
+            string? extension = inspectResult.Extension;
+            if (extension == null)
+            {
+                throw new HttpException(HttpStatusCode.BadRequest, "File extension can not detect from file content");
+            }
+            if ($".{extension}" != originalFileExtension)
+            {
+                throw new HttpException(HttpStatusCode.BadRequest, "Original file extesion doesn't macth with it content");
+            }
+            UploadedFile fileEntity = new UploadedFile
+            {
+                OriginalFileName = file.FileName,
+                Size = file.Length,
+                Extension = inspectResult.Extension,
+                IsCompleted = true,
+                UserId = userId
+            };
+            await _uploadedFileRepository.Insert(fileEntity, true);
+
+            string categoryDirectory = _globalUsings.PathCollection[extension];
+            string fileName = $"{fileEntity.Id}.{extension}";
+
+            // Save the file
+            using (var fileStream = new FileStream(Path.Combine(categoryDirectory, fileName), FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            fileEntity.Path = Path.Combine(Path.GetFileName(categoryDirectory), fileName);
+
+            await _uploadedFileRepository.Update(fileEntity, true);
+
+            return fileEntity;
         }
     }
 }

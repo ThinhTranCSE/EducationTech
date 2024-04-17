@@ -1,7 +1,7 @@
 ﻿using EducationTech.Annotations;
 using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Master.Interfaces;
-using EducationTech.Business.Shared.DTOs.Masters.User;
+using EducationTech.Business.Shared.DTOs.Masters.Users;
 using EducationTech.Controllers.Abstract;
 using EducationTech.DataAccess.Core;
 using EducationTech.DataAccess.Entities.Master;

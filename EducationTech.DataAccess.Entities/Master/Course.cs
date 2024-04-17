@@ -25,6 +25,7 @@ namespace EducationTech.DataAccess.Entities.Master
 
         public double Price { get; set; }
 
+        public string ImageUrl { get; set; }
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<Course>(modelBuilder);

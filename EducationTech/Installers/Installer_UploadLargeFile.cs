@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.Features;
+﻿using EducationTech.Shared.DataStructures;
+using EducationTech.Storage;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace EducationTech.Installers
 {
@@ -10,6 +12,13 @@ namespace EducationTech.Installers
             {
                 options.MultipartBodyLengthLimit = long.MaxValue;
             });
+
+            var globalUsings = new GlobalUsings();
+            int chunkSize = globalUsings.UploadChunkSize;
+            long sessionTimeOut = globalUsings.UploadSessionTimeOut;
+            UploadFileSessionManager uploadFileSessionManager = new UploadFileSessionManager(chunkSize, sessionTimeOut);
+            services.AddSingleton(uploadFileSessionManager);
+
             return services;
         }
 

@@ -1,8 +1,12 @@
-﻿namespace EducationTech.Business.Shared.DTOs.Business.File
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace EducationTech.Business.Shared.DTOs.Business.File
 {
     public class File_PrepareRequestBodyDto
     {
-        public string Name { get; set; }
-        public long Size { get; set; }
+        [Required]
+        public string FileName { get; set; }
+        [Required]
+        public long FileSize { get; set; }
     }
 }

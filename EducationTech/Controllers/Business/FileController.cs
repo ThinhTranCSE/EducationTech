@@ -3,6 +3,7 @@ using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Shared.DTOs.Business.File;
 using EducationTech.Controllers.Abstract;
 using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Entities.Master;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
@@ -18,23 +19,24 @@ namespace EducationTech.Controllers.Business
             _fileService = fileService;
         }
 
-        [HttpPost("Prepare")]
+        [HttpPost("Session")]
         public async Task<File_PrepareResponseDto> Prepare(File_PrepareRequestBodyDto requestBody)
         {
-            return await _fileService.PrepareUploadLargeFileAsync(requestBody.Name, requestBody.Size, CurrentUser);
+            return await _fileService.StartLargeFileUploadSession(requestBody.FileName, requestBody.FileSize, CurrentUser!.Id);
         }
 
-        [HttpPost("Upload/Chunk")]
+        [HttpPost("Session/Chunk")]
         public async Task<File_ChunkInfomationDto> UploadChunk([FromForm] File_UploadChunkRequestBodyDto requestBody)
         {
-            return await _fileService.UploadChunk(requestBody.ChunkName, requestBody.ChunkSize, requestBody.ChunkFormFile);
+            return await _fileService.UploadChunk(requestBody.SessionId, requestBody.Index, requestBody.ChunkFormFile);
         }
 
-        [HttpPost("Upload/Merge/{fileId}")]
-        public async Task<File_MergeResponseDto> Merge(Guid fileId)
+        [HttpPost("Upload")]
+        public async Task<UploadedFile> Upload([FromForm] IFormFile file)
         {
-            return await _fileService.MergeFile(fileId);
+            return await _fileService.UploadFile(file, CurrentUser!.Id);
         }
+
 
         [HttpGet("Streams/{streamId}/input.m3u8")]
         [SkipRestructurePhase]

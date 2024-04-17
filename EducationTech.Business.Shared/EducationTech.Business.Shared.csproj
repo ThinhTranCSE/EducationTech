@@ -6,13 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
 	</ItemGroup>
-  <ItemGroup>
-    <Folder Include="DTOs\Abstracts\" />
-    <Folder Include="DTOs\Masters\Courses\" />
-    <Folder Include="DTOs\Masters\Users\" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EducationTech.DataAccess.Entities\EducationTech.DataAccess.Entities.csproj" />
   </ItemGroup>

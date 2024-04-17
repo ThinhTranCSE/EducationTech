@@ -15,7 +15,6 @@ namespace EducationTech
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Configuration.AddUserSecrets<Program>();
-            builder.Services.AddSingleton<GlobalUsings>();
 
             builder.InstallServices(builder.Configuration);
 

@@ -10,16 +10,13 @@ namespace EducationTech.DataAccess.Entities.Master
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
-
-        public string OriginalFileName { get; set; }
+        public string OriginalFileName { get; set; } = string.Empty;
+        public string Extension { get; set; } = string.Empty;
         public long Size { get; set; }
-        public string Path { get; set; } = "temp path";
+        public string Path { get; set; } = string.Empty;
         public bool IsCompleted { get; set; }
-
         public bool IsPublic { get; set; }
-
-        public Guid UserId { get; set; } = new Guid("41805b8c-9a7f-4fc7-9487-08dc20ae4bf8");
-
+        public Guid UserId { get; set; }
         public virtual User User { get; set; }
 
         public override void OnModelCreating(ModelBuilder modelBuilder)

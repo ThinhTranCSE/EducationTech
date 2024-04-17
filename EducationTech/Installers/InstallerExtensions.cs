@@ -10,15 +10,12 @@
                 .Cast<IInstaller>()
                 .ToList();
             //swap Installer_Logging to be first
-            var loggingInstaller = installers.FirstOrDefault(x => x.GetType().Name == "Installer_Logging");
-            if (loggingInstaller != null)
-            {
-                installers.Remove(loggingInstaller);
-                installers.Insert(0, loggingInstaller);
-            }
-            
-
-
+            //var loggingInstaller = installers.FirstOrDefault(x => x.GetType().Name == "Installer_Logging");
+            //if (loggingInstaller != null)
+            //{
+            //    installers.Remove(loggingInstaller);
+            //    installers.Insert(0, loggingInstaller);
+            //}
             installers.ForEach(installer =>
             {
                 installer.InstallServicesToWebApplicationBuilder(builder, configuration);
