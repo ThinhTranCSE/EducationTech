@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EducationTech.Business.Shared.DTOs.Masters.Courses
 {
-    public class CourseDto : Abstracts.AbstractDto
+    public class CourseDto : Abstracts.AbstractDto<Course, CourseDto>
     {
         public int Id { get; set; }
 
@@ -22,10 +22,6 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
         public double Price { get; set; }
 
         public string ImageUrl { get; set; }
-        public override void Configure()
-        {
-            CreateMap<Course, CourseDto>();
-        }
     }
 
 }

@@ -9,8 +9,13 @@ using System.Threading.Tasks;
 namespace EducationTech.Business.Shared.DTOs.Abstracts
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public abstract class AbstractDto : Profile
+    public abstract class AbstractDto<TEntity, TDto> : IDto
+        where TDto : class
+        where TEntity : class
     {
-        public abstract void Configure();
+        public virtual void Configure(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<TEntity, TDto>().ReverseMap();
+        }
     }
 }

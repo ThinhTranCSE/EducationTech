@@ -1,4 +1,5 @@
-﻿using EducationTech.Annotations;
+﻿using AutoMapper;
+using EducationTech.Annotations;
 using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Shared.DTOs.Business.File;
 using EducationTech.Controllers.Abstract;
@@ -14,9 +15,11 @@ namespace EducationTech.Controllers.Business
     public class FileController : BaseController
     {
         private readonly IFileService _fileService;
-        public FileController(EducationTechContext context, IAuthService authService, IFileService fileService) : base(context, authService)
+        private readonly IMapper _mapper;
+        public FileController(EducationTechContext context, IAuthService authService, IFileService fileService, IMapper mapper) : base(context, authService)
         {
             _fileService = fileService;
+            _mapper = mapper;
         }
 
         [HttpPost("Session")]
@@ -32,9 +35,11 @@ namespace EducationTech.Controllers.Business
         }
 
         [HttpPost("Upload")]
-        public async Task<UploadedFile> Upload([FromForm] IFormFile file)
+        public async Task<UploadedFileDto> Upload([FromForm] IFormFile file)
         {
-            return await _fileService.UploadFile(file, CurrentUser!.Id);
+            UploadedFile result =  await _fileService.UploadFile(file, CurrentUser!.Id);
+            UploadedFileDto uploadedFileDto = _mapper.Map<UploadedFileDto>(result);
+            return uploadedFileDto;
         }
 
 

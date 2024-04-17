@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EducationTech.Business.Shared.DTOs.Business.File
 {
-    public class UploadedFileDto : AbstractDto
+    public class UploadedFileDto : AbstractDto<UploadedFile, UploadedFileDto>
     {
         public Guid Id { get; set; }
         public string OriginalFileName { get; set; } = null!;
@@ -17,9 +17,5 @@ namespace EducationTech.Business.Shared.DTOs.Business.File
         public bool IsCompleted { get; set; }
         public bool IsPublic { get; set; }
         public Guid UserId { get; set; }
-        public override void Configure()
-        {
-            CreateMap<UploadedFile, UploadedFileDto>();
-        }
     }
 }

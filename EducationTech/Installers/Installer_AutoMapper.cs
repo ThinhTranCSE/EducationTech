@@ -1,5 +1,8 @@
-﻿using EducationTech.Auth.Policies.Abstract;
+﻿using AutoMapper;
+using EducationTech.Auth.Policies.Abstract;
 using EducationTech.Business.Shared.DTOs.Abstracts;
+using EducationTech.DataAccess.Seeders;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EducationTech.Installers
 {
@@ -7,12 +10,16 @@ namespace EducationTech.Installers
     {
         public IServiceCollection InstallServicesToServiceCollection(IServiceCollection services, IConfiguration configuration)
         {
-            var dtoTypes = typeof(AbstractDto).Assembly.ExportedTypes
+            var dtoInstances = typeof(IDto).Assembly.ExportedTypes
                 .Where(t => !t.IsAbstract && !t.IsInterface)
-                .Where(t => t.IsAssignableTo(typeof(AbstractDto)))
-                .ToArray();
+                .Where(t => t.IsAssignableTo(typeof(IDto)))
+                .Select(x => (IDto)Activator.CreateInstance(x))
+                .ToList();
 
-            services.AddAutoMapper(dtoTypes);
+            services.AddAutoMapper(config =>
+            {
+                dtoInstances.ForEach(x => x.Configure(config));
+            });
 
             return services;
         }
