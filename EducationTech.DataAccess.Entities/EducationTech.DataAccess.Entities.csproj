@@ -15,6 +15,7 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\EducationTech.Shared\EducationTech.Shared.csproj" />
 	  <ProjectReference Include="..\EducationTech.Storage\EducationTech.Storage.csproj" />
 	</ItemGroup>
 </Project>

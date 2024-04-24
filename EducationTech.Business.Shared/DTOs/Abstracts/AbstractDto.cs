@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EducationTech.Storage;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace EducationTech.Business.Shared.DTOs.Abstracts
         where TDto : class
         where TEntity : class
     {
+        protected static GlobalUsings GlobalUsings = new GlobalUsings();
+
         public virtual void Configure(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<TEntity, TDto>().ReverseMap();
@@ -22,7 +25,7 @@ namespace EducationTech.Business.Shared.DTOs.Abstracts
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public abstract class AbstractDto : IDto
     {
+        //protected static GlobalUsings GlobalUsings = new GlobalUsings();
         public virtual void Configure(IMapperConfigurationExpression cfg) { }
-
     }
 }

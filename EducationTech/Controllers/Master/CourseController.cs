@@ -17,15 +17,15 @@ namespace EducationTech.Controllers.Master
         }
 
         [HttpGet]
-        public async Task<Course_GetResponseDto> Get([FromQuery]Course_GetRequestDto requestDto)
+        public async Task<Course_GetResponseDto> Get([FromQuery]Course_GetRequestDto requestDto) 
         {
             var coursesResponse = await _courseService.GetPaginatedData(requestDto, requestDto.Offset, requestDto.Limit, null);
-            string domain = HttpContext.Request.Host.ToString();
-            string scheme = HttpContext.Request.Scheme;
-            foreach (var courseDto in coursesResponse.Courses)
-            {
-                courseDto.ImageUrl = $"{scheme}://{domain}/{courseDto.ImageUrl}";
-            }
+            //string domain = HttpContext.Request.Host.ToString();
+            //string scheme = HttpContext.Request.Scheme;
+            //foreach (var courseDto in coursesResponse.Courses)
+            //{
+            //    courseDto.ImageUrl = $"{scheme}://{domain}/{courseDto.ImageUrl}";
+            //}
             return coursesResponse;
         }
     }

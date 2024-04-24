@@ -27,7 +27,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EducationTech.DataAccess.En
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EducationTech.DataAccess", "EducationTech.DataAccess\EducationTech.DataAccess.csproj", "{7F9DA6A0-35E0-4641-9340-570D8E0B07B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EducationTech.MessageQueue", "EducationTech.MessageQueue\EducationTech.MessageQueue.csproj", "{E19265CF-547D-41F3-9C5C-C08C5F049101}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EducationTech.MessageQueue", "EducationTech.MessageQueue\EducationTech.MessageQueue.csproj", "{E19265CF-547D-41F3-9C5C-C08C5F049101}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{62968A66-73AD-4F8D-85DF-BB3E8B7CDF19}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

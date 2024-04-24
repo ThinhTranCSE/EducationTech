@@ -6,7 +6,12 @@ namespace EducationTech.Storage
 {
     public class GlobalUsings
     {
-#region Paths
+        #region Host Information
+        public string HostName => "localhost:5013";
+        public string HostScheme => "http";
+        #endregion
+
+        #region Paths
         private string _currentDirctoryPath { get; set; }   
         public string StorageRootPath => _currentDirctoryPath;
         public string ContentRootPath => GetContentRootPath();
@@ -15,17 +20,18 @@ namespace EducationTech.Storage
         public string ImageFilesPath => GetCategoryDirectoryPath("Images");
         public string StreamFilesPath => GetCategoryDirectoryPath("Streams");
         public string UncategorizedFilesPath => GetCategoryDirectoryPath("Uncategorized");
-#endregion
+        #endregion
 
-#region Upload File Configs
+        #region Upload File Configs
         public long UploadSessionTimeOut => 1 * 60;
         public int UploadChunkSize => 1024 * 1024 * 2;
         #endregion
 
-#region Collections
+        #region Collections
         public PathCollection PathCollection { get; set; }
         public FileTypeCollection FileTypeCollection { get; set; }
-#endregion
+        #endregion
+
         public GlobalUsings()
         {
             string currentFilePath = GetThisFilePath();

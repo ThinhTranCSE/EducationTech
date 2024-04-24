@@ -18,7 +18,7 @@ namespace EducationTech.Installers
 
             services.AddAutoMapper(config =>
             {
-                dtoInstances.ForEach(x => x.Configure(config));
+                dtoInstances.ForEach(x => x?.Configure(config));
             });
 
             return services;

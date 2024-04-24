@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using EducationTech.DataAccess.Core;
 using EducationTech.DataAccess.Entities.Master;
+using EducationTech.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +35,11 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             {
                 throw new Exception("No image found, please use api upload at least 1 image first");
             }
+            //var video = _context.Videos.FirstOrDefault();
+            //if(video == null)
+            //{
+            //    throw new Exception("No video found, please use api upload at least 1 video first");
+            //}
 
             var courses = coursesGenerator
                 .RuleFor(x => x.Title, f => f.Lorem.Sentence())
@@ -62,6 +68,26 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             .Aggregate((acc, x) => acc.Concat(x));
 
             _context.CourseSections.AddRange(courseSections);
+            _context.SaveChanges();
+
+            var lessonGenerator = new Faker<Lesson>()
+                .RuleFor(x => x.Title, f => f.Lorem.Sentence())
+                .RuleFor(x => x.Type, f => f.PickRandom<LessonType>());
+
+            IEnumerable<Lesson> lessons = courseSections.Select(section =>
+            {
+                var lessonCount = random.Next(1, 5);
+                var lessons = lessonGenerator.Generate(lessonCount);
+                for (int i = 0; i < lessonCount; i++)
+                {
+                    lessons[i].CourseSectionId = section.Id;
+                    lessons[i].Order = i;
+                }
+                return lessons.AsEnumerable();
+            })
+            .Aggregate((acc, x) => acc.Concat(x));
+
+            _context.Lessons.AddRange(lessons);
             _context.SaveChanges();
         }
     }

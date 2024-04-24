@@ -1,4 +1,6 @@
-﻿using EducationTech.DataAccess.Entities.Master;
+﻿using AutoMapper;
+using EducationTech.Business.Shared.DTOs.Abstracts;
+using EducationTech.DataAccess.Entities.Master;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +24,15 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
         public double Price { get; set; }
 
         public string ImageUrl { get; set; }
+
+        public override void Configure(IMapperConfigurationExpression cfg)
+        {
+            string hostName = AbstractDto<Course, CourseDto>.GlobalUsings.HostName;
+            string scheme = AbstractDto<Course, CourseDto>.GlobalUsings.HostScheme;
+            cfg.CreateMap<Course, CourseDto>()
+                .ForMember(x => x.ImageUrl, opt => opt.MapFrom(x => $"{scheme}://{hostName}/{x.ImageUrl}"))
+                .ReverseMap();
+        }
     }
 
 }
