@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 
 namespace EducationTech.DataAccess.Entities.Master
 {
-    public class Role : Model
+    public class Role : Entity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

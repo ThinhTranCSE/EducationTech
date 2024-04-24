@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationTech.DataAccess.Entities.Master
 {
-    public class UserRole : Model
+    public class UserRole : Entity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -1,4 +1,5 @@
-﻿using System.Dynamic;
+﻿using EducationTech.Storage.Enums;
+using System.Dynamic;
 using System.Runtime.CompilerServices;
 
 namespace EducationTech.Storage
@@ -14,22 +15,35 @@ namespace EducationTech.Storage
         public string ImageFilesPath => GetCategoryDirectoryPath("Images");
         public string StreamFilesPath => GetCategoryDirectoryPath("Streams");
         public string UncategorizedFilesPath => GetCategoryDirectoryPath("Uncategorized");
-        public PathCollection PathCollection { get; set; }
 #endregion
 
 #region Upload File Configs
         public long UploadSessionTimeOut => 1 * 60;
         public int UploadChunkSize => 1024 * 1024 * 2;
+        #endregion
+
+#region Collections
+        public PathCollection PathCollection { get; set; }
+        public FileTypeCollection FileTypeCollection { get; set; }
 #endregion
         public GlobalUsings()
         {
             string currentFilePath = GetThisFilePath();
             _currentDirctoryPath = Path.GetDirectoryName(currentFilePath)!;
 
+
+            var imageExtensions = new string[] { "ai", "bmp", "cur", "gif", "ico", "icns", "jpg", "jpeg", "png", "ps", "psd", "svg", "tif", "tiff" };
+            var videoExtensions = new string[] { "3g2", "3gp", "avi", "flv", "h264", "m4v", "mkv", "mov", "mp4", "mpg", "mpeg", "rm", "swf", "vob", "wmv" };
+            (FileType, string[])[] fileTypeAndTheirExtensions = new (FileType, string[])[]
+            {
+                (FileType.Image, imageExtensions),
+                (FileType.Video, videoExtensions)
+            };
+            FileTypeCollection = new FileTypeCollection(fileTypeAndTheirExtensions);
             (string, string[])[] extensionAndTheirPaths = new (string, string[])[]
             {
-                (ImageFilesPath, new string[] { "ai", "bmp", "cur", "gif", "ico", "icns", "jpg", "jpeg", "png", "ps", "psd", "svg", "tif", "tiff" }),
-                (StreamFilesPath, new string[] { "3g2", "3gp", "avi", "flv", "h264", "m4v", "mkv", "mov", "mp4", "mpg", "mpeg", "rm", "swf", "vob", "wmv" })
+                (ImageFilesPath, imageExtensions),
+                (StreamFilesPath, videoExtensions)
             };
             PathCollection = new PathCollection(extensionAndTheirPaths, UncategorizedFilesPath);
         }

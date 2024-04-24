@@ -4,7 +4,6 @@ using Serilog.Sinks.SystemConsole.Themes;
 using Serilog.Formatting.Compact;
 using System.Linq;
 using EducationTech.Extensions;
-using EducationTech.Enums;
 using System;
 using Serilog.Filters;
 using EducationTech.DataAccess.Shared.Enums;

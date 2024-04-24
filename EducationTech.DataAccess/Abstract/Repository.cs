@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 namespace EducationTech.DataAccess.Abstract
 {
     public abstract class Repository<T> : IRepository<T>
-        where T : Model
+        where T : Entity
     {
         protected readonly EducationTechContext _context;
 

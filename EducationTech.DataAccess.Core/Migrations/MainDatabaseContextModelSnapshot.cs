@@ -71,6 +71,27 @@ namespace EducationTech.Migrations
                     b.ToTable("Comunities");
                 });
 
+            modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Image", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("FileId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileId")
+                        .IsUnique();
+
+                    b.ToTable("Images");
+                });
+
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.InstructorApproved", b =>
                 {
                     b.Property<int>("Id")
@@ -218,7 +239,7 @@ namespace EducationTech.Migrations
                     b.Property<Guid>("FileId")
                         .HasColumnType("char(36)");
 
-                    b.Property<int>("LessonId")
+                    b.Property<int?>("LessonId")
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
@@ -227,7 +248,8 @@ namespace EducationTech.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FileId");
+                    b.HasIndex("FileId")
+                        .IsUnique();
 
                     b.HasIndex("LessonId");
 
@@ -385,6 +407,9 @@ namespace EducationTech.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("FileType")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("tinyint(1)");
 
@@ -512,6 +537,17 @@ namespace EducationTech.Migrations
                     b.Navigation("Course");
                 });
 
+            modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Image", b =>
+                {
+                    b.HasOne("EducationTech.DataAccess.Entities.Master.UploadedFile", "File")
+                        .WithOne("Image")
+                        .HasForeignKey("EducationTech.DataAccess.Entities.Business.Image", "FileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("File");
+                });
+
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.InstructorApproved", b =>
                 {
                     b.HasOne("EducationTech.DataAccess.Entities.Master.User", "Admin")
@@ -605,16 +641,14 @@ namespace EducationTech.Migrations
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Video", b =>
                 {
                     b.HasOne("EducationTech.DataAccess.Entities.Master.UploadedFile", "File")
-                        .WithMany()
-                        .HasForeignKey("FileId")
+                        .WithOne("Video")
+                        .HasForeignKey("EducationTech.DataAccess.Entities.Business.Video", "FileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("EducationTech.DataAccess.Entities.Master.Lesson", "Lesson")
                         .WithMany()
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LessonId");
 
                     b.Navigation("File");
 
@@ -706,6 +740,13 @@ namespace EducationTech.Migrations
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Role", b =>
                 {
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.UploadedFile", b =>
+                {
+                    b.Navigation("Image");
+
+                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.User", b =>

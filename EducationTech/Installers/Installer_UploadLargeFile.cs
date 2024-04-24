@@ -16,8 +16,10 @@ namespace EducationTech.Installers
             var globalUsings = new GlobalUsings();
             int chunkSize = globalUsings.UploadChunkSize;
             long sessionTimeOut = globalUsings.UploadSessionTimeOut;
-            UploadFileSessionManager uploadFileSessionManager = new UploadFileSessionManager(chunkSize, sessionTimeOut);
-            services.AddSingleton(uploadFileSessionManager);
+
+
+            //UploadFileSessionManager uploadFileSessionManager = new UploadFileSessionManager(chunkSize, sessionTimeOut);
+            services.AddSingleton<UploadFileSessionManager>();
 
             return services;
         }

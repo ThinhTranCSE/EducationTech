@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationTech.DataAccess.Entities.Business
 {
-    public class UserKey : Model
+    public class UserKey : Entity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

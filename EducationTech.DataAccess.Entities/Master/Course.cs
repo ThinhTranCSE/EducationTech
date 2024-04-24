@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationTech.DataAccess.Entities.Master
 {
-    public class Course : Model
+    public class Course : Entity
     {
         public override bool Timestamp => true;
 

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationTech.DataAccess.Entities.Master
 {
-    public class CourseSection : Model
+    public class CourseSection : Entity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

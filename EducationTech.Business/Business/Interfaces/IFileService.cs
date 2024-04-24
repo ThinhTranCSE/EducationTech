@@ -11,7 +11,7 @@ namespace EducationTech.Business.Business.Interfaces
         Task<File_PrepareResponseDto> StartLargeFileUploadSession(string fileName, long fileSize, Guid userId);
         Task<File_ChunkInfomationDto> UploadChunk(Guid sessionId, int index, IFormFile chunkFormFile);
         Task<File_GetFileContentDto> GetFile(Guid fileId);
-        Task<File_GetFileContentDto> GetPlaylist(string streamId);
-        Task<File_GetFileContentDto> GetSegment(string streamId, string segmentName);
+        Task<File_GetFileContentDto> GetPlaylist(Guid streamId);
+        Task<File_GetFileContentDto> GetSegment(Guid streamId, string segmentName);
     }
 }

@@ -7,10 +7,9 @@ using System.Linq.Expressions;
 namespace EducationTech.DataAccess.Abstract
 {
     public interface IRepository<T>
-        where T : Model
+        where T : Entity
     {
         DbSet<T> Model { get; }
-
         EntityEntry<T> Entry(T entity);
         Task<IQueryable<T>> Get(Expression<Func<T, bool>>? filter = null, bool tracked = true, bool executed = false);
         Task<T?> GetSingle(Expression<Func<T, bool>> filter, bool tracked = true);

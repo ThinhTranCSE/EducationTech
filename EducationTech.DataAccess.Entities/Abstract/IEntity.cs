@@ -2,7 +2,7 @@
 
 namespace EducationTech.DataAccess.Entities.Abstract
 {
-    public interface IModel
+    public interface IEntity
     {
         void OnModelCreating(ModelBuilder modelBuilder);
     }

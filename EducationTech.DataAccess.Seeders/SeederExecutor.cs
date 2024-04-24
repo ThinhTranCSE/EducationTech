@@ -41,7 +41,8 @@ namespace EducationTech.DataAccess.Seeders
 
         private void Seed()
         {
-            foreach (ISeeder seeder in _seeders.Values)
+            var seeders = _seeders.Values.OrderBy(s => s.Piority);
+            foreach (ISeeder seeder in seeders)
             {
                 seeder.Seed();
             }

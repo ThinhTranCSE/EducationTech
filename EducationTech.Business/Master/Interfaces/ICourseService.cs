@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EducationTech.Business.Master.Interfaces
 {
-    public interface ICourseService : IPagination<Course_GetRequestDto, Course_GetResponseDto>
+    public interface ICourseService : IService, IPagination<Course_GetRequestDto, Course_GetResponseDto>
     {
     }
 }

@@ -18,4 +18,11 @@ namespace EducationTech.Business.Shared.DTOs.Abstracts
             cfg.CreateMap<TEntity, TDto>().ReverseMap();
         }
     }
+
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
+    public abstract class AbstractDto : IDto
+    {
+        public virtual void Configure(IMapperConfigurationExpression cfg) { }
+
+    }
 }

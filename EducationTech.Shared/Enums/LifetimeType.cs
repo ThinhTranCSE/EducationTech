@@ -1,4 +1,4 @@
-﻿namespace EducationTech.Enums
+﻿namespace EducationTech.Shared.Enums
 {
     public enum LifetimeType
     {

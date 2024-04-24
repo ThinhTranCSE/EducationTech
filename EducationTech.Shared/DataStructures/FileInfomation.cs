@@ -8,7 +8,8 @@ namespace EducationTech.Shared.DataStructures
 {
     public class FileInfomation
     {
-        public ISet<int> AlreadyPersistedChunks = new HashSet<int>();
+        private object _lock = new object();
+        private ISet<int> AlreadyPersistedChunks = new HashSet<int>();
         public string OriginalFileName { get; set; }
         public long Size { get; set; }
         public int ChunkSize { get; set; }
@@ -23,7 +24,30 @@ namespace EducationTech.Shared.DataStructures
 
         public void MarkChunkAsPersisted(int index)
         {
-            AlreadyPersistedChunks.Add(index);
+            lock (_lock)
+            {
+                AlreadyPersistedChunks.Add(index);
+            }
+        }
+
+        public int PersistedChunksCount()
+        {
+            int count;
+            lock (_lock)
+            {
+                count = AlreadyPersistedChunks.Count;
+            }
+            return count;
+        }
+
+        public bool IsCompleted()
+        {
+            bool isCompleted;
+            lock (_lock)
+            {
+                isCompleted = AlreadyPersistedChunks.Count == TotalChunks;
+            }
+            return isCompleted;
         }
     }
 }

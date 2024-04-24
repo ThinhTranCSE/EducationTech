@@ -22,6 +22,7 @@ namespace EducationTech
 
             var app = builder.Build();
 
+            app.ResolveAllConsumers();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -70,7 +71,9 @@ namespace EducationTech
                 {
                     ISeederExecutor seederExecutor = scope.ServiceProvider.GetRequiredService<ISeederExecutor>();
                     seederExecutor.RegisterSeeders(scope);
+
                     seederExecutor.Execute(cancellationTokenSource, args);
+                    //seederExecutor.Execute(cancellationTokenSource, new string[] {"seeder", "CourseSeeder"});
                 }
                 if (cancellationToken.IsCancellationRequested)
                 {

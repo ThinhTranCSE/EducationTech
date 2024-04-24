@@ -6,16 +6,15 @@ using EducationTech.DataAccess.Entities.Master;
 using EducationTech.Shared.Utilities.Interfaces;
 using HeyRed.Mime;
 using System.Net;
-using System.Net.Http;
-using System.Reflection.PortableExecutable;
-using System.Web;
 using EducationTech.Shared.Extensions;
 using Microsoft.AspNetCore.Http;
 using EducationTech.Storage;
 using EducationTech.Shared.DataStructures;
-using MySqlX.XDevAPI;
-using System.IO;
 using AutoMapper;
+using EducationTech.Storage.Enums;
+using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Entities.Business;
+using EducationTech.MessageQueue.VideoConvert;
 
 namespace EducationTech.Business.Business
 {
@@ -24,22 +23,33 @@ namespace EducationTech.Business.Business
         private readonly IFileUtils _fileUtils;
         private readonly GlobalUsings _globalUsings;
         private readonly IUploadedFileRepository _uploadedFileRepository;
+        private readonly IImageRepository _imageRepository;
+        private readonly IVideoRepository _videoRepository;
+        private readonly ITransactionManager _transactionManager;
         private readonly UploadFileSessionManager _uploadFileSessionManager;
         private readonly IMapper _mapper;
-
+        private readonly VideoConvertPublisher _videoConvertPublisher;
         public FileService(
             IFileUtils fileUtils, 
             GlobalUsings globalUsings, 
             IUploadedFileRepository uploadedFileRepository, 
+            IImageRepository imageRepository,
+            IVideoRepository videoRepository,
+            ITransactionManager transactionManager,
             UploadFileSessionManager uploadFileSessionManager,
-            IMapper mapper
+            IMapper mapper,
+            VideoConvertPublisher videoConvertPublisher
             )
         {
             _fileUtils = fileUtils;
             _globalUsings = globalUsings;
             _uploadedFileRepository = uploadedFileRepository;
+            _imageRepository = imageRepository;
+            _videoRepository = videoRepository;
+            _transactionManager = transactionManager;
             _uploadFileSessionManager = uploadFileSessionManager;
             _mapper = mapper;
+            _videoConvertPublisher = videoConvertPublisher;
         }
 
         public async Task<File_GetFileContentDto> GetFile(Guid fileId)
@@ -59,9 +69,9 @@ namespace EducationTech.Business.Business
             };
         }
 
-        public async Task<File_GetFileContentDto> GetPlaylist(string streamId)
+        public async Task<File_GetFileContentDto> GetPlaylist(Guid streamId)
         {
-            string streamDirectory = Path.Combine(_globalUsings.StreamFilesPath, streamId);
+            string streamDirectory = Path.Combine(_globalUsings.StreamFilesPath, streamId.ToString());
 
             // Check if the directory exists
             if (!Directory.Exists(streamDirectory))
@@ -82,9 +92,9 @@ namespace EducationTech.Business.Business
             };
         }
 
-        public async Task<File_GetFileContentDto> GetSegment(string streamId, string segmentName)
+        public async Task<File_GetFileContentDto> GetSegment(Guid streamId, string segmentName)
         {
-            string streamDirectory = Path.Combine(_globalUsings.StreamFilesPath, streamId);
+            string streamDirectory = Path.Combine(_globalUsings.StreamFilesPath, streamId.ToString());
 
             // Check if the directory exists
             if (!Directory.Exists(streamDirectory))
@@ -103,7 +113,6 @@ namespace EducationTech.Business.Business
                 Content = bytes,
                 ContentType = "video/MP2T"
             };
-
         }
         public async Task<File_PrepareResponseDto> StartLargeFileUploadSession(string fileName, long fileSize, Guid userId)
         {
@@ -207,8 +216,8 @@ namespace EducationTech.Business.Business
 
                 string categoryDirectory = _globalUsings.PathCollection[extension];
                 string fileName = $"{fileEntity.Id}.{extension}";
-
-                using (var fileStream = new FileStream(Path.Combine(categoryDirectory, fileName), FileMode.Create))
+                string filePath = Path.Combine(categoryDirectory, fileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     foreach (string chunkFile in chunkFiles)
                     {
@@ -223,8 +232,34 @@ namespace EducationTech.Business.Business
                     }
                 }
                 fileEntity.Path = Path.Combine(Path.GetFileName(categoryDirectory), fileName);
-                await _uploadedFileRepository.Update(fileEntity, true);
-
+                await _uploadedFileRepository.Update(fileEntity);
+                FileType? fileType = _globalUsings.FileTypeCollection[extension];
+                if (fileType != null)
+                {
+                    switch (fileType)
+                    {
+                        case FileType.Image:
+                            await _imageRepository.Insert(new Image
+                            {
+                                FileId = fileEntity.Id,
+                                Url = $"api/v1/File/{fileEntity.Id}"
+                            });
+                            break;
+                        case FileType.Video:
+                            await _videoRepository.Insert(new Video
+                            {
+                                FileId = fileEntity.Id,
+                                Url = $"api/v1/File/Stream/{fileEntity.Id}/input.m3u8"
+                            });
+                            _videoConvertPublisher.Publish(new VideoConvertMessage
+                            {
+                                OriginalVideoPath = filePath,
+                                ConvertedVideoDirectory = Path.Combine(categoryDirectory, fileEntity.Id.ToString())
+                            });
+                            break;
+                    }
+                }
+                _transactionManager.SaveChanges();
                 return true;
             }
             catch (Exception ex)
@@ -272,17 +307,41 @@ namespace EducationTech.Business.Business
 
             string categoryDirectory = _globalUsings.PathCollection[extension];
             string fileName = $"{fileEntity.Id}.{extension}";
-
+            string filePath = Path.Combine(categoryDirectory, fileName);
             // Save the file
-            using (var fileStream = new FileStream(Path.Combine(categoryDirectory, fileName), FileMode.Create))
+            await _fileUtils.SaveFile(filePath, file);
+
+            fileEntity.Path = filePath;
+
+            await _uploadedFileRepository.Update(fileEntity);
+
+            FileType? fileType = _globalUsings.FileTypeCollection[extension];
+            if (fileType != null)
             {
-                await file.CopyToAsync(fileStream);
+                switch (fileType)
+                {
+                    case FileType.Image:
+                        await _imageRepository.Insert(new Image
+                        {
+                            FileId = fileEntity.Id,
+                            Url = $"api/v1/File/{fileEntity.Id}"
+                        });
+                        break;
+                    case FileType.Video:
+                        await _videoRepository.Insert(new Video
+                        {
+                            FileId = fileEntity.Id,
+                            Url = $"api/v1/File/Stream/{fileEntity.Id}/input.m3u8"
+                        });
+                        _videoConvertPublisher.Publish(new VideoConvertMessage
+                        {
+                            OriginalVideoPath = filePath,
+                            ConvertedVideoDirectory = Path.Combine(categoryDirectory, fileEntity.Id.ToString())
+                        });
+                        break;
+                }
             }
-
-            fileEntity.Path = Path.Combine(Path.GetFileName(categoryDirectory), fileName);
-
-            await _uploadedFileRepository.Update(fileEntity, true);
-
+            _transactionManager.SaveChanges();
             return fileEntity;
         }
     }

@@ -14,7 +14,7 @@ namespace EducationTech.DataAccess.Core.Interceptors
 
             foreach (var entry in entries)
             {
-                Model model = entry.Entity as Model;
+                Entity model = entry.Entity as Entity;
                 if (!model.Timestamp) continue;
                 switch (entry.State)
                 {

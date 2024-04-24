@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationTech.DataAccess.Entities.Abstract
 {
-    public abstract class Model : IModel
+    public abstract class Entity : IEntity
     {
         [NotMapped]
         [JsonIgnore]
@@ -25,14 +25,14 @@ namespace EducationTech.DataAccess.Entities.Abstract
         public abstract void OnModelCreating(ModelBuilder modelBuilder);
 
 
-        protected void ConfigureSideEffects<TModel>(ModelBuilder modelBuilder) where TModel : Model
+        protected void ConfigureSideEffects<TEntity>(ModelBuilder modelBuilder) where TEntity : Entity
         {
 
-            if (typeof(TModel).IsAbstract || typeof(TModel).IsInterface || !typeof(TModel).IsAssignableTo(typeof(Model)))
+            if (typeof(TEntity).IsAbstract || typeof(TEntity).IsInterface || !typeof(TEntity).IsAssignableTo(typeof(Entity)))
             {
                 throw new Exception("TModel must be a class that implements Model");
             }
-            var model = modelBuilder.Entity<TModel>();
+            var model = modelBuilder.Entity<TEntity>();
             if (!Timestamp)
             {
                 model

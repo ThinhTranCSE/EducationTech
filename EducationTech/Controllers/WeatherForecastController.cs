@@ -43,24 +43,5 @@ namespace EducationTech.Controllers
             })
             .ToArray();
         }
-
-
-        [AllowAnonymous]
-        [HttpGet("request")]
-        public string GetRequest()
-        {
-            throw new Exception("something");
-            return "cc";
-        }
-
-
-        [AllowAnonymous]
-        [HttpGet("test-inspect")]
-        public async Task<IActionResult> TestInspect()
-        {
-            string filePath = @"C:\Users\thinh\source\repos\EducationTech\EducationTech.Storage\Static\cut_100_first_bytes.py";
-            var result = await _fileUtils.InspectContent(filePath);
-            return Ok(new { result });
-        }
     }
 }

@@ -34,7 +34,7 @@ namespace EducationTech.DataAccess.Core
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Video> Videos { get; set; }
         public DbSet<UploadedFile> UploadedFiles { get; set; }
-
+        public DbSet<Image> Images { get; set; }
 
 
 
@@ -63,14 +63,14 @@ namespace EducationTech.DataAccess.Core
 
         private void InvokeModelCreating(ModelBuilder builder)
         {
-            var modelImplementationTypes = typeof(Model).Assembly
+            var modelImplementationTypes = typeof(Entity).Assembly
                 .GetTypes()
-                .Where(t => t.IsAssignableTo(typeof(Model)) && !t.IsInterface && !t.IsAbstract)
+                .Where(t => t.IsAssignableTo(typeof(Entity)) && !t.IsInterface && !t.IsAbstract)
                 .ToList();
             modelImplementationTypes.ForEach(modelImplementation =>
             {
                 modelImplementation
-                    .GetMethod(nameof(IModel.OnModelCreating))
+                    .GetMethod(nameof(IEntity.OnModelCreating))
                     ?.Invoke(Activator.CreateInstance(modelImplementation), new object[] { builder });
             });
         }

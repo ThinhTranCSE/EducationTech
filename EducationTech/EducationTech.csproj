@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Configurations>Debug;Release;Debug Seeder</Configurations>
     <UserSecretsId>9e7daf8d-0ab5-44e9-9d21-788c65fef37e</UserSecretsId>
+	<EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +23,7 @@
     <PackageReference Include="Mime-Detective.Definitions.Exhaustive" Version="23.10.1" />
     <PackageReference Include="MimeTypesMap" Version="1.0.8" />
     <PackageReference Include="PM2.Extensions.MediaR" Version="2.0.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
     <PackageReference Include="Serilog" Version="3.1.1">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
@@ -48,6 +50,7 @@
     <ProjectReference Include="..\EducationTech.DataAccess.Seeders\EducationTech.DataAccess.Seeders.csproj" />
     <ProjectReference Include="..\EducationTech.DataAccess.Shared\EducationTech.DataAccess.Shared.csproj" />
     <ProjectReference Include="..\EducationTech.DataAccess\EducationTech.DataAccess.csproj" />
+    <ProjectReference Include="..\EducationTech.MessageQueue\EducationTech.MessageQueue.csproj" />
     <ProjectReference Include="..\EducationTech.Shared\EducationTech.Shared.csproj" />
     <ProjectReference Include="..\EducationTech.Storage\EducationTech.Storage.csproj" />
   </ItemGroup>

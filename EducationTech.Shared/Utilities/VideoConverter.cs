@@ -107,8 +107,6 @@ namespace EducationTech.Shared.Utilities
                 {
                     options.WithCustomArgument("-c:a copy");
                 }
-
-
                 if (_bitrate != null)
                 {
                     options.WithVariableBitrate(_bitrate.Value);

@@ -43,18 +43,18 @@ namespace EducationTech.Controllers.Business
         }
 
 
-        [HttpGet("Streams/{streamId}/input.m3u8")]
+        [HttpGet("Stream/{streamId}/input.m3u8")]
         [SkipRestructurePhase]
-        public async Task<IActionResult> GetPlaylist(string streamId)
+        public async Task<IActionResult> GetPlaylist(Guid streamId)
         {
             //return m3u8 file at result
             var fileContent = await _fileService.GetPlaylist(streamId);
             return File(fileContent.Content, fileContent.ContentType);
         }
 
-        [HttpGet("Streams/{streamId}/{segmentName}.ts")]
+        [HttpGet("Stream/{streamId}/{segmentName}.ts")]
         [SkipRestructurePhase]
-        public async Task<IActionResult> GetSegment(string streamId, string segmentName)
+        public async Task<IActionResult> GetSegment(Guid streamId, string segmentName)
         {
             //return ts file at result
             var fileContent = await _fileService.GetSegment(streamId, segmentName);
@@ -62,6 +62,7 @@ namespace EducationTech.Controllers.Business
         }
 
         [HttpGet("{fileId}")]
+        [AllowAnonymous]
         [SkipRestructurePhase]
         public async Task<IActionResult> GetFile(Guid fileId)
         {

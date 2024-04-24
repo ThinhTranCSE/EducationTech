@@ -17,9 +17,9 @@ namespace EducationTech.Shared.DataStructures
         public DateTime LastModifiedAt { get; private set; }
         public long TimeOut { get; set; }
         public FileInfomation FileInfo { get; set; }
-        public int SuccessfulChunks => FileInfo.AlreadyPersistedChunks.Count;
+        public int SuccessfulChunks => FileInfo.PersistedChunksCount();
         public bool IsProcessing { get; set; } = false;
-        public bool IsCompleted => SuccessfulChunks == FileInfo.TotalChunks;
+        public bool IsCompleted => FileInfo.IsCompleted();
         public bool IsExpired
         {
             get

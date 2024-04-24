@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace EducationTech.Business.Shared.DTOs.Masters.Courses
 {
-    public class Course_GetResponseDto
+    public class Course_GetResponseDto : Abstracts.AbstractDto
     {
+        public IList<CourseDto> Courses { get; set; } = new List<CourseDto>();
     }
 }

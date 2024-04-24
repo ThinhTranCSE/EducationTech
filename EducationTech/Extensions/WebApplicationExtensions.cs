@@ -1,4 +1,6 @@
-﻿using EducationTech.Storage;
+﻿using EducationTech.Business.Abstract;
+using EducationTech.MessageQueue.Common.Abstracts;
+using EducationTech.Storage;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using System.Net;
@@ -20,41 +22,20 @@ namespace EducationTech.Extensions
                 Directory.CreateDirectory(staticFilesPath);
             }
 
-            //var provider = new FileExtensionContentTypeProvider();
-            //// Add new mappings
-            //provider.Mappings[".m3u8"] = "application/x-mpegURL";
-            //provider.Mappings[".ts"] = "video/MP2T";
+            return app;
+        }
 
-
-
-
-            //app.UseStaticFiles(new StaticFileOptions
-            //{
-            //    ContentTypeProvider = provider,
-            //    FileProvider = new PhysicalFileProvider(staticFilesPath),
-            //    OnPrepareResponse = ctx =>
-            //    {
-            //        ctx.Context.Response.Headers.Add("Cache-Control", "no-store");
-            //        //file place in Public folder do not need to authenticate
-            //        string[] strings = ctx.Context.Request.Path.Value.Split("/");
-            //        if (strings.Length > 1 && strings[1] == "Public")
-            //        {
-            //            return;
-            //        }
-            //        using (var scope = app.Services.CreateScope())
-            //        {
-            //            var authUtils = scope.ServiceProvider.GetRequiredService<IAuthUtils>();
-            //            User? user = authUtils.GetUserFromToken(ctx.Context.Request.Headers.Authorization);
-
-            //            if (user == null)
-            //            {
-            //                throw new HttpException(HttpStatusCode.Unauthorized, "Unauthorized");
-            //            }
-            //        }
-
-            //    }
-            //});
-
+        public static WebApplication ResolveAllConsumers(this WebApplication app)
+        {
+            var consumerTypes = typeof(Consumer<>).Assembly.GetExportedTypes()
+                .Where(t => t.BaseType != null
+                            && t.BaseType.IsGenericType
+                            && t.BaseType.GetGenericTypeDefinition() == typeof(Consumer<>))
+                .ToArray();
+            foreach (var consumer in consumerTypes)
+            {
+                app.Services.GetRequiredService(consumer);
+            }
 
 
             return app;

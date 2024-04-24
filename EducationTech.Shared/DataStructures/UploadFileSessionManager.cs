@@ -1,4 +1,5 @@
 ﻿using EducationTech.Storage;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,20 +10,21 @@ namespace EducationTech.Shared.DataStructures
 {
     public class UploadFileSessionManager : IDisposable
     {
-        private const int DEFAULT_CHUNK_SIZE = 1024 * 1024; //1MB
-        private const long DEFAULT_TIME_OUT = 60 * 60; //seconds
+        //private const int DEFAULT_CHUNK_SIZE = 1024 * 1024; //1MB
+        //private const long DEFAULT_TIME_OUT = 60 * 60; //seconds
         private Thread _cleanerThread;
         public int MaxChunkSize { get; private set; }
         public long SessionTimeOut { get; private set; }
         public GlobalUsings _globalUsings { get; set; }
+
         private Dictionary<Guid, UploadFileSession> _sessions = new Dictionary<Guid, UploadFileSession>();
-        public UploadFileSessionManager(int chunkSize = DEFAULT_CHUNK_SIZE, long timeOut = DEFAULT_TIME_OUT)
+        public UploadFileSessionManager(GlobalUsings globalUsings, IHostApplicationLifetime lifeTime)
         {
-            MaxChunkSize = chunkSize;
-            SessionTimeOut = timeOut;
+            MaxChunkSize = globalUsings.UploadChunkSize;
+            SessionTimeOut = globalUsings.UploadSessionTimeOut;
 
             _globalUsings = new GlobalUsings();
-
+            lifeTime.ApplicationStopping.Register(Dispose);
             _cleanerThread = new Thread(ExpiredSessionCleaner);
             _cleanerThread.Start();
         }
@@ -142,6 +144,10 @@ namespace EducationTech.Shared.DataStructures
             {
                 return;
             }
+            catch (ThreadAbortException)
+            {
+                return;
+            }
             
         }
 
@@ -155,8 +161,6 @@ namespace EducationTech.Shared.DataStructures
                 File.Delete(chunkPath);
             });
         }
-
-
         public void Dispose()
         {
             _cleanerThread.Interrupt();

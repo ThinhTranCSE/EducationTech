@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 namespace EducationTech.DataAccess.Entities.Master
 {
     [Index(nameof(Username), IsUnique = true)]
-    public class User : Model
+    public class User : Entity
     {
         public override bool Timestamp => true;
         [Key]
