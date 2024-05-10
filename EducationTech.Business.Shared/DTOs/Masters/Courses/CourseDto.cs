@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EducationTech.Business.Shared.DTOs.Abstracts;
+using EducationTech.Business.Shared.DTOs.Masters.Users;
 using EducationTech.DataAccess.Entities.Master;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,15 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
 
         public bool IsArchived { get; set; }
 
-        public double Price { get; set; }
+        public bool IsPublished { get; set; }
 
+        public DateTime PublishedAt { get; set; }
+        public double Price { get; set; }
         public string ImageUrl { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public UserDto Owner { get; set; }
+
+        public double? Rate { get; set; } = null;
 
         public override void Configure(IMapperConfigurationExpression cfg)
         {
@@ -32,6 +39,7 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
             cfg.CreateMap<Course, CourseDto>()
                 .ForMember(x => x.ImageUrl, opt => opt.MapFrom(x => $"{scheme}://{hostName}/{x.ImageUrl}"))
                 .ReverseMap();
+
         }
     }
 

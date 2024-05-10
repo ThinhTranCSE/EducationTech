@@ -1,25 +1,31 @@
 ﻿using EducationTech.DataAccess.Entities.Abstract;
-using EducationTech.DataAccess.Entities.Master;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EducationTech.DataAccess.Entities.Business
 {
-    public class Quiz : Entity
+    public class Answer : Entity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public int LessonId { get; set; }
+        public int QuestionId { get; set; }
+        public string Content { get; set; }
 
-        public int TimeLimit { get; set; }
+        public bool IsCorrect { get; set; }
 
-        public virtual Lesson Lesson { get; set; }
+        public virtual Question Question { get; set; }
+
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            ConfigureSideEffects<Quiz>(modelBuilder);
+            ConfigureSideEffects<Answer>(modelBuilder);
         }
     }
 }

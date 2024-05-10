@@ -12,7 +12,7 @@ namespace EducationTech.DataAccess.Core.Providers.MySql
             string connectionString = configuration.GetSection("Database").GetSection("ConnectionStrings")
                 .GetSection("MySql").Value;
             optionsBuidler
-                .UseLazyLoadingProxies(false)
+                //.UseLazyLoadingProxies(false)
                 .UseMySQL(connectionString);
         }
     }

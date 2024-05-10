@@ -15,8 +15,6 @@ namespace EducationTech.DataAccess.Entities.Business
 
         public string Content { get; set; }
 
-        public string Solution { get; set; }
-
         public virtual Quiz Quiz { get; set; }
 
         public override void OnModelCreating(ModelBuilder modelBuilder)

@@ -3,6 +3,7 @@ using System;
 using EducationTech.DataAccess.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EducationTech.Migrations
 {
     [DbContext(typeof(EducationTechContext))]
-    partial class MainDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240510085337_CreateAnswersTable")]
+    partial class CreateAnswersTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -316,17 +318,11 @@ namespace EducationTech.Migrations
                     b.Property<bool>("IsArchived")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("IsPublished")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("char(36)");
 
                     b.Property<double>("Price")
                         .HasColumnType("double");
-
-                    b.Property<DateTime>("PublishedAt")
-                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -645,7 +641,7 @@ namespace EducationTech.Migrations
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.LearnerCourse", b =>
                 {
                     b.HasOne("EducationTech.DataAccess.Entities.Master.Course", "Course")
-                        .WithMany("LearnerCourses")
+                        .WithMany()
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -810,11 +806,6 @@ namespace EducationTech.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Course", b =>
-                {
-                    b.Navigation("LearnerCourses");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Role", b =>

@@ -29,14 +29,14 @@ namespace EducationTech.DataAccess.Core
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Comunity> Comunities { get; set; }
-        public DbSet<Question> Questions { get; set; }
         public DbSet<Quiz> Quizzes { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Answer> Answers { get; set; }
+        public DbSet<AnswerUser> AnswerUsers {  get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Video> Videos { get; set; }
         public DbSet<UploadedFile> UploadedFiles { get; set; }
         public DbSet<Image> Images { get; set; }
-
-
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

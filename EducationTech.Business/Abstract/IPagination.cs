@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EducationTech.DataAccess.Entities.Master;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace EducationTech.Business.Abstract
         where TRequestDto : class
         where TResponseDto : class
     {
-        Task<TResponseDto> GetPaginatedData(TRequestDto requestDto, int? offset, int? limit, string? cursor);
+        Task<TResponseDto> GetPaginatedData(TRequestDto requestDto, int? offset, int? limit, string? cursor, User? currentUser);
         Task<int> GetTotalCount();
     }
 }

@@ -8,22 +8,30 @@ namespace EducationTech.Installers
     {
         public IServiceCollection InstallServicesToServiceCollection(IServiceCollection services, IConfiguration configuration)
         {
-            var redisConfiguration = new RedisConfiguration();
-            configuration.GetSection("Redis").Bind(redisConfiguration);
-            services.AddSingleton(redisConfiguration);
-
-            if(!redisConfiguration.Enabled) return services;
-
-            services.AddSingleton<IConnectionMultiplexer>(_ =>
+            try
             {
-                var host = redisConfiguration.ConnectionString;
-                return ConnectionMultiplexer.Connect(host);
-            });
 
-            services.AddStackExchangeRedisCache(options =>
+                var redisConfiguration = new RedisConfiguration();
+                configuration.GetSection("Redis").Bind(redisConfiguration);
+                services.AddSingleton(redisConfiguration);
+
+                if(!redisConfiguration.Enabled) return services;
+
+                services.AddSingleton<IConnectionMultiplexer>(_ =>
+                {
+                    var host = redisConfiguration.ConnectionString;
+                    return ConnectionMultiplexer.Connect(host);
+                });
+
+                services.AddStackExchangeRedisCache(options =>
+                {
+                    options.Configuration = redisConfiguration.ConnectionString;
+                });
+            }
+            catch
             {
-                options.Configuration = redisConfiguration.ConnectionString;
-            });
+                services.AddDistributedMemoryCache();
+            }
 
             //Log.Information("Installed RedisCache");
             return services;
