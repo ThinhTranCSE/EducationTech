@@ -1,6 +1,7 @@
 ﻿using EducationTech.MessageQueue.Common.Abstracts;
 using EducationTech.Shared.Utilities;
 using EducationTech.Shared.Utilities.Interfaces;
+using FFMpegCore.Enums;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
@@ -37,9 +38,10 @@ namespace EducationTech.MessageQueue.VideoConvert
             _videoConverter
                     .From(message.OriginalVideoPath)
                     .To(message.ConvertedVideoDirectory)
+                    .WithAudioCodec(AudioCodec.Aac)
                     .ProcessAsync()
                     .GetAwaiter()
                     .GetResult();
-        }
+        } 
     }
 }
