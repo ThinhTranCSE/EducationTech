@@ -37,6 +37,8 @@ namespace EducationTech.DataAccess.Core
         public DbSet<Video> Videos { get; set; }
         public DbSet<UploadedFile> UploadedFiles { get; set; }
         public DbSet<Image> Images { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<CourseCategory> CourseCategories { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

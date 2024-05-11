@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationTech.DataAccess.Entities.Business
 {
-    public class Comment : Entity
+    public class Comment : Entity, INestedSet
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -20,15 +20,14 @@ namespace EducationTech.DataAccess.Entities.Business
 
         public string Content { get; set; }
 
+        public int TreeId { get; set; }
         public int Left { get; set; }
-
         public int Right { get; set; }
 
         public virtual Topic Topic { get; set; }
         public virtual Comment RepliedComment { get; set; }
 
         public virtual User User { get; set; }
-
 
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {

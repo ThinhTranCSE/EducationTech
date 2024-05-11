@@ -291,6 +291,15 @@ namespace EducationTech.Business.Business
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = jwtTokenHandler.ReadJwtToken(token);
             var userId = jwtToken.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            var exp = jwtToken.Claims.FirstOrDefault(c => c.Type == "exp")?.Value;
+            if (exp == null)
+            {
+                return null;
+            }
+            if (long.Parse(exp) < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+            {
+                return null;
+            }
             return userId != null ? Guid.Parse(userId) : null;
         }
 

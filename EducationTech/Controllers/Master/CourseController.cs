@@ -1,4 +1,5 @@
-﻿using EducationTech.Business.Business.Interfaces;
+﻿using EducationTech.Annotations;
+using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Courses;
 using EducationTech.Controllers.Abstract;
@@ -17,17 +18,19 @@ namespace EducationTech.Controllers.Master
         }
 
         [HttpGet]
-        public async Task<Course_GetResponseDto> Get([FromQuery]Course_GetRequestDto requestDto) 
+        [Cache(300)]
+        public async Task<Course_GetResponseDto> GetCourses([FromQuery]Course_GetRequestDto requestDto) 
         {
             var coursesResponse = await _courseService.GetPaginatedData(requestDto, requestDto.Offset, requestDto.Limit, null, CurrentUser);
             return coursesResponse;
         }
 
         [HttpGet("{id}")]
-        public async Task<CourseDto> GetById(int id, [FromQuery]Course_GetByIdRequestDto requestDto)
+        public async Task<CourseDto> GetCourseById(int id, [FromQuery]Course_GetByIdRequestDto requestDto)
         {
             var course = await _courseService.GetCourseById(requestDto, id, CurrentUser);
             return course;
         }
+
     }
 }

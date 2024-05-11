@@ -4,6 +4,7 @@ using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Courses;
 using EducationTech.Business.Shared.Exceptions.Http;
 using EducationTech.Business.Shared.Types;
+using EducationTech.DataAccess.Business.Interfaces;
 using EducationTech.DataAccess.Core;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Master.Interfaces;
@@ -21,11 +22,13 @@ namespace EducationTech.Business.Master
     {
         private readonly ITransactionManager _transactionManager;
         private readonly ICourseRepository _courseRepository;
+        private readonly ILearnerCourseRepository _learnerCourseRepository;
         private readonly IMapper _mapper;
-        public CourseService(ITransactionManager transactionManager, ICourseRepository courseRepository, IMapper mapper)
+        public CourseService(ITransactionManager transactionManager, ICourseRepository courseRepository, ILearnerCourseRepository learnerCourseRepository, IMapper mapper)
         {
             _transactionManager = transactionManager;
             _courseRepository = courseRepository;
+            _learnerCourseRepository = learnerCourseRepository;
             _mapper = mapper;
         }
 
@@ -41,6 +44,21 @@ namespace EducationTech.Business.Master
                 query = query
                     .Include(x => x.LearnerCourses)
                     .Where(x => x.LearnerCourses.Any(y => y.LearnerId == currentUser.Id));
+            }
+            if (requestDto.IsGetGetail)
+            {
+                if (currentUser == null)
+                {
+                    throw new HttpException(HttpStatusCode.Unauthorized, "Please login to get course detail");
+                }
+                var leanerCourse = await _learnerCourseRepository.GetSingle(lc => lc.CourseId == id && lc.LearnerId == currentUser.Id, false);
+                if (leanerCourse == null)
+                {
+                    throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to view this course detail");
+                }
+                query = query
+                    .Include(x => x.CourseSections)
+                        .ThenInclude(x => x.Lessons);                        
             }
             query
                 .Include(x => x.Owner)

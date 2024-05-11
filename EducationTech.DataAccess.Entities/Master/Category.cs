@@ -1,26 +1,28 @@
 ﻿using EducationTech.DataAccess.Entities.Abstract;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EducationTech.DataAccess.Entities.Master
 {
-    public class CourseSection : Entity
+    public class Category : Abstract.Entity, INestedSet
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public string Name { get; set; }
+        public int TreeId { get; set; }
+        public int Left { get; set; }
+        public int Right { get; set; }
 
-        public int CourseId { get; set; }
-
-        public string Title { get; set; }
-        public int Order { get; set; }
-
-        public virtual Course Course { get; set; }
-        public virtual ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            ConfigureSideEffects<CourseSection>(modelBuilder);
+            ConfigureSideEffects<Category>(modelBuilder);
         }
     }
 }

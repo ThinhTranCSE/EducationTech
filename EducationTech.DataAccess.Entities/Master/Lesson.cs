@@ -1,4 +1,5 @@
 ﻿using EducationTech.DataAccess.Entities.Abstract;
+using EducationTech.DataAccess.Entities.Business;
 using EducationTech.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -16,6 +17,9 @@ namespace EducationTech.DataAccess.Entities.Master
         public int Order { get; set; }
         public LessonType Type { get; set; }
         public virtual CourseSection CourseSection { get; set; }
+
+        public virtual Video Video { get; set; }
+        public virtual Quiz Quiz { get; set; }
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<Lesson>(modelBuilder);

@@ -17,6 +17,8 @@ namespace EducationTech.DataAccess.Entities.Business
         public int TimeLimit { get; set; }
 
         public virtual Lesson Lesson { get; set; }
+        public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
+
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<Quiz>(modelBuilder);

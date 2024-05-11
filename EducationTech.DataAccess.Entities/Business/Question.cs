@@ -17,6 +17,8 @@ namespace EducationTech.DataAccess.Entities.Business
 
         public virtual Quiz Quiz { get; set; }
 
+        public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
+
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<Question>(modelBuilder);
