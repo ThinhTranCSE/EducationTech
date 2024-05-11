@@ -3,10 +3,12 @@ using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Lessons;
 using EducationTech.Controllers.Abstract;
 using EducationTech.DataAccess.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationTech.Controllers.Master
 {
+    [Authorize]
     public class LessonController : BaseController
     {
         private readonly ILessonService _lessonService;

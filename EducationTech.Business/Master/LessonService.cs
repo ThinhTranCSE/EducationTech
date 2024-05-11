@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Lessons;
+using EducationTech.Business.Shared.Exceptions.Http;
 using EducationTech.DataAccess.Business.Interfaces;
 using EducationTech.DataAccess.Core;
 using EducationTech.DataAccess.Entities.Master;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,7 +33,7 @@ namespace EducationTech.Business.Master
         {
             if (currentUser == null)
             {
-                throw new Exception("Please login to get lesson detail");
+                throw new HttpException(HttpStatusCode.Unauthorized, "Please login to get lesson detail");
             }
 
             var query = await _lessonRepository.Get();
@@ -47,11 +49,11 @@ namespace EducationTech.Business.Master
             var lesson = await query.FirstOrDefaultAsync();
             if (lesson == null)
             {
-                throw new Exception("Lesson not found");
+                throw new HttpException(HttpStatusCode.NotFound, "Lesson not found");
             }
             if(lesson.CourseSection.Course.LearnerCourses.All(x => x.LearnerId != currentUser.Id))
             {
-                throw new Exception("You dont have permission to view this lesson detail");
+                throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to view this lesson detail");
             }
 
             return _mapper.Map<LessonDto>(lesson);
