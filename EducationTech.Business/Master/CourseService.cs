@@ -60,11 +60,11 @@ namespace EducationTech.Business.Master
                     .Include(x => x.CourseSections)
                         .ThenInclude(x => x.Lessons);                        
             }
-            query
+            query = query
+                .Where(x => x.Id == id)
                 .Include(x => x.Owner)
                 .Where(x => !x.IsArchived)
-                .Where(x => x.IsPublished)
-                .Where(x => x.Id == id);
+                .Where(x => x.IsPublished);
 
             var course = await query.FirstOrDefaultAsync();
             if (course == null)

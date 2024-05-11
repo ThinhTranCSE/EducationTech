@@ -17,17 +17,11 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
     public class CourseDto : Abstracts.AbstractDto<Course, CourseDto>
     {
         public int Id { get; set; }
-
         public Guid OwnerId { get; set; }
-
         public string Description { get; set; }
-
         public string Title { get; set; }
-
         public bool IsArchived { get; set; }
-
         public bool IsPublished { get; set; }
-
         public DateTime PublishedAt { get; set; }
         public double Price { get; set; }
         public string ImageUrl { get; set; }
