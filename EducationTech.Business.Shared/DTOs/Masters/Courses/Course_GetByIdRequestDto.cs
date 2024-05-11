@@ -10,5 +10,7 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
     {
         public bool BelongToCurrentUser { get; set; } = false;
         public bool IsGetGetail { get; set; } = false;
+
+        public bool IsIncludeRate { get; set; } = false;
     }
 }

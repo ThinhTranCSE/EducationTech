@@ -60,6 +60,12 @@ namespace EducationTech.Business.Master
                     .Include(x => x.CourseSections)
                         .ThenInclude(x => x.Lessons);                        
             }
+
+            if (requestDto.IsIncludeRate)
+            {
+                query = query.Include(x => x.LearnerCourses);
+            }
+
             query = query
                 .Where(x => x.Id == id)
                 .Include(x => x.Owner)
@@ -72,6 +78,12 @@ namespace EducationTech.Business.Master
                 throw new HttpException(HttpStatusCode.NotFound, "Course not found");
             }
             var courseDto = _mapper.Map<CourseDto>(course);
+
+            if (requestDto.IsIncludeRate)
+            {
+                courseDto.Rate = course.LearnerCourses.Average(x => x.Rate);
+            }
+
             return courseDto;
         }
 
