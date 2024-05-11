@@ -23,5 +23,12 @@ namespace EducationTech.Controllers.Master
             var lesson = await _lessonService.GetLessonById(id, CurrentUser);
             return lesson;
         }
+
+        [HttpPost("SubmitAnswers")]
+        public async Task<Lesson_ValidateQuizResponseDto> SubmitAnswers(Lesson_ValidateQuizRequestDto requestDto)
+        {
+            var response = await _lessonService.SubmitAnswers(requestDto, CurrentUser);
+            return response;
+        }
     }
 }

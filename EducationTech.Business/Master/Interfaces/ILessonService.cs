@@ -12,5 +12,6 @@ namespace EducationTech.Business.Master.Interfaces
     public interface ILessonService : IService
     {
         Task<LessonDto> GetLessonById(int id, User? currentUser);
+        Task<Lesson_ValidateQuizResponseDto> SubmitAnswers(Lesson_ValidateQuizRequestDto requestDto, User? currentUser);
     }
 }

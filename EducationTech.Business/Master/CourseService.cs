@@ -138,7 +138,6 @@ namespace EducationTech.Business.Master
             }
             if(offset.HasValue && limit.HasValue)
             {
-
                 query = query
                     .Skip(offset.Value)
                     .Take(limit.Value);
