@@ -9,5 +9,6 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Lessons
     public class Lesson_ValidateQuizRequestDto
     {
         public IEnumerable<int> AnswerIds { get; set; }
+        public int QuizId { get; set; }
     }
 }

@@ -78,34 +78,41 @@ namespace EducationTech.Business.Master
         {
             if (currentUser == null)
             {
-                throw new HttpException(HttpStatusCode.Unauthorized, "Please login to validate quizzes");
+                throw new HttpException(HttpStatusCode.Unauthorized, "Please login to submit quizzes");
             }
-            HashSet<int> answerIdsSet = new HashSet<int>(requestDto.AnswerIds);
-            var quizQuery = await _answerRepositoy.Get(); 
+            var quizQuery = await _quizRepository.Get(); 
             quizQuery = quizQuery
-                .Include(x => x.Question)
-                    .ThenInclude(x => x.Quiz)
-                        .ThenInclude(x => x.Lesson)
-                            .ThenInclude(x => x.CourseSection)
-                                .ThenInclude(x => x.Course)
-                                    .ThenInclude(x => x.LearnerCourses)
-                .Where(x => x.Question.Quiz.Lesson.CourseSection.Course.LearnerCourses.Any(y => y.LearnerId == currentUser.Id))
-                .Where(x => answerIdsSet.Contains(x.Id));
-            
-            var answers = await quizQuery.ToListAsync();
-            if (answers.Count != answerIdsSet.Count)
+                .Include(q => q.Questions)
+                    .ThenInclude(q => q.Answers)
+                .Include(q => q.Lesson)
+                    .ThenInclude(q => q.CourseSection)
+                            .ThenInclude(q => q.Course)
+                                .ThenInclude(q => q.LearnerCourses)
+                .Where(q => q.Id == requestDto.QuizId)
+                .Where(q => q.Lesson.CourseSection.Course.LearnerCourses.Any(x => x.LearnerId == currentUser.Id));
+                
+            var quiz = await quizQuery.FirstOrDefaultAsync();
+            if (quiz == null)
             {
-                throw new HttpException(HttpStatusCode.BadRequest, "Invalid answer ids");
+                throw new HttpException(HttpStatusCode.NotFound, "Quiz not found or you do not have permission to submit this quiz");
             }
-            var answerUsers = answers.Select(x => new AnswerUser
+            var answerBaseIdsSet = new HashSet<int>(quiz.Questions.SelectMany(question => question.Answers).Select(a => a.Id));
+            if(requestDto.AnswerIds.Any(a => !answerBaseIdsSet.Contains(a)))
             {
-                AnswerId = x.Id,
-                UserId = currentUser.Id
-            });
-            await _answerUserRepository.Insert(answerUsers);
+                throw new HttpException(HttpStatusCode.BadRequest, "Invalid answer id");
+            }
+            var insertedAnswerUserTasks = requestDto.AnswerIds.Select(answerId => _answerUserRepository.Insert(new AnswerUser
+            {
+                UserId = currentUser.Id,
+                AnswerId = answerId
+            })).ToArray();
+
+            Task.WaitAll(insertedAnswerUserTasks);
+
             _transactionManager.SaveChanges();
 
-            var correctAnswerIds = answers.Where(x => x.IsCorrect).Select(x => x.Id).ToList();
+
+            var correctAnswerIds = quiz.Questions.SelectMany(question => question.Answers).Where(a => a.IsCorrect).Select(a => a.Id).ToArray();
             return new Lesson_ValidateQuizResponseDto
             {
                 CorrectAnswerIds = correctAnswerIds
