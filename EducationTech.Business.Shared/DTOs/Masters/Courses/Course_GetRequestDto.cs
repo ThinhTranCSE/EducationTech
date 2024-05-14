@@ -16,6 +16,8 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
         public bool IsIncludeOwner { get; set; } = false;
         public bool IsIncludeRate { get; set; } = false;
         public bool BelongToCurrentUser { get; set; } = false;
+
+        public bool CreatedByCurrentUser { get; set; } = false;
         
     }
 }

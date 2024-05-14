@@ -142,12 +142,23 @@ namespace EducationTech.Business.Master
             {
                 query = query.Include(x => x.LearnerCourses);
             }
+
+            if(requestDto.CreatedByCurrentUser)
+            {
+                if(currentUser == null)
+                {
+                    throw new HttpException(HttpStatusCode.Unauthorized, "Please login to get created courses");
+                }
+                query = query.Where(x => x.OwnerId == currentUser.Id);
+            }
+
             if(offset.HasValue && limit.HasValue)
             {
                 query = query
                     .Skip(offset.Value)
                     .Take(limit.Value);
             }
+
             var courses = await query.ToListAsync();
             var courseDtos = _mapper.ProjectTo<CourseDto>(courses.AsQueryable()).ToList();
 
