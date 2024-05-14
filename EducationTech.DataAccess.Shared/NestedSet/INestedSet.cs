@@ -11,7 +11,7 @@ namespace EducationTech.DataAccess.Shared.NestedSet
     public interface INestedSet<TNestedSetNode>
         where TNestedSetNode : class, INestedSetNode
     {
-        DbSet<TNestedSetNode> Model { get; }
+        DbSet<TNestedSetNode> EntityNode { get; }
         void SaveChanges();
     }
 }

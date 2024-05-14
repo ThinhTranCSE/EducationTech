@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace EducationTech.DataAccess.Entities.Master
 {
+    [Index(nameof(TreeId))]
     public class Category : Abstract.Entity, INestedSetNode
     {
         [Key]
@@ -20,6 +21,9 @@ namespace EducationTech.DataAccess.Entities.Master
         public int TreeId { get; set; }
         public int Left { get; set; }
         public int Right { get; set; }
+        public int? ParentId { get; set; }
+
+        public virtual Category Parent { get; set; }
 
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {

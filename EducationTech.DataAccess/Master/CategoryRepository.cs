@@ -20,6 +20,8 @@ namespace EducationTech.DataAccess.Master
 
         public override DbSet<Category> Model => _context.Categories;
 
+        public DbSet<Category> EntityNode => _context.Categories;
+
         public void SaveChanges() => _context.SaveChanges();
 
     }

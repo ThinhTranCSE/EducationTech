@@ -12,23 +12,20 @@ namespace EducationTech.DataAccess.Entities.Business
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
         public int TopicId { get; set; }
-
         public Guid UserId { get; set; }
-
-        public int RepliedCommentId { get; set; }
-
         public string Content { get; set; }
-
         public int TreeId { get; set; }
         public int Left { get; set; }
         public int Right { get; set; }
+        public int? ParentId { get; set; }
 
         public virtual Topic Topic { get; set; }
         public virtual Comment RepliedComment { get; set; }
 
         public virtual User User { get; set; }
+
+        public virtual Comment Parent { get; set; }
 
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {

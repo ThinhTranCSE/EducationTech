@@ -8,6 +8,8 @@ namespace EducationTech.DataAccess.Shared.NestedSet
 {
     public interface INestedSetNode
     {
+        int Id { get; set; }
+        int? ParentId { get; set; }
         int TreeId { get; set; }
         int Left { get; set; }
         int Right { get; set; }

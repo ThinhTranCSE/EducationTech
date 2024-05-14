@@ -1,7 +1,9 @@
 ﻿using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Master;
 using EducationTech.DataAccess.Master.Interfaces;
 using EducationTech.DataAccess.Shared.NestedSet;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +22,125 @@ namespace EducationTech.DataAccess.Seeders.Seeds
 
         public override void Seed()
         {
-            string jsonSeedData = "[\r\n  {\r\n    \"Node\": {\r\n      \"Id\": 1,\r\n      \"Name\": \"Computer Science\",\r\n      \"Left\": 1,\r\n      \"Right\": 40\r\n    },\r\n    \"Children\": [\r\n      {\r\n        \"Node\": {\r\n          \"Id\": 2,\r\n          \"Name\": \"Programming Languages\",\r\n          \"Left\": 2,\r\n          \"Right\": 11\r\n        },\r\n        \"Children\": [\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 3,\r\n              \"Name\": \"Python\",\r\n              \"Left\": 3,\r\n              \"Right\": 4\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 4,\r\n              \"Name\": \"Java\",\r\n              \"Left\": 5,\r\n              \"Right\": 6\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 5,\r\n              \"Name\": \"C++\",\r\n              \"Left\": 7,\r\n              \"Right\": 8\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 6,\r\n              \"Name\": \"JavaScript\",\r\n              \"Left\": 9,\r\n              \"Right\": 10\r\n            },\r\n            \"Children\": []\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"Node\": {\r\n          \"Id\": 7,\r\n          \"Name\": \"Algorithms and Data Structures\",\r\n          \"Left\": 12,\r\n          \"Right\": 21\r\n        },\r\n        \"Children\": [\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 8,\r\n              \"Name\": \"Sorting Algorithms\",\r\n              \"Left\": 13,\r\n              \"Right\": 14\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 9,\r\n              \"Name\": \"Search Algorithms\",\r\n              \"Left\": 15,\r\n              \"Right\": 16\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 10,\r\n              \"Name\": \"Graph Algorithms\",\r\n              \"Left\": 17,\r\n              \"Right\": 18\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 11,\r\n              \"Name\": \"Data Structures (e.g., Trees, Graphs)\",\r\n              \"Left\": 19,\r\n              \"Right\": 20\r\n            },\r\n            \"Children\": []\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"Node\": {\r\n          \"Id\": 12,\r\n          \"Name\": \"Software Development\",\r\n          \"Left\": 22,\r\n          \"Right\": 31\r\n        },\r\n        \"Children\": [\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 13,\r\n              \"Name\": \"Agile Methodologies\",\r\n              \"Left\": 23,\r\n              \"Right\": 24\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 14,\r\n              \"Name\": \"Software Testing\",\r\n              \"Left\": 25,\r\n              \"Right\": 26\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 15,\r\n              \"Name\": \"Version Control (e.g., Git)\",\r\n              \"Left\": 27,\r\n              \"Right\": 28\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 16,\r\n              \"Name\": \"Software Architecture\",\r\n              \"Left\": 29,\r\n              \"Right\": 30\r\n            },\r\n            \"Children\": []\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"Node\": {\r\n          \"Id\": 17,\r\n          \"Name\": \"Artificial Intelligence\",\r\n          \"Left\": 32,\r\n          \"Right\": 41\r\n        },\r\n        \"Children\": [\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 18,\r\n              \"Name\": \"Machine Learning\",\r\n              \"Left\": 33,\r\n              \"Right\": 34\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 19,\r\n              \"Name\": \"Natural Language Processing\",\r\n              \"Left\": 35,\r\n              \"Right\": 36\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 20,\r\n              \"Name\": \"Neural Networks\",\r\n              \"Left\": 37,\r\n              \"Right\": 38\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 21,\r\n              \"Name\": \"Computer Vision\",\r\n              \"Left\": 39,\r\n              \"Right\": 40\r\n            },\r\n            \"Children\": []\r\n          }\r\n        ]\r\n      }\r\n    ]\r\n  },\r\n  {\r\n    \"Node\": {\r\n      \"Id\": 22,\r\n      \"Name\": \"Data Science\",\r\n      \"Left\": 42,\r\n      \"Right\": 83\r\n    },\r\n    \"Children\": [\r\n      {\r\n        \"Node\": {\r\n          \"Id\": 23,\r\n          \"Name\": \"Data Analysis\",\r\n          \"Left\": 43,\r\n          \"Right\": 52\r\n        },\r\n        \"Children\": [\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 24,\r\n              \"Name\": \"Exploratory Data Analysis\",\r\n              \"Left\": 44,\r\n              \"Right\": 45\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 25,\r\n              \"Name\": \"Statistical Analysis\",\r\n              \"Left\": 46,\r\n              \"Right\": 47\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 26,\r\n              \"Name\": \"Data Cleaning\",\r\n              \"Left\": 48,\r\n              \"Right\": 49\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 27,\r\n              \"Name\": \"Data Wrangling\",\r\n              \"Left\": 50,\r\n              \"Right\": 51\r\n            },\r\n            \"Children\": []\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"Node\": {\r\n          \"Id\": 28,\r\n          \"Name\": \"Machine Learning\",\r\n          \"Left\": 53,\r\n          \"Right\": 62\r\n        },\r\n        \"Children\": [\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 29,\r\n              \"Name\": \"Supervised Learning\",\r\n              \"Left\": 54,\r\n              \"Right\": 55\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 30,\r\n              \"Name\": \"Unsupervised Learning\",\r\n              \"Left\": 56,\r\n              \"Right\": 57\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 31,\r\n              \"Name\": \"Reinforcement Learning\",\r\n              \"Left\": 58,\r\n              \"Right\": 59\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 32,\r\n              \"Name\": \"Deep Learning\",\r\n              \"Left\": 60,\r\n              \"Right\": 61\r\n            },\r\n            \"Children\": []\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"Node\": {\r\n          \"Id\": 33,\r\n          \"Name\": \"Big Data\",\r\n          \"Left\": 63,\r\n          \"Right\": 72\r\n        },\r\n        \"Children\": [\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 34,\r\n              \"Name\": \"Hadoop\",\r\n              \"Left\": 64,\r\n              \"Right\": 65\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 35,\r\n              \"Name\": \"Spark\",\r\n              \"Left\": 66,\r\n              \"Right\": 67\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 36,\r\n              \"Name\": \"Big Data Analytics\",\r\n              \"Left\": 68,\r\n              \"Right\": 69\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 37,\r\n              \"Name\": \"Big Data Storage\",\r\n              \"Left\": 70,\r\n              \"Right\": 71\r\n            },\r\n            \"Children\": []\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"Node\": {\r\n          \"Id\": 38,\r\n          \"Name\": \"Data Visualization\",\r\n          \"Left\": 73,\r\n          \"Right\": 82\r\n        },\r\n        \"Children\": [\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 39,\r\n              \"Name\": \"Data Visualization Tools\",\r\n              \"Left\": 74,\r\n              \"Right\": 75\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 40,\r\n              \"Name\": \"Graphs and Charts\",\r\n              \"Left\": 76,\r\n              \"Right\": 77\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 41,\r\n              \"Name\": \"Interactive Dashboards\",\r\n              \"Left\": 78,\r\n              \"Right\": 79\r\n            },\r\n            \"Children\": []\r\n          },\r\n          {\r\n            \"Node\": {\r\n              \"Id\": 42,\r\n              \"Name\": \"Data Storytelling\",\r\n              \"Left\": 80,\r\n              \"Right\": 81\r\n            },\r\n            \"Children\": []\r\n          }\r\n        ]\r\n      }\r\n    ]\r\n  },\r\n  {\r\n    \"Node\": {\r\n      \"Id\": 43,\r\n      \"Name\": \"Business Management\",\r\n      \"Left\": 84,\r\n      \"Right\": 123\r\n    },\r\n    \"Children\": [\r\n      {\r\n        \"Node\": {\r\n          \"Id\": 44,\r\n          \"Name\": \"Strategic Management\",\r\n          \"Left\": 85,\r\n";
-            //IEnumerable<NestedSetRecursiveDto> seedData = 
+            string jsonSeedData = @"
+            [
+              {
+                ""Name"": ""Science & Engineering"",
+                ""Children"": [
+                  {
+                    ""Name"": ""Basic Science"",
+                    ""Children"": [
+                      {""Name"": ""Mathematics""},
+                      {""Name"": ""Physics""},
+                      {""Name"": ""Chemistry""}
+                    ]
+                  },
+                  {
+                    ""Name"": ""Information Technology"",
+                    ""Children"": [
+                      {""Name"": ""Computer Science""},
+                      {""Name"": ""Software Engineering""},
+                      {""Name"": ""Data Science""}
+                    ]
+                  },
+                  {
+                    ""Name"": ""Construction Engineering"",
+                    ""Children"": [
+                      {""Name"": ""Civil Engineering""},
+                      {""Name"": ""Mechanical Engineering""},
+                      {""Name"": ""Electrical Engineering""}
+                    ]
+                  }
+                ]
+              },
+              {
+                ""Name"": ""Arts & Culture"",
+                ""Children"": [
+                  {
+                    ""Name"": ""Painting & Graphics"",
+                    ""Children"": [
+                      {""Name"": ""Fine Arts""},
+                      {""Name"": ""Graphic Design""},
+                      {""Name"": ""Digital Art""}
+                    ]
+                  },
+                  {
+                    ""Name"": ""Music & Sound"",
+                    ""Children"": [
+                      {""Name"": ""Music Theory""},
+                      {""Name"": ""Instrumental Music""},
+                      {""Name"": ""Vocal Music""}
+                    ]
+                  },
+                  {
+                    ""Name"": ""Literature & Culture"",
+                    ""Children"": [
+                      {""Name"": ""English Literature""},
+                      {""Name"": ""World Literature""},
+                      {""Name"": ""Creative Writing""}
+                    ]
+                  }
+                ]
+              },
+              {
+                ""Name"": ""Business & Finance"",
+                ""Children"": [
+                  {
+                    ""Name"": ""Business Management"",
+                    ""Children"": [
+                      {""Name"": ""Leadership""},
+                      {""Name"": ""Strategic Management""},
+                      {""Name"": ""Organizational Behavior""}
+                    ]
+                  },
+                  {
+                    ""Name"": ""Personal Finance"",
+                    ""Children"": [
+                      {""Name"": ""Budgeting""},
+                      {""Name"": ""Investing""},
+                      {""Name"": ""Retirement Planning""}
+                    ]
+                  },
+                  {
+                    ""Name"": ""Marketing & PR"",
+                    ""Children"": [
+                      {""Name"": ""Market Research""},
+                      {""Name"": ""Brand Management""},
+                      {""Name"": ""Digital Marketing""}
+                    ]
+                  }
+                ]
+              }
+            ]";
+            List<Node> nodes = JsonConvert.DeserializeObject<List<Node>>(jsonSeedData)!;
+            foreach (var node in nodes)
+            {
+                InsertCategory(node, null);
+            }
+
         }
+
+        private void InsertCategory(Node node, Category? parent)
+        {
+            if (_categoryRepository.EntityNode.Any(c => c.Name == node.Name))
+            {
+                return;
+            }
+            var category = _categoryRepository.AddNode(parent, new Category
+            {
+                Name = node.Name,
+                ParentId = parent?.Id
+            });
+            foreach(var childNode in node.Children)
+            {
+                InsertCategory(childNode, category);
+            }
+        }
+    }
+
+    internal class Node
+    {
+        public string Name { get; set; }
+        public List<Node> Children { get; set; } = new List<Node>();
     }
 }
