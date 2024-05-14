@@ -54,7 +54,7 @@ namespace EducationTech.Business.Master
                     //throw new HttpException(HttpStatusCode.Unauthorized, "Please login to get course detail");
                     flag = true;
                 }
-                var leanerCourse = await _learnerCourseRepository.GetSingle(lc => lc.CourseId == id && lc.LearnerId == currentUser.Id, false);
+                var leanerCourse = !flag ? await _learnerCourseRepository.GetSingle(lc => lc.CourseId == id && lc.LearnerId == currentUser.Id, false) : null;
                 if (leanerCourse == null)
                 {
                     //throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to view this course detail");
