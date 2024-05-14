@@ -37,13 +37,12 @@ namespace EducationTech.Business.Master
             var query = await _courseRepository.Get();
             if (requestDto.BelongToCurrentUser)
             {
-                if (currentUser == null)
+                if (currentUser != null)
                 {
-                    throw new HttpException(HttpStatusCode.Unauthorized, "Please login to get buyed courses");
+                    query = query
+                        .Include(x => x.LearnerCourses)
+                        .Where(x => x.LearnerCourses.Any(y => y.LearnerId == currentUser.Id));
                 }
-                query = query
-                    .Include(x => x.LearnerCourses)
-                    .Where(x => x.LearnerCourses.Any(y => y.LearnerId == currentUser.Id));
             }
             if (requestDto.IsGetGetail)
             {
