@@ -1,5 +1,6 @@
 ﻿using EducationTech.DataAccess.Entities.Abstract;
 using EducationTech.DataAccess.Entities.Master;
+using EducationTech.DataAccess.Shared.NestedSet;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

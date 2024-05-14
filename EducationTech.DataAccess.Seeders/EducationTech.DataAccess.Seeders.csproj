@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EducationTech.Business\EducationTech.Business.csproj" />
+    <ProjectReference Include="..\EducationTech.DataAccess.Shared\EducationTech.DataAccess.Shared.csproj" />
   </ItemGroup>
 
 </Project>
