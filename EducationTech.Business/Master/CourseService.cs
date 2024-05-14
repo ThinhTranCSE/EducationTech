@@ -37,27 +37,34 @@ namespace EducationTech.Business.Master
             var query = await _courseRepository.Get();
             if (requestDto.BelongToCurrentUser)
             {
-                if (currentUser != null)
-                {
-                    query = query
-                        .Include(x => x.LearnerCourses)
-                        .Where(x => x.LearnerCourses.Any(y => y.LearnerId == currentUser.Id));
-                }
-            }
-            if (requestDto.IsGetGetail)
-            {
                 if (currentUser == null)
                 {
-                    throw new HttpException(HttpStatusCode.Unauthorized, "Please login to get course detail");
+                    throw new HttpException(HttpStatusCode.Unauthorized, "Please login to get buyed courses");
+                }
+                query = query
+                    .Include(x => x.LearnerCourses)
+                    .Where(x => x.LearnerCourses.Any(y => y.LearnerId == currentUser.Id));
+            }
+            if (requestDto.IsGetDetail)
+            {
+                var beforeChangeQuery = query;
+                var flag = false;
+                if (currentUser == null)
+                {
+                    //throw new HttpException(HttpStatusCode.Unauthorized, "Please login to get course detail");
+                    flag = true;
                 }
                 var leanerCourse = await _learnerCourseRepository.GetSingle(lc => lc.CourseId == id && lc.LearnerId == currentUser.Id, false);
                 if (leanerCourse == null)
                 {
-                    throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to view this course detail");
+                    //throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to view this course detail");
+                    flag = true;
                 }
                 query = query
                     .Include(x => x.CourseSections)
-                        .ThenInclude(x => x.Lessons);                        
+                        .ThenInclude(x => x.Lessons);
+                
+                if (flag) { query = beforeChangeQuery; }
             }
 
             if (requestDto.IsIncludeRate)
