@@ -1,4 +1,5 @@
 ﻿using EducationTech.DataAccess.Entities.Abstract;
+using EducationTech.DataAccess.Shared.NestedSet;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EducationTech.DataAccess.Entities.Master
 {
-    public class Category : Abstract.Entity, INestedSet
+    public class Category : Abstract.Entity, INestedSetNode
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

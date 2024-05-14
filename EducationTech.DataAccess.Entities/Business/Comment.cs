@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationTech.DataAccess.Entities.Business
 {
-    public class Comment : Entity, INestedSet
+    public class Comment : Entity, INestedSetNode
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

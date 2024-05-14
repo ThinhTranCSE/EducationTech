@@ -1,7 +1,7 @@
-﻿
-using EducationTech.DataAccess.Core;
+﻿using EducationTech.DataAccess.Core;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Shared.Enums;
+using EducationTech.Shared.Enums;
 
 namespace EducationTech.DataAccess.Seeders.Seeds
 {

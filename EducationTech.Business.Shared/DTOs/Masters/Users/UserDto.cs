@@ -1,4 +1,5 @@
-﻿using EducationTech.DataAccess.Entities.Master;
+﻿using EducationTech.Business.Shared.DTOs.Masters.UserRoles;
+using EducationTech.DataAccess.Entities.Master;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,12 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Users
         public Guid Id { get; set; }
         public string Username { get; set; } = "";
 
-        //public string? PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         //public string? Email { get; set; }
 
         //public DateTime? DateOfBirth { get; set; }
+
+        public ICollection<UserRoleDto> UserRoles { get; set; }
     }
 }

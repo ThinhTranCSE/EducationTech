@@ -6,6 +6,7 @@ using EducationTech.DataAccess.Core;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.Business.Shared.Exceptions.Http;
 using EducationTech.Business.Shared.DTOs.Masters.Users;
+using AutoMapper;
 
 namespace EducationTech.Business.Master
 {
@@ -15,22 +16,24 @@ namespace EducationTech.Business.Master
         private readonly IRoleRepository _roleRepository;
         private readonly ITransactionManager _transactionManager;
         private readonly IUserRoleRepository _userRoleRepository;
-        public UserService(ITransactionManager transactionFactory, IUserRepository userRepository, IRoleRepository roleRepository, IUserRoleRepository userRoleRepository)
+        private readonly IMapper _mapper;
+        public UserService(ITransactionManager transactionFactory, IUserRepository userRepository, IRoleRepository roleRepository, IUserRoleRepository userRoleRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _transactionManager = transactionFactory;
             _userRoleRepository = userRoleRepository;
+            _mapper = mapper;
         }
 
 
-        public async Task<User?> GetUserById(Guid id)
+        public async Task<UserDto?> GetUserById(Guid id)
         {
             var user = (await _userRepository.Get(u => u.Id == id))
                 .Include(u => u.Roles)
                 .FirstOrDefault();
 
-            return user;
+            return _mapper.Map<UserDto>(user);
         }
 
         public async Task<User?> UpdateUser(Guid userId, User_UpdateDto updateDto, User currentUser)

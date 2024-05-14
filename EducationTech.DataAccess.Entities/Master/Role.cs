@@ -15,11 +15,10 @@ namespace EducationTech.DataAccess.Entities.Master
         [Required(ErrorMessage = "Role must have specific name")]
         public string Name { get; set; } = "";
 
-        [IgnoreDataMember]
         public virtual ICollection<User> Users { get; set; }
-
-        [IgnoreDataMember]
         public virtual ICollection<UserRole> UserRoles { get; set; }
+
+        public virtual ICollection<RolePermission> RolePermissions { get; set; }
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<Role>(modelBuilder);

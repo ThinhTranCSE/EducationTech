@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EducationTech.DataAccess.Entities.Abstract
+namespace EducationTech.DataAccess.Shared.NestedSet
 {
-    public interface INestedSet
+    public interface INestedSetNode
     {
         int TreeId { get; set; }
         int Left { get; set; }

@@ -46,7 +46,16 @@ namespace EducationTech.Business.Business
 
         public async Task<TokensReponseDto> Login(LoginDto loginDto)
         {
-            User? user = await _userRepository.GetUserByUsername(loginDto.Username);
+            var userQuery = await _userRepository.Get(u => u.Username == loginDto.Username);
+            userQuery = userQuery
+                .Include(u => u.UserKey)
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                        .ThenInclude(r => r.RolePermissions)
+                            .ThenInclude(rp => rp.Permission);
+            User? user = await userQuery.FirstOrDefaultAsync();
+                        
+                
 
             if (user == null)
             {
@@ -65,6 +74,9 @@ namespace EducationTech.Business.Business
             .Concat(
                 user.UserRoles.Select(r => new Claim("roles", r.Role.Name))
              )
+            .Concat(
+                user.UserRoles.Select(us => us.Role).SelectMany(r => r.RolePermissions).Select(rp => new Claim("permissions", rp.Permission.Name))
+            )
             .ToArray();
 
             var refreshClaims = new Claim[]

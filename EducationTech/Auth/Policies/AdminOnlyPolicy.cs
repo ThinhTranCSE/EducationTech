@@ -1,5 +1,6 @@
 ﻿using EducationTech.Auth.Policies.Abstract;
 using EducationTech.DataAccess.Shared.Enums;
+using EducationTech.Shared.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 

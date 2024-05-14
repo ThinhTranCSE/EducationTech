@@ -6,7 +6,7 @@ namespace EducationTech.Business.Master.Interfaces
 {
     public interface IUserService : IService
     {
-        Task<User?> GetUserById(Guid id);
+        Task<UserDto?> GetUserById(Guid id);
         Task<User?> UpdateUser(Guid userId, User_UpdateDto updateDto, User currentUser);
     }
 }

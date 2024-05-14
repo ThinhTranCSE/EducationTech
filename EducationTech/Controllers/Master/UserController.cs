@@ -22,15 +22,16 @@ namespace EducationTech.Controllers.Master
         }
 
         [HttpGet("{id}")]
-        public async Task<User?> GetUserById(Guid id)
+        public async Task<UserDto?> GetUserById(Guid id)
         {
             return await _userService.GetUserById(id);
         }
 
         [HttpGet("me")]
-        public async Task<User?> GetCurrentUser()
-        {
-            return CurrentUser;
+        public async Task<UserDto?> GetCurrentUser()
+        {  
+
+            return await _userService.GetUserById(CurrentUser.Id);
         }
 
         [HttpPatch("{id}")]
