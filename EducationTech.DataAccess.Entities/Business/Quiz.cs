@@ -11,9 +11,7 @@ namespace EducationTech.DataAccess.Entities.Business
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
         public int LessonId { get; set; }
-
         public int TimeLimit { get; set; }
 
         public virtual Lesson Lesson { get; set; }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EducationTech.Business.Shared.DTOs.Abstracts;
+using EducationTech.Business.Shared.DTOs.Masters.CourseCategories;
 using EducationTech.Business.Shared.DTOs.Masters.CourseSections;
 using EducationTech.Business.Shared.DTOs.Masters.Quizzes;
 using EducationTech.Business.Shared.DTOs.Masters.Users;
@@ -28,8 +29,8 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
         public DateTimeOffset CreatedAt { get; set; }
         public UserDto Owner { get; set; }
         public double? Rate { get; set; } = null;
-
         public ICollection<CourseSectionDto> CourseSections { get; set; }
+        public ICollection<CourseCategoryDto> CurseCategories { get; set; }
         public override void Configure(IMapperConfigurationExpression cfg)
         {
             string hostName = AbstractDto<Course, CourseDto>.GlobalUsings.HostName;

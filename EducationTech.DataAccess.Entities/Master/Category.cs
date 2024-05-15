@@ -11,19 +11,14 @@ using System.Threading.Tasks;
 
 namespace EducationTech.DataAccess.Entities.Master
 {
-    [Index(nameof(TreeId))]
     public class Category : Abstract.Entity, INestedSetNode
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Name { get; set; }
-        public int TreeId { get; set; }
         public int Left { get; set; }
         public int Right { get; set; }
-        public int? ParentId { get; set; }
-
-        public virtual Category Parent { get; set; }
 
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {

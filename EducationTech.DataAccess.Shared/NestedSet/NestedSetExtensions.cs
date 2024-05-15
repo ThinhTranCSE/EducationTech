@@ -13,7 +13,7 @@ namespace EducationTech.DataAccess.Shared.NestedSet
             where TNestedSetNode : class, INestedSetNode
         {
             return nestedSet.EntityNode
-                .Where(n => n.TreeId == currentNode.TreeId && n.Left > currentNode.Left && n.Right < currentNode.Right)
+                .Where(n => n.Left > currentNode.Left && n.Right < currentNode.Right)
                 .OrderBy(n => n.Left);
         }
 
@@ -21,7 +21,7 @@ namespace EducationTech.DataAccess.Shared.NestedSet
             where TNestedSetNode : class, INestedSetNode
         {
             return nestedSet.EntityNode
-                .Where(n => n.TreeId == currentNode.TreeId && n.Left < currentNode.Left && n.Right > currentNode.Right)
+                .Where(n => n.Left < currentNode.Left && n.Right > currentNode.Right)
                 .OrderBy(n => n.Left);
         }
         public static TNestedSetNode? GetParent<TNestedSetNode>(this INestedSet<TNestedSetNode> nestedSet, TNestedSetNode currentNode)
@@ -34,40 +34,33 @@ namespace EducationTech.DataAccess.Shared.NestedSet
             where TNestedSetNode : class, INestedSetNode
         {
             return nestedSet.EntityNode
-                .Where(n => n.TreeId == currentNode.TreeId && n.Left >= currentNode.Left && n.Right <= currentNode.Right)
-                .OrderBy(n => n.Left);
+                .Where(n => n.Left >= currentNode.Left && n.Right <= currentNode.Right)
+                .OrderBy(n => n.Left)
+                .ToArray();
         }
 
-        public static TNestedSetNode AddNode<TNestedSetNode>(this INestedSet<TNestedSetNode> nestedSet, TNestedSetNode? parentNode, TNestedSetNode addedNode)
+        public static TNestedSetNode AddNode<TNestedSetNode>(this INestedSet<TNestedSetNode> nestedSet, int? leftBound, TNestedSetNode addedNode)
             where TNestedSetNode : class, INestedSetNode
         {
-            if(parentNode == null)
-            {   
-                int newTreeId = nestedSet.EntityNode.Count() == 0 ? 1 : nestedSet.EntityNode.Max(n => n.TreeId) + 1;
-                addedNode.TreeId = newTreeId;
-                addedNode.Left = 1;
-                addedNode.Right = 2;
-                nestedSet.EntityNode.Add(addedNode);
-                nestedSet.SaveChanges();
-                return addedNode;
-            }
+            int right = Math.Max(leftBound ?? 0, 0);
 
             nestedSet.EntityNode
-                .Where(n => n.TreeId == parentNode.TreeId && n.Left > parentNode.Right)
+                .Where(n => n.Right > right)
+                .ToList()
+                .ForEach(n => n.Right += 2);
+            
+            nestedSet.EntityNode
+                .Where(n => n.Left > right)
                 .ToList()
                 .ForEach(n => n.Left += 2);
 
-            nestedSet.EntityNode
-                .Where(n => n.TreeId == parentNode.TreeId && n.Right >= parentNode.Right)
-                .ToList()
-                .ForEach(n => n.Right += 2);
+            addedNode.Left = right + 1;
+            addedNode.Right = right + 2;
 
-            addedNode.TreeId = parentNode.TreeId;
-            addedNode.Left = parentNode.Right;
-            addedNode.Right = parentNode.Right + 1;
             nestedSet.EntityNode.Add(addedNode);
 
             nestedSet.SaveChanges();
+
             return addedNode;
         }
 
@@ -77,17 +70,21 @@ namespace EducationTech.DataAccess.Shared.NestedSet
         {
             int width = removedNode.Right - removedNode.Left + 1;
 
-            nestedSet.EntityNode
-                .Where(n => n.TreeId == removedNode.TreeId && n.Left > removedNode.Right)
-                .ToList()
-                .ForEach(n => n.Left -= width);
+            var removedNodes = nestedSet.EntityNode
+                .Where(n => n.Left >= removedNode.Left && n.Left <= removedNode.Right)
+                .ToList();
+            nestedSet.EntityNode.RemoveRange(removedNodes);
 
             nestedSet.EntityNode
-                .Where(n => n.TreeId == removedNode.TreeId && n.Right > removedNode.Right)
+                .Where(n => n.Right > removedNode.Right)
                 .ToList()
                 .ForEach(n => n.Right -= width);
 
-            nestedSet.EntityNode.Remove(removedNode);
+            nestedSet.EntityNode
+                .Where(n => n.Left > removedNode.Right)
+                .ToList()
+                .ForEach(n => n.Left -= width);
+
             nestedSet.SaveChanges();
         }
 
@@ -113,51 +110,24 @@ namespace EducationTech.DataAccess.Shared.NestedSet
 
         }
 
-        //public static NestedSetRecursiveDto<TNestedSetNode> ToRecursiveViewing<TNestedSetNode>(this IEnumerable<TNestedSetNode> nodes, TNestedSetNode? root = null)
-        //    where TNestedSetNode : class, INestedSetNode
-        //{
-        //    if(nodes.Count() == 0)
-        //    {
-        //        return new NestedSetRecursiveDto<TNestedSetNode>();
-        //    }
-        //    if (root == null)
-        //    {
-        //        root = nodes.OrderBy(n => n.Left).FirstOrDefault()!;
-        //    }
-        //    return new NestedSetRecursiveDto<TNestedSetNode>
-        //    {
-        //        Node = root,
-        //        Children = nodes.GetImmediateChildren(root).Select(c => nodes.ToRecursiveViewing(c))
-        //    };
-        //}
 
-        public static IEnumerable<NestedSetRecursiveNodeDto<TNestedSetNode>> ToTrees<TNestedSetNode>(this IEnumerable<TNestedSetNode> nodes)
+        public static ICollection<NestedSetRecursiveNodeDto<TNestedSetNode>> ToTrees<TNestedSetNode>(this IEnumerable<TNestedSetNode> nodes, int left = 0, int? right = null)
             where TNestedSetNode : class, INestedSetNode
         {
-            var nodeDictionay = new Dictionary<int, NestedSetRecursiveNodeDto<TNestedSetNode>>();
-
-            foreach(var node in nodes)
+            var tree = new Dictionary<TNestedSetNode, ICollection<NestedSetRecursiveNodeDto<TNestedSetNode>>>();
+            foreach (var node in nodes)
             {
-                var recursiveNode = new NestedSetRecursiveNodeDto<TNestedSetNode>
+                if(node.Left == left + 1 && (right == null || node.Right < right))
                 {
-                    Node = node
-                };
-                nodeDictionay.TryAdd(node.Id, recursiveNode);
-            }
-            foreach(var node in nodes)
-            {
-                if(node.ParentId == null)
-                {
-                    continue;
-                }
-                if(nodeDictionay.TryGetValue(node.ParentId.Value, out var parentRecursiveNode))
-                {
-                    var recursiveNode = nodeDictionay[node.Id];
-                    parentRecursiveNode.Children.Add(recursiveNode);
+                    tree.Add(node, nodes.ToTrees(node.Left, node.Right));
+                    left = node.Right;
                 }
             }
-            return nodeDictionay.Values.Where(n => n.Node.ParentId == null);
-
+            return tree.Select(kvp => new NestedSetRecursiveNodeDto<TNestedSetNode>
+            {
+                Node = kvp.Key,
+                Children = kvp.Value
+            }).OrderBy(n => n.Node.Left).ToList();
         }
 
     }

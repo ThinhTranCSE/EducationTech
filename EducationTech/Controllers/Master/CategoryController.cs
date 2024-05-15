@@ -22,10 +22,11 @@ namespace EducationTech.Controllers.Master
             return await _categoryService.GetCategories();
         }
 
-        [HttpGet("{treeId}")]
-        public async Task<NestedSetRecursiveNodeDto<CategoryDto>> GetCategoryByTreeId(int treeId)
+        [HttpDelete("{id}")]
+        public async Task<IEnumerable<NestedSetRecursiveNodeDto<CategoryDto>>> DeleteCategories(int id)
         {
-            return await _categoryService.GetCategoryByTreeId(treeId);
+            return await _categoryService.DeleteCategories(id);
         }
+
     }
 }

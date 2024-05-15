@@ -22,32 +22,47 @@ namespace EducationTech.Business.Master
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
-        }   
+        }
+
 
         public async Task<IEnumerable<NestedSetRecursiveNodeDto<CategoryDto>>> GetCategories()
         {
 
             var query = await _categoryRepository.Get();
             List<Category> categories = await query.ToListAsync()!;
-            
+            int left = categories.Min(x => x.Left) - 1;
+
+
             var categoryDtos = _mapper.Map<List<CategoryDto>>(categories);
 
-            var trees = categoryDtos.ToTrees();
+            var trees = categoryDtos.ToTrees(left);
 
             return trees;
         }
 
-        public async Task<NestedSetRecursiveNodeDto<CategoryDto>> GetCategoryByTreeId(int treeId)
+        public async Task<IEnumerable<NestedSetRecursiveNodeDto<CategoryDto>>> DeleteCategories(int id)
         {
             var query = await _categoryRepository.Get();
-            query = query.Where(x => x.TreeId == treeId);
-            var categories = await query.ToListAsync()!;
+            query = query.Where(x => x.Id == id);
 
-            var categoryDtos = _mapper.Map<List<CategoryDto>>(categories);
+            var category = await query.FirstOrDefaultAsync()!;
 
-            var trees = categoryDtos.ToTrees();
+            if (category == null)
+            {
+                throw new Exception("Category not found");
+            }
 
-            return trees.FirstOrDefault();
+            var categoryTree = _categoryRepository.GetTree(category);
+            int left = category.Left - 1;
+
+            _categoryRepository.RemoveNode(category);
+
+            var categoryDtos = _mapper.Map<List<CategoryDto>>(categoryTree);
+           
+
+            var tree = categoryDtos.ToTrees(left);
+
+            return tree;
         }
     }
 }

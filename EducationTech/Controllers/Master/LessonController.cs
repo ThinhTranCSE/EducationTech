@@ -30,5 +30,12 @@ namespace EducationTech.Controllers.Master
             var response = await _lessonService.SubmitAnswers(requestDto, CurrentUser);
             return response;
         }
+
+        [HttpPost]
+        public async Task<LessonDto> CreateLesson([FromBody]Lesson_CreateRequestDto requestDto)
+        {
+            var lesson = await _lessonService.CreateLesson(requestDto, CurrentUser);
+            return lesson;
+        }
     }
 }

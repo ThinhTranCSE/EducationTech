@@ -4,6 +4,7 @@ using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Courses;
 using EducationTech.Controllers.Abstract;
 using EducationTech.DataAccess.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.CompilerServices;
 
@@ -29,6 +30,14 @@ namespace EducationTech.Controllers.Master
         public async Task<CourseDto> GetCourseById(int id, [FromQuery]Course_GetByIdRequestDto requestDto)
         {
             var course = await _courseService.GetCourseById(requestDto, id, CurrentUser);
+            return course;
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "UploadCourse")]
+        public async Task<CourseDto> CreateCourse([FromBody]Course_CreateRequestDto requestDto)
+        {
+            var course = await _courseService.CreateCourse(requestDto, CurrentUser);
             return course;
         }
 

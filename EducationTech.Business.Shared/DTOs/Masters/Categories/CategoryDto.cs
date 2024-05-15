@@ -13,9 +13,7 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Categories
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int TreeId { get; set; }
         public int Left { get; set; }
         public int Right { get; set; }
-        public int? ParentId { get; set; }
     }
 }

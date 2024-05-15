@@ -12,6 +12,6 @@ namespace EducationTech.Business.Master.Interfaces
     public interface ICategoryService : IService
     {
         Task<IEnumerable<NestedSetRecursiveNodeDto<CategoryDto>>> GetCategories();
-        Task<NestedSetRecursiveNodeDto<CategoryDto>> GetCategoryByTreeId(int treeId);
+        Task<IEnumerable<NestedSetRecursiveNodeDto<CategoryDto>>> DeleteCategories(int id);
     }
 }

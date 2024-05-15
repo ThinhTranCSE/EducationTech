@@ -1,0 +1,27 @@
+﻿using EducationTech.Business.Business.Interfaces;
+using EducationTech.Business.Master.Interfaces;
+using EducationTech.Business.Shared.DTOs.Masters.CourseSections;
+using EducationTech.Controllers.Abstract;
+using EducationTech.DataAccess.Core;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace EducationTech.Controllers.Master
+{
+    [Authorize]
+    public class CourseSectionController : BaseController
+    {
+        private readonly ICourseSectionService _courseSectionService;
+        public CourseSectionController(EducationTechContext context, IAuthService authService, ICourseSectionService courseSectionService) : base(context, authService)
+        {
+            _courseSectionService = courseSectionService;
+        }
+
+        [HttpPost]
+        public async Task<CourseSectionDto> CreateCourseSection([FromBody]CourseSection_CreateRequestDto requestDto)
+        {
+            var courseSection = await _courseSectionService.CreateCourseSection(requestDto, CurrentUser);
+            return courseSection;
+        }
+    }
+}

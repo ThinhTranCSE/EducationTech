@@ -113,28 +113,29 @@ namespace EducationTech.DataAccess.Seeders.Seeds
               }
             ]";
             List<Node> nodes = JsonConvert.DeserializeObject<List<Node>>(jsonSeedData)!;
+            int leftBound = 0;
             foreach (var node in nodes)
             {
-                InsertCategory(node, null);
+                leftBound = InsertCategory(leftBound, node);
             }
 
         }
 
-        private void InsertCategory(Node node, Category? parent)
+        private int InsertCategory(int? leftBound, Node node)
         {
-            if (_categoryRepository.EntityNode.Any(c => c.Name == node.Name))
+            var exitedCategory = _context.Categories.Where(c => c.Name == node.Name).FirstOrDefault();
+            if (exitedCategory != null)
             {
-                return;
+                return exitedCategory.Right;
             }
-            var category = _categoryRepository.AddNode(parent, new Category
+            var category = _categoryRepository.AddNode(leftBound, new Category { Name = node.Name });
+            int left = category.Left;
+            foreach (var child in node.Children)
             {
-                Name = node.Name,
-                ParentId = parent?.Id
-            });
-            foreach(var childNode in node.Children)
-            {
-                InsertCategory(childNode, category);
+                left = InsertCategory(left, child);
             }
+            _context.Entry(category).Reload();
+            return category.Right;
         }
     }
 

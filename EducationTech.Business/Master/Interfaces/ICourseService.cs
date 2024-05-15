@@ -12,5 +12,6 @@ namespace EducationTech.Business.Master.Interfaces
     public interface ICourseService : IService, IPagination<Course_GetRequestDto, Course_GetResponseDto>
     {
         Task<CourseDto> GetCourseById(Course_GetByIdRequestDto requestDto, int id, User? currentUser);
+        Task<CourseDto> CreateCourse(Course_CreateRequestDto requestDto, User? currentUser);
     }
 }

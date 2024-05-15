@@ -7,6 +7,7 @@ using EducationTech.DataAccess.Core;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Master.Interfaces;
+using EducationTech.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -22,28 +23,133 @@ namespace EducationTech.Business.Master
         private readonly ITransactionManager _transactionManager;
         private readonly ILessonRepository _lessonRepository;
         private readonly IQuizRepository _quizRepository;
+        private readonly IQuestionRepository _questionRepository;
         private readonly IAnswerRepositoy _answerRepositoy;
         private readonly IAnswerUserRepository _answerUserRepository;
         private readonly ILearnerCourseRepository _learnerCourseRepository;
+        private readonly ICourseRepository _courseRepository;
+        private readonly ICourseSectionRepository _courseSectionRepository;
+        private readonly IVideoRepository _videoRepository;
         private readonly IMapper _mapper;
 
         public LessonService(
             ITransactionManager transactionManager, 
             ILessonRepository lessonRepository, 
             IQuizRepository quizRepository, 
+            IQuestionRepository questionRepository,
             IAnswerRepositoy answerRepositoy, 
             IAnswerUserRepository answerUserRepository,
-            ILearnerCourseRepository learnerCourseRepository, 
+            ILearnerCourseRepository learnerCourseRepository,
+            ICourseRepository courseRepository,
+            ICourseSectionRepository courseSectionRepository,
+            IVideoRepository videoRepository,
             IMapper mapper)
         {
             _transactionManager = transactionManager;
             _lessonRepository = lessonRepository;
             _quizRepository = quizRepository;
+            _questionRepository = questionRepository;
             _answerRepositoy = answerRepositoy;
             _answerUserRepository = answerUserRepository;
             _learnerCourseRepository = learnerCourseRepository;
+            _courseRepository = courseRepository;
+            _courseSectionRepository = courseSectionRepository;
+            _videoRepository = videoRepository;
             _mapper = mapper;
         }
+
+        public async Task<LessonDto> CreateLesson(Lesson_CreateRequestDto requestDto, User? currentUser)
+        {
+            if(currentUser == null)
+            {
+                throw new HttpException(HttpStatusCode.Unauthorized, "Please login to create lesson");
+            }
+
+            var courseSectionQuery = await _courseSectionRepository.Get();
+            courseSectionQuery = courseSectionQuery
+                .Include(x => x.Course)
+                    .ThenInclude(x => x.Owner)
+                .Where(x => x.Id == requestDto.CourseSectionId);
+
+            var courseSection = await courseSectionQuery.FirstOrDefaultAsync();
+
+            if(courseSection == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Course section not found");
+            }
+            if(courseSection.Course.OwnerId != currentUser.Id)
+            {
+                throw new HttpException(HttpStatusCode.Forbidden, "You are not allowed to create lesson for this course section");
+            }
+
+            var createdLesson = new Lesson
+            {
+                CourseSectionId = requestDto.CourseSectionId,
+                Type = requestDto.Type,
+                Title = requestDto.Title,
+                Order = requestDto.Order
+            };
+
+            await _lessonRepository.Insert(createdLesson, true);
+
+            if(requestDto.Type == LessonType.Quiz)
+            {
+                if(requestDto.Quiz == null)
+                {
+                    throw new HttpException(HttpStatusCode.BadRequest, "Quiz is required for quiz lesson");
+                }
+                var quiz = new Quiz
+                {
+                    LessonId = createdLesson.Id,
+                    TimeLimit = requestDto.Quiz.TimeLimit
+                };
+
+                await _quizRepository.Insert(quiz, true);
+
+                var questions = requestDto.Quiz.Questions.Select(q => new Question
+                {
+                    Content = q.Content,
+                    QuizId = quiz.Id,
+                    Answers = q.Answers.Select(a => new Answer
+                    {
+                        Content = a.Content,
+                        IsCorrect = a.IsCorrect
+                    }).ToList()
+                }).ToList();
+
+                await _questionRepository.Insert(questions, true);
+            }
+            else if (requestDto.Type == LessonType.Video)
+            {
+                if(requestDto.VideoId == null)
+                {
+                    throw new HttpException(HttpStatusCode.BadRequest, "Video id is required for video lesson");
+                }
+                var videoQuery = await _videoRepository.Get();
+                videoQuery = videoQuery
+                    .Include(v => v.File.User)
+                    .Where(x => x.Id == requestDto.VideoId);
+                var video = await videoQuery.FirstOrDefaultAsync();
+
+                if (video == null)
+                {
+                    throw new HttpException(HttpStatusCode.NotFound, "Video not found");
+                }
+                if (video.File.UserId != currentUser.Id)
+                {
+                    throw new HttpException(HttpStatusCode.Forbidden, "You are not allowed to use this video");
+                }
+                video.LessonId = createdLesson.Id;
+                await _videoRepository.Update(video, true);
+            }
+            else
+            {
+                throw new HttpException(HttpStatusCode.BadRequest, "Invalid lesson type");
+            }
+            
+            return _mapper.Map<LessonDto>(createdLesson);
+        }
+
         public async Task<LessonDto> GetLessonById(int id, User? currentUser)
         {
             if (currentUser == null)
@@ -66,7 +172,7 @@ namespace EducationTech.Business.Master
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Lesson not found");
             }
-            if(lesson.CourseSection.Course.LearnerCourses.All(x => x.LearnerId != currentUser.Id))
+            if(lesson.CourseSection.Course.LearnerCourses.All(x => x.LearnerId != currentUser.Id) && lesson.CourseSection.Course.OwnerId != currentUser.Id)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to view this lesson detail");
             }

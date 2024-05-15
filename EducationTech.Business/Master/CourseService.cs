@@ -6,6 +6,7 @@ using EducationTech.Business.Shared.Exceptions.Http;
 using EducationTech.Business.Shared.Types;
 using EducationTech.DataAccess.Business.Interfaces;
 using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Master.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -23,13 +24,49 @@ namespace EducationTech.Business.Master
         private readonly ITransactionManager _transactionManager;
         private readonly ICourseRepository _courseRepository;
         private readonly ILearnerCourseRepository _learnerCourseRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly ICourseCategoryRepository _courseCategoryRepository;
         private readonly IMapper _mapper;
-        public CourseService(ITransactionManager transactionManager, ICourseRepository courseRepository, ILearnerCourseRepository learnerCourseRepository, IMapper mapper)
+        public CourseService(
+            ITransactionManager transactionManager, 
+            ICourseRepository courseRepository, 
+            ILearnerCourseRepository learnerCourseRepository, 
+            ICategoryRepository categoryRepository,
+            ICourseCategoryRepository courseCategoryRepository,
+            IMapper mapper)
         {
             _transactionManager = transactionManager;
             _courseRepository = courseRepository;
             _learnerCourseRepository = learnerCourseRepository;
+            _categoryRepository = categoryRepository;
+            _courseCategoryRepository = courseCategoryRepository;
             _mapper = mapper;
+        }
+
+        public async Task<CourseDto> CreateCourse(Course_CreateRequestDto requestDto, User? currentUser)
+        {
+            if(currentUser == null)
+            {
+                throw new HttpException(HttpStatusCode.Unauthorized, "Please login to create course");
+            }
+            var createdCourse = _mapper.Map<Course>(requestDto);
+            createdCourse.OwnerId = currentUser.Id;
+
+            await _courseRepository.Insert(createdCourse, true);
+
+            var categoryQuery = await _categoryRepository.Get();
+            var categories = await categoryQuery.Where(x => requestDto.CategoryIds.Contains(x.Id)).ToListAsync();
+
+            var courseCategories = categories.Select(x => new CourseCategory
+            {
+                CategoryId = x.Id,
+                CourseId = createdCourse.Id
+            }).ToList();
+
+            await _courseCategoryRepository.Insert(courseCategories, true);
+            
+            return _mapper.Map<CourseDto>(createdCourse);
+           
         }
 
         public async Task<CourseDto> GetCourseById(Course_GetByIdRequestDto requestDto, int id, User? currentUser)
@@ -185,3 +222,4 @@ namespace EducationTech.Business.Master
         }
     }
 }
+
