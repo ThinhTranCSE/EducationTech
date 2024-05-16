@@ -33,6 +33,8 @@ namespace EducationTech.DataAccess.Entities.Master
 
         public virtual ICollection<LearnerCourse> LearnerCourses { get; set; } = new List<LearnerCourse>();
         public virtual ICollection<CourseSection> CourseSections { get; set; } = new List<CourseSection>();
+
+        public virtual ICollection<CourseCategory> CourseCategories { get; set; } = new List<CourseCategory>();
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<Course>(modelBuilder);

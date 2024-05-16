@@ -23,5 +23,12 @@ namespace EducationTech.Controllers.Master
             var courseSection = await _courseSectionService.CreateCourseSection(requestDto, CurrentUser);
             return courseSection;
         }
+
+        [HttpPatch("{id}")]
+        public async Task<CourseSectionDto> UpdateCourseSection(int id, [FromBody]CourseSection_UpdateRequestDto requestDto)
+        {
+            var courseSection = await _courseSectionService.UpdateCourseSection(id, requestDto, CurrentUser);
+            return courseSection;
+        }
     }
 }

@@ -41,5 +41,13 @@ namespace EducationTech.Controllers.Master
             return course;
         }
 
+        [HttpPatch("{id}")]
+        [Authorize(Policy = "UpdateCourse")]
+        public async Task<CourseDto> UpdateCourse(int id, [FromBody]Course_UpdateRequestDto requestDto)
+        {
+            var course = await _courseService.UpdateCourse(requestDto, id, CurrentUser);
+            return course;
+        }
+
     }
 }

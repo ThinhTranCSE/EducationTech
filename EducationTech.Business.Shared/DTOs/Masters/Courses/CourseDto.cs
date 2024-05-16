@@ -30,7 +30,7 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
         public UserDto Owner { get; set; }
         public double? Rate { get; set; } = null;
         public ICollection<CourseSectionDto> CourseSections { get; set; }
-        public ICollection<CourseCategoryDto> CurseCategories { get; set; }
+        public ICollection<CourseCategoryDto> CourseCategories { get; set; }
         public override void Configure(IMapperConfigurationExpression cfg)
         {
             string hostName = AbstractDto<Course, CourseDto>.GlobalUsings.HostName;

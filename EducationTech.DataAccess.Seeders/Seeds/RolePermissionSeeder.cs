@@ -23,8 +23,9 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             var roles = _context.Roles.ToList();
 
             var rolePermissionMapping = new Dictionary<RoleType, IEnumerable<PermissionType>>();
-            rolePermissionMapping.Add(RoleType.Admin, new List<PermissionType> { PermissionType.AdminOnly, PermissionType.UploadCourse });
-            rolePermissionMapping.Add(RoleType.Instructor, new List<PermissionType> { PermissionType.UploadCourse });
+            rolePermissionMapping.Add(RoleType.Admin, new List<PermissionType> { PermissionType.AdminOnly, PermissionType.UploadCourse, PermissionType.UpdateCourse, PermissionType.DeleteCourse, PermissionType.DeleteCourse });
+            rolePermissionMapping.Add(RoleType.GroupAdmin, new List<PermissionType> { PermissionType.AdminOnly, PermissionType.UploadCourse, PermissionType.UpdateCourse, PermissionType.DeleteCourse, PermissionType.DeleteCourse });
+            rolePermissionMapping.Add(RoleType.Instructor, new List<PermissionType> { PermissionType.UploadCourse, PermissionType.UpdateCourse, PermissionType.DeleteCourse });
 
             foreach (var role in roles)
             {

@@ -9,6 +9,7 @@ using EducationTech.DataAccess.Core;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Master.Interfaces;
+using EducationTech.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace EducationTech.Business.Master
         private readonly ILearnerCourseRepository _learnerCourseRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly ICourseCategoryRepository _courseCategoryRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         public CourseService(
             ITransactionManager transactionManager, 
@@ -33,6 +35,7 @@ namespace EducationTech.Business.Master
             ILearnerCourseRepository learnerCourseRepository, 
             ICategoryRepository categoryRepository,
             ICourseCategoryRepository courseCategoryRepository,
+            IUserRepository userRepository,
             IMapper mapper)
         {
             _transactionManager = transactionManager;
@@ -40,6 +43,7 @@ namespace EducationTech.Business.Master
             _learnerCourseRepository = learnerCourseRepository;
             _categoryRepository = categoryRepository;
             _courseCategoryRepository = courseCategoryRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
 
@@ -69,6 +73,103 @@ namespace EducationTech.Business.Master
            
         }
 
+        public async Task<CourseDto> UpdateCourse(Course_UpdateRequestDto requestDto, int id, User? currentUser)
+        {
+            if(currentUser == null)
+            {
+                throw new HttpException(HttpStatusCode.Unauthorized, "Please login to update course");
+            }
+            var courseQuery = await _courseRepository.Get();
+            courseQuery = courseQuery
+                .Include(x => x.Owner)
+                .Include(x => x.CourseCategories)
+                .Where(x => x.Id == id);
+
+            var course = await courseQuery.FirstOrDefaultAsync();
+            if(course == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Course not found");
+            }
+            if(course.OwnerId != currentUser.Id)
+            {
+                throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to update this course");
+            }
+            if(requestDto.Description != null)
+            {
+                course.Description = requestDto.Description;
+            }
+            if(requestDto.Title != null)
+            {
+                course.Title = requestDto.Title;
+            }
+            if(requestDto.Price != null)
+            {
+                course.Price = requestDto.Price.Value;
+            }
+            if(requestDto.ImageUrl != null)
+            {
+                course.ImageUrl = requestDto.ImageUrl;
+            }
+            if(requestDto.IsArchived != null)
+            {
+                course.IsArchived = requestDto.IsArchived.Value;
+            }
+            if(requestDto.IsPublished != null)
+            {
+               currentUser = await (await _userRepository.Get())
+                    .Where(u => u.Id == currentUser.Id)
+                    .Include(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                            .ThenInclude(r => r.RolePermissions)
+                                .ThenInclude(rp => rp.Permission)
+                    .FirstOrDefaultAsync();
+
+                var hasPermission = currentUser!.UserRoles
+                    .Select(ur => ur.Role)
+                    .SelectMany(r => r.RolePermissions)
+                    .Select(rp => rp.Permission)
+                    .Any(p => p.Name == nameof(PermissionType.PublishCourse));
+                if(!hasPermission)
+                {
+                    throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to publish course");
+                }
+                course.IsPublished = requestDto.IsPublished.Value;
+            }
+            if(requestDto.CategoryIds != null)
+            {
+                var categoryQuery = await _categoryRepository.Get();
+                var currentCourseCategories = await categoryQuery
+                    .Include(c => c.CourseCategories)
+                    .Where(c => c.CourseCategories.Any(cc => cc.CourseId == course.Id))
+                    .ToListAsync();
+                //get current categor of course
+                var currentCategoryIds = currentCourseCategories.SelectMany(c => c.CourseCategories).Select(cc => cc.CategoryId);
+
+                //get inserted and deleted category ids
+                var insertedCategoryIds = requestDto.CategoryIds.Except(currentCategoryIds).ToHashSet();
+                var deletedCategoryIds = currentCategoryIds.Except(requestDto.CategoryIds).ToHashSet();
+
+                //delete removed categories of course
+                var deletedCourseCategories = course.CourseCategories.Where(cc => deletedCategoryIds.Contains(cc.CategoryId)).ToList();
+                deletedCourseCategories.ForEach(cc => _courseCategoryRepository.Delete(cc).GetAwaiter().GetResult());
+
+                //insert new categories to course
+                var insertedCategories = await categoryQuery.Where(c => insertedCategoryIds.Contains(c.Id)).ToListAsync();
+                var insertedCourseCategories = insertedCategories.Select(ic => new CourseCategory
+                {
+                    CategoryId = ic.Id,
+                    CourseId = course.Id
+                }).ToList();
+
+                await _courseCategoryRepository.Insert(insertedCourseCategories, true);
+            }
+
+            await _courseRepository.Update(course, true);
+            course = await courseQuery.FirstOrDefaultAsync();
+
+            return _mapper.Map<CourseDto>(course);
+
+        }
         public async Task<CourseDto> GetCourseById(Course_GetByIdRequestDto requestDto, int id, User? currentUser)
         {
             var query = await _courseRepository.Get();
@@ -112,6 +213,8 @@ namespace EducationTech.Business.Master
             query = query
                 .Where(x => x.Id == id)
                 .Include(x => x.Owner)
+                .Include(x => x.CourseCategories)
+                    .ThenInclude(x => x.Category)
                 .Where(x => !x.IsArchived)
                 .Where(x => x.IsPublished);
 
@@ -220,6 +323,7 @@ namespace EducationTech.Business.Master
             var courses = await _courseRepository.Get();
             return await courses.CountAsync();
         }
+
     }
 }
 

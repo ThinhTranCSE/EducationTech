@@ -13,5 +13,8 @@ namespace EducationTech.Business.Master.Interfaces
     {
         Task<CourseDto> GetCourseById(Course_GetByIdRequestDto requestDto, int id, User? currentUser);
         Task<CourseDto> CreateCourse(Course_CreateRequestDto requestDto, User? currentUser);
+        Task<CourseDto> UpdateCourse(Course_UpdateRequestDto requestDto, int id, User? currentUser);
+
+
     }
 }

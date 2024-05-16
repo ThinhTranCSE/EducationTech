@@ -21,7 +21,7 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             foreach (PermissionType permissionType in permissionTypes)
             {
                 string permissionName = permissionType.ToString();
-                if (_context.Roles.Any(p => p.Name == permissionName))
+                if (_context.Permissions.Any(p => p.Name == permissionName))
                 {
                     continue;
                 }

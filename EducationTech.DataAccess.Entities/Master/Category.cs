@@ -1,4 +1,5 @@
 ﻿using EducationTech.DataAccess.Entities.Abstract;
+using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Shared.NestedSet;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,6 +21,8 @@ namespace EducationTech.DataAccess.Entities.Master
         public int Left { get; set; }
         public int Right { get; set; }
 
+
+        public ICollection<CourseCategory> CourseCategories { get; set; } = new List<CourseCategory>();
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<Category>(modelBuilder);

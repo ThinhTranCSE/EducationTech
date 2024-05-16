@@ -12,5 +12,6 @@ namespace EducationTech.Business.Master.Interfaces
     public interface ICourseSectionService : IService
     {
         Task<CourseSectionDto> CreateCourseSection(CourseSection_CreateRequestDto requestDto, User? currentUser);
+        Task<CourseSectionDto> UpdateCourseSection(int id, CourseSection_UpdateRequestDto requestDto, User? currentUser);
     }
 }
