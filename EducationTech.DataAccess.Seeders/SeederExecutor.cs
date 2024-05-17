@@ -1,5 +1,7 @@
 ﻿using EducationTech.DataAccess.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Org.BouncyCastle.Tls;
+using Serilog;
 
 namespace EducationTech.DataAccess.Seeders
 {
@@ -46,6 +48,7 @@ namespace EducationTech.DataAccess.Seeders
             {
                 seeder.Seed();
             }
+            Log.Debug("All seeders executed");
         }
 
         private void Seed(string seederName)
@@ -55,6 +58,7 @@ namespace EducationTech.DataAccess.Seeders
                 throw new Exception($"Seeder {seederName} not found");
             }
             _seeders[seederName].Seed();
+            Log.Debug($"Seeder {seederName} executed");
         }
 
         public void Execute(CancellationTokenSource tokenSource, params string[] args)

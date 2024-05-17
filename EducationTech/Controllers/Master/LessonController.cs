@@ -1,6 +1,7 @@
 ﻿using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Lessons;
+using EducationTech.Business.Shared.DTOs.Masters.Quizzes;
 using EducationTech.Controllers.Abstract;
 using EducationTech.DataAccess.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -32,10 +33,22 @@ namespace EducationTech.Controllers.Master
         }
 
         [HttpPost]
+        [Authorize(Policy = "CreateCourse")]
         public async Task<LessonDto> CreateLesson([FromBody]Lesson_CreateRequestDto requestDto)
         {
             var lesson = await _lessonService.CreateLesson(requestDto, CurrentUser);
             return lesson;
         }
+
+        [HttpPatch("{id}")]
+        [Authorize(Policy = "UpdateCourse")]
+        public async Task<LessonDto> UpdateLesson(int id, [FromBody]Lesson_UpdateRequestDto requestDto)
+        {
+            var lesson = await _lessonService.UpdateLesson(id, requestDto, CurrentUser);
+            return lesson;
+        }
+
+
+
     }
 }

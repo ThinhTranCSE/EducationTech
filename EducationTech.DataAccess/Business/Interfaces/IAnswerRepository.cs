@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EducationTech.DataAccess.Business.Interfaces
 {
-    public interface IAnswerRepositoy : IRepository<Answer>
+    public interface IAnswerRepository : IRepository<Answer>
     {
     }
 }

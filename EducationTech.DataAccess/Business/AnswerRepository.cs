@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EducationTech.DataAccess.Business
 {
-    public class AnswerRepository : Repository<Answer>, IAnswerRepositoy
+    public class AnswerRepository : Repository<Answer>, IAnswerRepository
     {
         public override DbSet<Answer> Model => _context.Answers;
         public AnswerRepository(EducationTechContext context) : base(context)

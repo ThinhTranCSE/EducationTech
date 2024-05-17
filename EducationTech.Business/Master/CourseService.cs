@@ -70,9 +70,7 @@ namespace EducationTech.Business.Master
             await _courseCategoryRepository.Insert(courseCategories, true);
             
             return _mapper.Map<CourseDto>(createdCourse);
-           
         }
-
         public async Task<CourseDto> UpdateCourse(Course_UpdateRequestDto requestDto, int id, User? currentUser)
         {
             if(currentUser == null)
@@ -238,7 +236,6 @@ namespace EducationTech.Business.Master
 
             return courseDto;
         }
-
         public async Task<Course_GetResponseDto> GetPaginatedData(Course_GetRequestDto requestDto, int? offset, int? limit, string? cursor, User? currentUser)
         {
             var query = await _courseRepository.Get();
@@ -323,8 +320,6 @@ namespace EducationTech.Business.Master
                 Courses = courseDtos
             };
         }
-
-
         public async Task<int> GetTotalCount()
         {
             var courses = await _courseRepository.Get();

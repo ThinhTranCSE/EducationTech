@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Categories;
+using EducationTech.Business.Shared.Exceptions.Http;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Master.Interfaces;
 using EducationTech.DataAccess.Shared.NestedSet;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -49,7 +51,7 @@ namespace EducationTech.Business.Master
 
             if (category == null)
             {
-                throw new Exception("Category not found");
+                throw new HttpException(HttpStatusCode.NotFound, "Category not found");
             }
 
             var categoryTree = _categoryRepository.GetTree(category);

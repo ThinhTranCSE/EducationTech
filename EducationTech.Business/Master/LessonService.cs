@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Lessons;
+using EducationTech.Business.Shared.DTOs.Masters.Quizzes;
 using EducationTech.Business.Shared.Exceptions.Http;
 using EducationTech.DataAccess.Business.Interfaces;
 using EducationTech.DataAccess.Core;
@@ -24,7 +25,7 @@ namespace EducationTech.Business.Master
         private readonly ILessonRepository _lessonRepository;
         private readonly IQuizRepository _quizRepository;
         private readonly IQuestionRepository _questionRepository;
-        private readonly IAnswerRepositoy _answerRepositoy;
+        private readonly IAnswerRepository _answerRepositoy;
         private readonly IAnswerUserRepository _answerUserRepository;
         private readonly ILearnerCourseRepository _learnerCourseRepository;
         private readonly ICourseRepository _courseRepository;
@@ -37,7 +38,7 @@ namespace EducationTech.Business.Master
             ILessonRepository lessonRepository, 
             IQuizRepository quizRepository, 
             IQuestionRepository questionRepository,
-            IAnswerRepositoy answerRepositoy, 
+            IAnswerRepository answerRepositoy, 
             IAnswerUserRepository answerUserRepository,
             ILearnerCourseRepository learnerCourseRepository,
             ICourseRepository courseRepository,
@@ -235,5 +236,77 @@ namespace EducationTech.Business.Master
                 CorrectAnswerIds = correctAnswerIds
             };
         }
+
+        public async Task<LessonDto> UpdateLesson(int id, Lesson_UpdateRequestDto requestDto, User? currentUser)
+        {
+            if(currentUser == null)
+            {
+                throw new HttpException(HttpStatusCode.Unauthorized, "Please login to update lesson");
+            }
+
+            var lessonQuery = await _lessonRepository.Get();
+            lessonQuery = lessonQuery
+                .Include(l => l.CourseSection)
+                    .ThenInclude(l => l.Course)
+                        .ThenInclude(l => l.Owner)
+                .Include(l => l.Video)
+                .Where(x => x.Id == id);
+            
+            var lesson = await lessonQuery.FirstOrDefaultAsync();
+
+            if(lesson == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Lesson not found");
+            }
+
+            if(lesson.CourseSection.Course.OwnerId != currentUser.Id)
+            {
+                throw new HttpException(HttpStatusCode.Forbidden, "You are not allowed to update this lesson");
+            }
+
+            if(requestDto.Title != null)
+            {
+                lesson.Title = requestDto.Title;
+            }
+
+            if(requestDto.Order != null)
+            {
+                lesson.Order = requestDto.Order.Value;
+            }
+
+            if(requestDto.VideoId != null)
+            {
+                if(lesson.Type != LessonType.Video)
+                {
+                    throw new HttpException(HttpStatusCode.BadRequest, "Video id can only be updated for video lesson");
+                }
+                var videoQuery = await _videoRepository.Get();
+                videoQuery = videoQuery
+                    .Include(v => v.File.User)
+                    .Where(x => x.Id == requestDto.VideoId);
+                var video = await videoQuery.FirstOrDefaultAsync();
+
+                if (video == null)
+                {
+                    throw new HttpException(HttpStatusCode.NotFound, "Video not found");
+                }
+                if (video.File.UserId != currentUser.Id)
+                {
+                    throw new HttpException(HttpStatusCode.Forbidden, "You are not allowed to use this video");
+                }
+                if(video.LessonId != null)
+                {
+                    throw new HttpException(HttpStatusCode.BadRequest, "Video is already used in another lesson");
+                }
+                video.LessonId = lesson.Id;
+                await _videoRepository.Update(video, true);
+            }
+
+            await _lessonRepository.Update(lesson, true);
+            lesson = await lessonQuery.FirstOrDefaultAsync();
+            return _mapper.Map<LessonDto>(lesson);
+        }
+
+        
     }
 }
