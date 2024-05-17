@@ -19,7 +19,7 @@ namespace EducationTech.Controllers.Master
         }
 
         [HttpGet]
-        [Cache(300)]
+        //[Cache(300)]
         public async Task<Course_GetResponseDto> GetCourses([FromQuery]Course_GetRequestDto requestDto) 
         {
             var coursesResponse = await _courseService.GetPaginatedData(requestDto, requestDto.Offset, requestDto.Limit, null, CurrentUser);
