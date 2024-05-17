@@ -112,11 +112,7 @@ namespace EducationTech.Business.Master
             }
             if(requestDto.IsArchived != null)
             {
-                course.IsArchived = requestDto.IsArchived.Value;
-            }
-            if(requestDto.IsPublished != null)
-            {
-               currentUser = await (await _userRepository.Get())
+                currentUser = await (await _userRepository.Get())
                     .Where(u => u.Id == currentUser.Id)
                     .Include(u => u.UserRoles)
                         .ThenInclude(ur => ur.Role)
@@ -128,11 +124,21 @@ namespace EducationTech.Business.Master
                     .Select(ur => ur.Role)
                     .SelectMany(r => r.RolePermissions)
                     .Select(rp => rp.Permission)
-                    .Any(p => p.Name == nameof(PermissionType.PublishCourse));
-                if(!hasPermission)
+                    .Any(p => p.Name == nameof(PermissionType.ArchivedCourse));
+
+                if (!hasPermission)
                 {
                     throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to publish course");
                 }
+                course.IsArchived = requestDto.IsArchived.Value;
+            }
+            if(requestDto.IsPublished != null)
+            {
+                if(course.OwnerId != currentUser.Id)
+                {
+                    throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to publish course");
+                }
+                
                 course.IsPublished = requestDto.IsPublished.Value;
             }
             if(requestDto.CategoryIds != null)

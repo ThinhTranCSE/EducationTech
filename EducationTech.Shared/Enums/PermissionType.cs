@@ -11,7 +11,7 @@ namespace EducationTech.Shared.Enums
         AdminOnly = 1,
         UploadCourse = 2,
         UpdateCourse = 3,
-        PublishCourse = 4,
+        ArchivedCourse = 4,
         DeleteCourse = 5,
     }
 }
