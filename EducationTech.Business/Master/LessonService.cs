@@ -177,7 +177,18 @@ namespace EducationTech.Business.Master
                 throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to view this lesson detail");
             }
 
-            return _mapper.Map<LessonDto>(lesson);
+            var lessonDto = _mapper.Map<LessonDto>(lesson);
+            if(lessonDto.Type == LessonType.Quiz && lesson.CourseSection.Course.OwnerId != currentUser.Id)
+            {
+                foreach(var question in lessonDto.Quiz.Questions)
+                {
+                    foreach(var answer in question.Answers)
+                    {
+                        answer.IsCorrect = null;
+                    }
+                }
+            }
+            return lessonDto;
         }
 
         public async Task<Lesson_ValidateQuizResponseDto> SubmitAnswers(Lesson_ValidateQuizRequestDto requestDto, User? currentUser)
