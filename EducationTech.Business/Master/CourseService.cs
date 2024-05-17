@@ -269,7 +269,7 @@ namespace EducationTech.Business.Master
                 query = query.Where(x => !x.IsArchived);
             }
 
-            if (!requestDto.IsIncludeNotPublished)
+            if (!requestDto.IsIncludeNotPublished && !requestDto.CreatedByCurrentUser)
             {
                 query = query.Where(x => x.IsPublished);
             }
@@ -289,7 +289,8 @@ namespace EducationTech.Business.Master
                 {
                     throw new HttpException(HttpStatusCode.Unauthorized, "Please login to get created courses");
                 }
-                query = query.Where(x => x.OwnerId == currentUser.Id);
+                query = query.Where(x => x.OwnerId == currentUser.Id)
+                    .Where(x => !x.IsArchived);
             }
 
             if(offset.HasValue && limit.HasValue)
