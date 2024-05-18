@@ -233,8 +233,10 @@ namespace EducationTech.Business.Business
                     }
                 }
                 fileEntity.Path = Path.Combine(Path.GetFileName(categoryDirectory), fileName);
-                await _uploadedFileRepository.Update(fileEntity);
                 FileType? fileType = _globalUsings.FileTypeCollection[extension];
+                fileEntity.FileType = fileType ?? FileType.Unknown;
+
+                await _uploadedFileRepository.Update(fileEntity);
                 if (fileType != null)
                 {
                     switch (fileType)
@@ -314,9 +316,11 @@ namespace EducationTech.Business.Business
 
             fileEntity.Path = filePath;
 
-            await _uploadedFileRepository.Update(fileEntity);
-
             FileType? fileType = _globalUsings.FileTypeCollection[extension];
+
+            fileEntity.FileType = fileType ?? FileType.Unknown;
+
+            await _uploadedFileRepository.Update(fileEntity);
             if (fileType != null)
             {
                 switch (fileType)
