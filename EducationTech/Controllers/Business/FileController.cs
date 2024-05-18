@@ -22,7 +22,7 @@ namespace EducationTech.Controllers.Business
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("Info")]
         public async Task<IEnumerable<UploadedFileDto>> GetFileInformation([FromQuery] File_GetFileInformationRequestDto requestDto)
         {
             var result =  await _fileService.GetFileInformation(requestDto, CurrentUser);
