@@ -18,7 +18,6 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Lessons
         public string Title { get; set; }
         public int Order { get; set; }
         public LessonType Type { get; set; }
-
         public VideoDto Video { get; set; }
         public QuizDto Quiz { get; set; }
     }

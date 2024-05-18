@@ -357,7 +357,7 @@ namespace EducationTech.Business.Business
             fileQuery = fileQuery
                 .Include(f => f.Image)
                 .Include(f => f.Video)
-                .Where(f => f.Id == currentUser.Id);
+                .Where(f => f.UserId == currentUser.Id);
 
             var files = await fileQuery.ToListAsync();
 
