@@ -7,7 +7,8 @@ namespace EducationTech.Business.Business.Interfaces
 {
     public interface IFileService : IService
     {
-        Task<UploadedFile> UploadFile(IFormFile file, Guid userId);
+        Task<IEnumerable<UploadedFileDto>> GetFileInformation(File_GetFileInformationRequestDto requestDto, User? currentUser);
+        Task<UploadedFileDto> UploadFile(IFormFile file, Guid userId);
         Task<File_PrepareResponseDto> StartLargeFileUploadSession(string fileName, long fileSize, Guid userId);
         Task<File_ChunkInfomationDto> UploadChunk(Guid sessionId, int index, IFormFile chunkFormFile);
         Task<File_GetFileContentDto> GetFile(Guid fileId);

@@ -22,6 +22,13 @@ namespace EducationTech.Controllers.Business
             _mapper = mapper;
         }
 
+        [HttpGet]
+        public async Task<IEnumerable<UploadedFileDto>> GetFileInformation([FromQuery] File_GetFileInformationRequestDto requestDto)
+        {
+            var result =  await _fileService.GetFileInformation(requestDto, CurrentUser);
+            return result;
+        }
+
         [HttpPost("Session")]
         public async Task<File_PrepareResponseDto> Prepare(File_PrepareRequestBodyDto requestBody)
         {
@@ -37,9 +44,8 @@ namespace EducationTech.Controllers.Business
         [HttpPost("Upload")]
         public async Task<UploadedFileDto> Upload([FromForm] IFormFile file)
         {
-            UploadedFile result =  await _fileService.UploadFile(file, CurrentUser!.Id);
-            UploadedFileDto uploadedFileDto = _mapper.Map<UploadedFileDto>(result);
-            return uploadedFileDto;
+            var result =  await _fileService.UploadFile(file, CurrentUser!.Id);
+            return result;
         }
 
 

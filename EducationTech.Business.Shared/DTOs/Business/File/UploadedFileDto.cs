@@ -1,5 +1,8 @@
 ﻿using EducationTech.Business.Shared.DTOs.Abstracts;
+using EducationTech.Business.Shared.DTOs.Masters.Images;
+using EducationTech.Business.Shared.DTOs.Masters.Videos;
 using EducationTech.DataAccess.Entities.Master;
+using EducationTech.Storage.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +20,9 @@ namespace EducationTech.Business.Shared.DTOs.Business.File
         public bool IsCompleted { get; set; }
         public bool IsPublic { get; set; }
         public Guid UserId { get; set; }
+        public FileType FileType { get; set; }
+        public VideoDto? Video { get; set; }
+        public ImageDto? Image { get; set; }
+
     }
 }

@@ -15,6 +15,7 @@ using EducationTech.Storage.Enums;
 using EducationTech.DataAccess.Core;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.MessageQueue.VideoConvert;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Business.Business
 {
@@ -272,7 +273,7 @@ namespace EducationTech.Business.Business
             }
         }
 
-        public async Task<UploadedFile> UploadFile(IFormFile file, Guid userId)
+        public async Task<UploadedFileDto> UploadFile(IFormFile file, Guid userId)
         {
             if(file.Length == 0)
             {
@@ -342,7 +343,26 @@ namespace EducationTech.Business.Business
                 }
             }
             _transactionManager.SaveChanges();
-            return fileEntity;
+            return _mapper.Map<UploadedFileDto>(fileEntity);
         }
+
+        public async Task<IEnumerable<UploadedFileDto>> GetFileInformation(File_GetFileInformationRequestDto requestDto, User? currentUser)
+        {
+            if(currentUser == null)
+            {
+                throw new HttpException(HttpStatusCode.Unauthorized, "User is not authenticated");
+            }
+
+            var fileQuery = await _uploadedFileRepository.Get();
+            fileQuery = fileQuery
+                .Include(f => f.Image)
+                .Include(f => f.Video)
+                .Where(f => f.Id == currentUser.Id);
+
+            var files = await fileQuery.ToListAsync();
+
+            return _mapper.ProjectTo<UploadedFileDto>(files.AsQueryable());
+        }
+
     }
 }
