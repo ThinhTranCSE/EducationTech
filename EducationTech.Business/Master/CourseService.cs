@@ -218,15 +218,19 @@ namespace EducationTech.Business.Master
                 .Where(x => x.Id == id)
                 .Include(x => x.Owner)
                 .Include(x => x.CourseCategories)
-                    .ThenInclude(x => x.Category)
-                .Where(x => !x.IsArchived)
-                .Where(x => x.IsPublished);
+                    .ThenInclude(x => x.Category);
+
 
             var course = await query.FirstOrDefaultAsync();
             if (course == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Course not found");
             }
+            if(course.OwnerId != currentUser?.Id && (course.IsArchived || !course.IsPublished))
+            {
+                throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to view this course detail");
+            }
+
             var courseDto = _mapper.Map<CourseDto>(course);
 
             if (requestDto.IsIncludeRate)
