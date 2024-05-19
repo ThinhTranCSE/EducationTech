@@ -277,6 +277,17 @@ namespace EducationTech.Business.Master
                     .Include(x => x.LearnerCourses)
                     .Where(x => x.LearnerCourses.Any(y => y.LearnerId == currentUser.Id));
             }
+
+            if (requestDto.IsExcludeBought)
+            {
+                if (currentUser != null)
+                {
+                    query = query
+                        .Include(x => x.LearnerCourses)
+                        .Where(x => !x.LearnerCourses.All(y => y.LearnerId != currentUser.Id));
+                }
+            }
+
             if(!requestDto.IsIncludeArchived)
             {
                 query = query.Where(x => !x.IsArchived);
