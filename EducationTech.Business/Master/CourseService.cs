@@ -190,17 +190,22 @@ namespace EducationTech.Business.Master
             if (requestDto.IsGetDetail)
             {
                 var beforeChangeQuery = query;
-                var flag = false;
+                bool flag = false;
                 if (currentUser == null)
                 {
                     //throw new HttpException(HttpStatusCode.Unauthorized, "Please login to get course detail");
                     flag = true;
                 }
                 var leanerCourse = !flag ? await _learnerCourseRepository.GetSingle(lc => lc.CourseId == id && lc.LearnerId == currentUser.Id, false) : null;
+                var c = await _courseRepository.GetSingle(x => x.Id == id, false);
                 if (leanerCourse == null)
                 {
                     //throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to view this course detail");
                     flag = true;
+                }
+                if(currentUser != null && c.OwnerId == currentUser.Id)
+                {
+                    flag = false;
                 }
                 query = query
                     .Include(x => x.CourseSections)
@@ -235,7 +240,8 @@ namespace EducationTech.Business.Master
 
             if (requestDto.IsIncludeRate)
             {
-                courseDto.Rate = course.LearnerCourses.Average(x => x.Rate);
+                bool isLearnerCouseEmpty = course.LearnerCourses.Count() == 0;
+                courseDto.Rate = isLearnerCouseEmpty ? 0 : course.LearnerCourses.Average(x => x.Rate);
             }
 
             return courseDto;
