@@ -347,6 +347,43 @@ namespace EducationTech.Business.Master
             return await courses.CountAsync();
         }
 
+        public async Task<CourseDto> BuyCourse(Course_BuyRequestDto requestDto, int id, User? currentUser)
+        {
+            if(currentUser == null)
+            {
+                throw new HttpException(HttpStatusCode.Unauthorized, "Please login to buy course");
+            }
+
+            var courseQuery = await _courseRepository.Get();
+            courseQuery = courseQuery
+                .Include(x => x.LearnerCourses)
+                .Where(x => x.Id == id);
+            var course = await courseQuery.FirstOrDefaultAsync();
+
+            if(course == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Course not found");
+            }
+
+            if(course.OwnerId == currentUser.Id)
+            {
+                throw new HttpException(HttpStatusCode.BadRequest, "You cant buy your own course");
+            }
+
+            var learnerCourse = await _learnerCourseRepository.GetSingle(x => x.CourseId == id && x.LearnerId == currentUser.Id, false);
+            if(learnerCourse != null)
+            {
+                throw new HttpException(HttpStatusCode.BadRequest, "You already bought this course");
+            }
+
+            learnerCourse = new LearnerCourse
+            {
+                CourseId = id,
+                LearnerId = currentUser.Id,
+            };
+            await _learnerCourseRepository.Insert(learnerCourse, true);
+            return _mapper.Map<CourseDto>(course);
+        }
     }
 }
 

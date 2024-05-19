@@ -49,5 +49,13 @@ namespace EducationTech.Controllers.Master
             return course;
         }
 
+        [HttpPost("{id}/Buy")]
+        [Authorize]
+        public async Task<CourseDto> BuyCourse(int id, [FromBody]Course_BuyRequestDto requestDto)
+        {
+            var course = await _courseService.BuyCourse(requestDto, id, CurrentUser);
+            return course;
+        }
+
     }
 }
