@@ -32,7 +32,7 @@ namespace EducationTech.Controllers.Master
         }
 
         [HttpPost]
-        [Authorize(Policy = "CreateCourse")]
+        [Authorize(Policy = "UploadCourse")]
         public async Task<LessonDto> CreateLesson([FromBody] Lesson_CreateRequestDto requestDto)
         {
             var lesson = await _lessonService.CreateLesson(requestDto, CurrentUser);

@@ -24,7 +24,7 @@ namespace EducationTech.Controllers.Master
         //}
 
         [HttpPost]
-        [Authorize(Policy = "CreateCourse")]
+        [Authorize(Policy = "UploadCourse")]
         public async Task<QuizDto> CreateQuiz([FromBody] Quiz_CreateRequestDto requestDto)
         {
             var quiz = await _quizService.CreateQuiz(requestDto, CurrentUser);

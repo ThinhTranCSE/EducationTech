@@ -17,7 +17,7 @@ namespace EducationTech.Controllers.Master
         }
 
         [HttpPost]
-        [Authorize(Policy = "CreateCourse")]
+        [Authorize(Policy = "UploadCourse")]
         public async Task<AnswerDto> CreateAnswer([FromBody] Answer_CreateRequestDto requestDto)
         {
             var answer = await _answerService.CreateAnswer(requestDto, CurrentUser);
