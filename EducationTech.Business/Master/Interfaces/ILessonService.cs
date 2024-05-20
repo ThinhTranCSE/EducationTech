@@ -1,12 +1,6 @@
 ﻿using EducationTech.Business.Abstract;
 using EducationTech.Business.Shared.DTOs.Masters.Lessons;
-using EducationTech.Business.Shared.DTOs.Masters.Quizzes;
 using EducationTech.DataAccess.Entities.Master;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.Business.Master.Interfaces
 {
@@ -16,6 +10,7 @@ namespace EducationTech.Business.Master.Interfaces
         Task<Lesson_ValidateQuizResponseDto> SubmitAnswers(Lesson_ValidateQuizRequestDto requestDto, User? currentUser);
         Task<LessonDto> CreateLesson(Lesson_CreateRequestDto requestDto, User? currentUser);
         Task<LessonDto> UpdateLesson(int id, Lesson_UpdateRequestDto requestDto, User? currentUser);
+        Task<LessonDto> DeleteLesson(int id, User? currentUser);
 
     }
 }

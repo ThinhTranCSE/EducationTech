@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Lessons;
-using EducationTech.Business.Shared.DTOs.Masters.Quizzes;
 using EducationTech.Business.Shared.Exceptions.Http;
 using EducationTech.DataAccess.Business.Interfaces;
 using EducationTech.DataAccess.Core;
@@ -10,12 +9,7 @@ using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Master.Interfaces;
 using EducationTech.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.Business.Master
 {
@@ -34,11 +28,11 @@ namespace EducationTech.Business.Master
         private readonly IMapper _mapper;
 
         public LessonService(
-            ITransactionManager transactionManager, 
-            ILessonRepository lessonRepository, 
-            IQuizRepository quizRepository, 
+            ITransactionManager transactionManager,
+            ILessonRepository lessonRepository,
+            IQuizRepository quizRepository,
             IQuestionRepository questionRepository,
-            IAnswerRepository answerRepositoy, 
+            IAnswerRepository answerRepositoy,
             IAnswerUserRepository answerUserRepository,
             ILearnerCourseRepository learnerCourseRepository,
             ICourseRepository courseRepository,
@@ -61,7 +55,7 @@ namespace EducationTech.Business.Master
 
         public async Task<LessonDto> CreateLesson(Lesson_CreateRequestDto requestDto, User? currentUser)
         {
-            if(currentUser == null)
+            if (currentUser == null)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "Please login to create lesson");
             }
@@ -74,11 +68,11 @@ namespace EducationTech.Business.Master
 
             var courseSection = await courseSectionQuery.FirstOrDefaultAsync();
 
-            if(courseSection == null)
+            if (courseSection == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Course section not found");
             }
-            if(courseSection.Course.OwnerId != currentUser.Id)
+            if (courseSection.Course.OwnerId != currentUser.Id)
             {
                 throw new HttpException(HttpStatusCode.Forbidden, "You are not allowed to create lesson for this course section");
             }
@@ -93,9 +87,9 @@ namespace EducationTech.Business.Master
 
             await _lessonRepository.Insert(createdLesson, true);
 
-            if(requestDto.Type == LessonType.Quiz)
+            if (requestDto.Type == LessonType.Quiz)
             {
-                if(requestDto.Quiz == null)
+                if (requestDto.Quiz == null)
                 {
                     throw new HttpException(HttpStatusCode.BadRequest, "Quiz is required for quiz lesson");
                 }
@@ -122,7 +116,7 @@ namespace EducationTech.Business.Master
             }
             else if (requestDto.Type == LessonType.Video)
             {
-                if(requestDto.VideoId == null)
+                if (requestDto.VideoId == null)
                 {
                     throw new HttpException(HttpStatusCode.BadRequest, "Video id is required for video lesson");
                 }
@@ -147,9 +141,10 @@ namespace EducationTech.Business.Master
             {
                 throw new HttpException(HttpStatusCode.BadRequest, "Invalid lesson type");
             }
-            
+
             return _mapper.Map<LessonDto>(createdLesson);
         }
+
 
         public async Task<LessonDto> GetLessonById(int id, User? currentUser)
         {
@@ -173,17 +168,17 @@ namespace EducationTech.Business.Master
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Lesson not found");
             }
-            if(lesson.CourseSection.Course.LearnerCourses.All(x => x.LearnerId != currentUser.Id) && lesson.CourseSection.Course.OwnerId != currentUser.Id)
+            if (lesson.CourseSection.Course.LearnerCourses.All(x => x.LearnerId != currentUser.Id) && lesson.CourseSection.Course.OwnerId != currentUser.Id)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to view this lesson detail");
             }
 
             var lessonDto = _mapper.Map<LessonDto>(lesson);
-            if(lessonDto.Type == LessonType.Quiz && lesson.CourseSection.Course.OwnerId != currentUser.Id)
+            if (lessonDto.Type == LessonType.Quiz && lesson.CourseSection.Course.OwnerId != currentUser.Id)
             {
-                foreach(var question in lessonDto.Quiz.Questions)
+                foreach (var question in lessonDto.Quiz.Questions)
                 {
-                    foreach(var answer in question.Answers)
+                    foreach (var answer in question.Answers)
                     {
                         answer.IsCorrect = null;
                     }
@@ -198,7 +193,7 @@ namespace EducationTech.Business.Master
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "Please login to submit quizzes");
             }
-            var quizQuery = await _quizRepository.Get(); 
+            var quizQuery = await _quizRepository.Get();
             quizQuery = quizQuery
                 .Include(q => q.Questions)
                     .ThenInclude(q => q.Answers)
@@ -208,14 +203,14 @@ namespace EducationTech.Business.Master
                                 .ThenInclude(q => q.LearnerCourses)
                 .Where(q => q.Id == requestDto.QuizId)
                 .Where(q => q.Lesson.CourseSection.Course.LearnerCourses.Any(x => x.LearnerId == currentUser.Id));
-                
+
             var quiz = await quizQuery.FirstOrDefaultAsync();
             if (quiz == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Quiz not found or you do not have permission to submit this quiz");
             }
             var answerBaseIdsSet = new HashSet<int>(quiz.Questions.SelectMany(question => question.Answers).Select(a => a.Id));
-            if(requestDto.AnswerIds.Any(a => !answerBaseIdsSet.Contains(a)))
+            if (requestDto.AnswerIds.Any(a => !answerBaseIdsSet.Contains(a)))
             {
                 throw new HttpException(HttpStatusCode.BadRequest, "Invalid answer id");
             }
@@ -239,7 +234,7 @@ namespace EducationTech.Business.Master
 
         public async Task<LessonDto> UpdateLesson(int id, Lesson_UpdateRequestDto requestDto, User? currentUser)
         {
-            if(currentUser == null)
+            if (currentUser == null)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "Please login to update lesson");
             }
@@ -251,32 +246,32 @@ namespace EducationTech.Business.Master
                         .ThenInclude(l => l.Owner)
                 .Include(l => l.Video)
                 .Where(x => x.Id == id);
-            
+
             var lesson = await lessonQuery.FirstOrDefaultAsync();
 
-            if(lesson == null)
+            if (lesson == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Lesson not found");
             }
 
-            if(lesson.CourseSection.Course.OwnerId != currentUser.Id)
+            if (lesson.CourseSection.Course.OwnerId != currentUser.Id)
             {
                 throw new HttpException(HttpStatusCode.Forbidden, "You are not allowed to update this lesson");
             }
 
-            if(requestDto.Title != null)
+            if (requestDto.Title != null)
             {
                 lesson.Title = requestDto.Title;
             }
 
-            if(requestDto.Order != null)
+            if (requestDto.Order != null)
             {
                 lesson.Order = requestDto.Order.Value;
             }
 
-            if(requestDto.VideoId != null)
+            if (requestDto.VideoId != null)
             {
-                if(lesson.Type != LessonType.Video)
+                if (lesson.Type != LessonType.Video)
                 {
                     throw new HttpException(HttpStatusCode.BadRequest, "Video id can only be updated for video lesson");
                 }
@@ -294,7 +289,7 @@ namespace EducationTech.Business.Master
                 {
                     throw new HttpException(HttpStatusCode.Forbidden, "You are not allowed to use this video");
                 }
-                if(video.LessonId != null)
+                if (video.LessonId != null)
                 {
                     throw new HttpException(HttpStatusCode.BadRequest, "Video is already used in another lesson");
                 }
@@ -307,6 +302,54 @@ namespace EducationTech.Business.Master
             return _mapper.Map<LessonDto>(lesson);
         }
 
-        
+        public async Task<LessonDto> DeleteLesson(int id, User? currentUser)
+        {
+            if (currentUser == null)
+            {
+                throw new HttpException(HttpStatusCode.Unauthorized, "Please login to delete lesson");
+            }
+
+            var lessonQuery = await _lessonRepository.Get();
+            lessonQuery = lessonQuery
+                .Include(l => l.CourseSection)
+                    .ThenInclude(l => l.Course)
+                .Include(l => l.Quiz)
+                    .ThenInclude(l => l.Questions)
+                        .ThenInclude(l => l.Answers)
+                .Include(l => l.Video)
+                .Where(x => x.Id == id);
+
+            var lesson = await lessonQuery.FirstOrDefaultAsync();
+
+            if (lesson == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Lesson not found");
+            }
+
+            if (lesson.CourseSection.Course.OwnerId != currentUser.Id)
+            {
+                throw new HttpException(HttpStatusCode.Forbidden, "You are not allowed to delete this lesson");
+            }
+
+            if (lesson.Type == LessonType.Quiz)
+            {
+                var quiz = lesson.Quiz;
+                var questions = quiz.Questions;
+                var answers = questions.SelectMany(q => q.Answers);
+                await _answerRepositoy.Delete(answers, true);
+                await _questionRepository.Delete(questions, true);
+                await _quizRepository.Delete(quiz, true);
+            }
+            else if (lesson.Type == LessonType.Video)
+            {
+                var video = lesson.Video;
+                video.LessonId = null;
+                await _videoRepository.Update(video, true);
+            }
+
+            var deletedLesson = await _lessonRepository.Delete(lesson, true);
+
+            return _mapper.Map<LessonDto>(deletedLesson);
+        }
     }
 }

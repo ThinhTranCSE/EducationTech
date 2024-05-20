@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.CourseSections;
 using EducationTech.Business.Shared.Exceptions.Http;
 using EducationTech.DataAccess.Entities.Master;
@@ -11,7 +12,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EducationTech.Business.Master.Interfaces
+namespace EducationTech.Business.Master
 {
     public class CourseSectionService : ICourseSectionService
     {
@@ -29,7 +30,7 @@ namespace EducationTech.Business.Master.Interfaces
 
         public async Task<CourseSectionDto> CreateCourseSection(CourseSection_CreateRequestDto requestDto, User? currentUser)
         {
-            if(currentUser == null)
+            if (currentUser == null)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "Please login to create course section");
             }
@@ -39,11 +40,11 @@ namespace EducationTech.Business.Master.Interfaces
                 .Where(x => x.Id == requestDto.CourseId);
             var course = await courseQuery.FirstOrDefaultAsync();
 
-            if(course == null)
+            if (course == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Course not found");
             }
-            if(course.OwnerId != currentUser.Id)
+            if (course.OwnerId != currentUser.Id)
             {
                 throw new HttpException(HttpStatusCode.Forbidden, "You are not allowed to create course section for this course");
             }
@@ -57,7 +58,7 @@ namespace EducationTech.Business.Master.Interfaces
 
         public async Task<CourseSectionDto> UpdateCourseSection(int id, CourseSection_UpdateRequestDto requestDto, User? currentUser)
         {
-            if(currentUser == null)
+            if (currentUser == null)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "Please login to update course section");
             }
@@ -70,20 +71,20 @@ namespace EducationTech.Business.Master.Interfaces
 
             var courseSection = await courseSectionQuery.FirstOrDefaultAsync();
 
-            if(courseSection == null)
+            if (courseSection == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Course section not found");
             }
-            if(courseSection.Course.OwnerId != currentUser.Id)
+            if (courseSection.Course.OwnerId != currentUser.Id)
             {
                 throw new HttpException(HttpStatusCode.Forbidden, "You are not allowed to update course section for this course");
             }
 
-            if(requestDto.Title != null)
+            if (requestDto.Title != null)
             {
                 courseSection.Title = requestDto.Title;
             }
-            if(requestDto.Order != null)
+            if (requestDto.Order != null)
             {
                 courseSection.Order = requestDto.Order.Value;
             }
