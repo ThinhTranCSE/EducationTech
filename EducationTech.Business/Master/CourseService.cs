@@ -11,12 +11,7 @@ using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Master.Interfaces;
 using EducationTech.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.Business.Master
 {
@@ -30,9 +25,9 @@ namespace EducationTech.Business.Master
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         public CourseService(
-            ITransactionManager transactionManager, 
-            ICourseRepository courseRepository, 
-            ILearnerCourseRepository learnerCourseRepository, 
+            ITransactionManager transactionManager,
+            ICourseRepository courseRepository,
+            ILearnerCourseRepository learnerCourseRepository,
             ICategoryRepository categoryRepository,
             ICourseCategoryRepository courseCategoryRepository,
             IUserRepository userRepository,
@@ -49,7 +44,7 @@ namespace EducationTech.Business.Master
 
         public async Task<CourseDto> CreateCourse(Course_CreateRequestDto requestDto, User? currentUser)
         {
-            if(currentUser == null)
+            if (currentUser == null)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "Please login to create course");
             }
@@ -68,12 +63,12 @@ namespace EducationTech.Business.Master
             }).ToList();
 
             await _courseCategoryRepository.Insert(courseCategories, true);
-            
+
             return _mapper.Map<CourseDto>(createdCourse);
         }
         public async Task<CourseDto> UpdateCourse(Course_UpdateRequestDto requestDto, int id, User? currentUser)
         {
-            if(currentUser == null)
+            if (currentUser == null)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "Please login to update course");
             }
@@ -84,31 +79,31 @@ namespace EducationTech.Business.Master
                 .Where(x => x.Id == id);
 
             var course = await courseQuery.FirstOrDefaultAsync();
-            if(course == null)
+            if (course == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Course not found");
             }
-            if(course.OwnerId != currentUser.Id)
+            if (course.OwnerId != currentUser.Id)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to update this course");
             }
-            if(requestDto.Description != null)
+            if (requestDto.Description != null)
             {
                 course.Description = requestDto.Description;
             }
-            if(requestDto.Title != null)
+            if (requestDto.Title != null)
             {
                 course.Title = requestDto.Title;
             }
-            if(requestDto.Price != null)
+            if (requestDto.Price != null)
             {
                 course.Price = requestDto.Price.Value;
             }
-            if(requestDto.ImageUrl != null)
+            if (requestDto.ImageUrl != null)
             {
                 course.ImageUrl = requestDto.ImageUrl;
             }
-            if(requestDto.IsArchived != null)
+            if (requestDto.IsArchived != null)
             {
                 currentUser = await (await _userRepository.Get())
                     .Where(u => u.Id == currentUser.Id)
@@ -130,16 +125,16 @@ namespace EducationTech.Business.Master
                 }
                 course.IsArchived = requestDto.IsArchived.Value;
             }
-            if(requestDto.IsPublished != null)
+            if (requestDto.IsPublished != null)
             {
-                if(course.OwnerId != currentUser.Id)
+                if (course.OwnerId != currentUser.Id)
                 {
                     throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to publish course");
                 }
-                
+
                 course.IsPublished = requestDto.IsPublished.Value;
             }
-            if(requestDto.CategoryIds != null)
+            if (requestDto.CategoryIds != null)
             {
                 var categoryQuery = await _categoryRepository.Get();
                 var currentCourseCategories = await categoryQuery
@@ -203,14 +198,14 @@ namespace EducationTech.Business.Master
                     //throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to view this course detail");
                     flag = true;
                 }
-                if(currentUser != null && c.OwnerId == currentUser.Id)
+                if (currentUser != null && c.OwnerId == currentUser.Id)
                 {
                     flag = false;
                 }
                 query = query
                     .Include(x => x.CourseSections)
                         .ThenInclude(x => x.Lessons);
-                
+
                 if (flag) { query = beforeChangeQuery; }
             }
 
@@ -231,7 +226,7 @@ namespace EducationTech.Business.Master
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Course not found");
             }
-            if(course.OwnerId != currentUser?.Id && (course.IsArchived || !course.IsPublished))
+            if (course.OwnerId != currentUser?.Id && (course.IsArchived || !course.IsPublished))
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to view this course detail");
             }
@@ -255,8 +250,8 @@ namespace EducationTech.Business.Master
                 case CourseOrderByType.Id:
                     query = query.OrderBy(x => x.Id);
                     break;
-                case CourseOrderByType.CreatedAt:
-                    query = query.OrderBy(x => x.CreatedAt);
+                case CourseOrderByType.PublishedAt:
+                    query = query.OrderBy(x => x.PublishedAt);
                     break;
                 case CourseOrderByType.Rate:
                     query = query
@@ -264,12 +259,12 @@ namespace EducationTech.Business.Master
                         .OrderBy(x => x.LearnerCourses.Average(y => y.Rate));
                     break;
                 default:
-                    query = query.OrderBy(x => x.Id);
+                    query = query.OrderBy(x => x.PublishedAt);
                     break;
             }
-            if(requestDto.BelongToCurrentUser)
+            if (requestDto.BelongToCurrentUser)
             {
-                if(currentUser == null)
+                if (currentUser == null)
                 {
                     throw new HttpException(HttpStatusCode.Unauthorized, "Please login to get buyed courses");
                 }
@@ -288,7 +283,7 @@ namespace EducationTech.Business.Master
                 }
             }
 
-            if(!requestDto.IsIncludeArchived)
+            if (!requestDto.IsIncludeArchived)
             {
                 query = query.Where(x => !x.IsArchived);
             }
@@ -302,14 +297,14 @@ namespace EducationTech.Business.Master
             {
                 query = query.Include(x => x.Owner);
             }
-            if(requestDto.IsIncludeRate)
+            if (requestDto.IsIncludeRate)
             {
                 query = query.Include(x => x.LearnerCourses);
             }
 
-            if(requestDto.CreatedByCurrentUser)
+            if (requestDto.CreatedByCurrentUser)
             {
-                if(currentUser == null)
+                if (currentUser == null)
                 {
                     throw new HttpException(HttpStatusCode.Unauthorized, "Please login to get created courses");
                 }
@@ -317,7 +312,7 @@ namespace EducationTech.Business.Master
                     .Where(x => !x.IsArchived);
             }
 
-            if(offset.HasValue && limit.HasValue)
+            if (offset.HasValue && limit.HasValue)
             {
                 query = query
                     .Skip(offset.Value)
@@ -349,7 +344,7 @@ namespace EducationTech.Business.Master
 
         public async Task<CourseDto> BuyCourse(Course_BuyRequestDto requestDto, int id, User? currentUser)
         {
-            if(currentUser == null)
+            if (currentUser == null)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "Please login to buy course");
             }
@@ -360,18 +355,18 @@ namespace EducationTech.Business.Master
                 .Where(x => x.Id == id);
             var course = await courseQuery.FirstOrDefaultAsync();
 
-            if(course == null)
+            if (course == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Course not found");
             }
 
-            if(course.OwnerId == currentUser.Id)
+            if (course.OwnerId == currentUser.Id)
             {
                 throw new HttpException(HttpStatusCode.BadRequest, "You cant buy your own course");
             }
 
             var learnerCourse = await _learnerCourseRepository.GetSingle(x => x.CourseId == id && x.LearnerId == currentUser.Id, false);
-            if(learnerCourse != null)
+            if (learnerCourse != null)
             {
                 throw new HttpException(HttpStatusCode.BadRequest, "You already bought this course");
             }
