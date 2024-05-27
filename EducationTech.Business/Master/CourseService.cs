@@ -64,6 +64,12 @@ namespace EducationTech.Business.Master
 
             await _courseCategoryRepository.Insert(courseCategories, true);
 
+            await _learnerCourseRepository.Insert(new LearnerCourse
+            {
+                CourseId = createdCourse.Id,
+                LearnerId = currentUser.Id
+            }, true);
+
             return _mapper.Map<CourseDto>(createdCourse);
         }
         public async Task<CourseDto> UpdateCourse(Course_UpdateRequestDto requestDto, int id, User? currentUser)
