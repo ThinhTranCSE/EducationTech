@@ -18,6 +18,8 @@ namespace EducationTech.DataAccess.Entities.Master
 
         public virtual Course Course { get; set; }
         public virtual ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
+
+
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<CourseSection>(modelBuilder);

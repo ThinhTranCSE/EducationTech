@@ -210,7 +210,13 @@ namespace EducationTech.Business.Master
                 }
                 query = query
                     .Include(x => x.CourseSections)
-                        .ThenInclude(x => x.Lessons);
+                        .ThenInclude(x => x.Lessons)
+                            .ThenInclude(x => x.Quiz)
+                                .ThenInclude(x => x.Questions)
+                                    .ThenInclude(x => x.Answers)
+                    .Include(x => x.CourseSections)
+                        .ThenInclude(x => x.Lessons)
+                            .ThenInclude(x => x.Video);
 
                 if (flag) { query = beforeChangeQuery; }
             }
