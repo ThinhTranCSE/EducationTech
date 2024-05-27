@@ -1,20 +1,18 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Immutable;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Net;
-using Microsoft.EntityFrameworkCore;
-using EducationTech.Business.Business.Interfaces;
+﻿using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Shared.DTOs.Business.Auth;
-using EducationTech.Shared.Utilities.Interfaces;
-using EducationTech.DataAccess.Master.Interfaces;
+using EducationTech.Business.Shared.Exceptions.Http;
 using EducationTech.DataAccess.Business.Interfaces;
 using EducationTech.DataAccess.Core;
-using EducationTech.DataAccess.Entities.Master;
-using EducationTech.Business.Shared.Exceptions.Http;
 using EducationTech.DataAccess.Entities.Business;
+using EducationTech.DataAccess.Entities.Master;
+using EducationTech.DataAccess.Master.Interfaces;
+using EducationTech.Shared.Utilities.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace EducationTech.Business.Business
 {
@@ -23,6 +21,7 @@ namespace EducationTech.Business.Business
         private readonly IEncryptionUtils _encryptionUtils;
         private readonly IUserRepository _userRepository;
         private readonly IUserKeyRepository _userKeyRepository;
+        private readonly IUserRoleRepository _userRoleRepository;
         private readonly IAuthUtils _authUtils;
         private readonly ICacheService _cacheService;
         private readonly EducationTechContext _context;
@@ -33,6 +32,7 @@ namespace EducationTech.Business.Business
             IEncryptionUtils encryptionUtils,
             IUserRepository userRepository,
             IUserKeyRepository userKeyRepository,
+            IUserRoleRepository userRoleRepository,
             ICacheService cacheService
             )
         {
@@ -41,6 +41,7 @@ namespace EducationTech.Business.Business
             _userRepository = userRepository;
             _encryptionUtils = encryptionUtils;
             _userKeyRepository = userKeyRepository;
+            _userRoleRepository = userRoleRepository;
             _cacheService = cacheService;
         }
 
@@ -54,8 +55,8 @@ namespace EducationTech.Business.Business
                         .ThenInclude(r => r.RolePermissions)
                             .ThenInclude(rp => rp.Permission);
             User? user = await userQuery.FirstOrDefaultAsync();
-                        
-                
+
+
 
             if (user == null)
             {
@@ -237,8 +238,6 @@ namespace EducationTech.Business.Business
             {
                 throw new HttpException(HttpStatusCode.Conflict, "Username already exists");
             }
-
-            var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 string hashedPassword = _encryptionUtils.HashPassword(registerDto.Password, out var salt);
@@ -254,17 +253,18 @@ namespace EducationTech.Business.Business
 
                     Salt = salt
 
-                });
+                }, true);
 
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
+                await _userRoleRepository.Insert(new UserRole()
+                {
+                    UserId = createdUser.Id,
+                    RoleId = (await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Learner"))!.Id
+                }, true);
 
                 return createdUser;
             }
             catch (Exception e)
             {
-                await transaction.RollbackAsync();
                 throw;
             }
 
@@ -315,7 +315,7 @@ namespace EducationTech.Business.Business
             return userId != null ? Guid.Parse(userId) : null;
         }
 
-        
+
         public User? GetUserFromToken(string? token)
         {
             if (string.IsNullOrEmpty(token))
