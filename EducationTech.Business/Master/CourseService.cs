@@ -291,7 +291,7 @@ namespace EducationTech.Business.Master
                 {
                     query = query
                         .Include(x => x.LearnerCourses)
-                        .Where(x => !x.LearnerCourses.All(y => y.LearnerId != currentUser.Id));
+                        .Where(x => x.LearnerCourses.All(y => y.LearnerId != currentUser.Id));
                 }
             }
 
@@ -339,7 +339,8 @@ namespace EducationTech.Business.Master
                 int courseCount = courseDtos.Count();
                 for (int i = 0; i < courseCount; i++)
                 {
-                    courseDtos.ElementAt(i).Rate = courses.ElementAt(i).LearnerCourses.Average(x => x.Rate);
+                    var isLearnerCouseEmpty = courses.ElementAt(i).LearnerCourses.Count() == 0;
+                    courseDtos.ElementAt(i).Rate = isLearnerCouseEmpty ? 0 : courses.ElementAt(i).LearnerCourses.Average(x => x.Rate);
                 }
             }
 
