@@ -1,5 +1,4 @@
 ﻿using Microsoft.OpenApi.Models;
-using Serilog;
 
 namespace EducationTech.Installers
 {
