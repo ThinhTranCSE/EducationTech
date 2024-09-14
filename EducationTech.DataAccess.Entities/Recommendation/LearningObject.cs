@@ -1,11 +1,15 @@
 ﻿using EducationTech.DataAccess.Entities.Abstract;
 using EducationTech.DataAccess.Shared.Enums.LearningObject;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationTech.DataAccess.Entities.Recommendation;
 
 public class LearningObject : Entity
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public string Title { get; set; }
     public Structure Structure { get; set; }

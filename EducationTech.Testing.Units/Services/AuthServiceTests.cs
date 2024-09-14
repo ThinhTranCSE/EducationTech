@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System.Net;
 using System.Security.Claims;
 
 namespace EducationTech.Testing.Units.Services
@@ -20,12 +19,13 @@ namespace EducationTech.Testing.Units.Services
     [TestFixture]
     public class AuthServiceTests
     {
-        private AuthService _authService; 
+        private AuthService _authService;
         private Mock<EducationTechContext> _mainDbContextMock;
         private Mock<IAuthUtils> _authUtils;
         private Mock<IEncryptionUtils> _encryptionUtils;
         private Mock<IUserRepository> _userRepository;
         private Mock<IUserKeyRepository> _userKeyRepository;
+        private Mock<IUserRoleRepository> _userRoleRepository;
         private Mock<ICacheService> _cacheService;
 
         [SetUp]
@@ -45,8 +45,9 @@ namespace EducationTech.Testing.Units.Services
             _encryptionUtils = new Mock<IEncryptionUtils>();
             _userRepository = new Mock<IUserRepository>();
             _userKeyRepository = new Mock<IUserKeyRepository>();
+            _userRoleRepository = new Mock<IUserRoleRepository>();
             _cacheService = new Mock<ICacheService>();
-            _authService = new AuthService(_mainDbContextMock.Object, _authUtils.Object, _encryptionUtils.Object, _userRepository.Object, _userKeyRepository.Object, _cacheService.Object);
+            _authService = new AuthService(_mainDbContextMock.Object, _authUtils.Object, _encryptionUtils.Object, _userRepository.Object, _userKeyRepository.Object, _userRoleRepository.Object, _cacheService.Object);
 
         }
 

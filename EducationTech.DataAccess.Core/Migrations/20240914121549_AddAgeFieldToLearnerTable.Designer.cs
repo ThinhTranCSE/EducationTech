@@ -3,6 +3,7 @@ using System;
 using EducationTech.DataAccess.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EducationTech.Migrations
 {
     [DbContext(typeof(EducationTechContext))]
-    partial class MainDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240914121549_AddAgeFieldToLearnerTable")]
+    partial class AddAgeFieldToLearnerTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -625,9 +627,6 @@ namespace EducationTech.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("Attempt")
-                        .HasColumnType("int");
-
                     b.Property<int>("LearnerId")
                         .HasColumnType("int");
 
@@ -635,18 +634,6 @@ namespace EducationTech.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TimeTaken")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("VisitedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("VisitedTime")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -700,32 +687,32 @@ namespace EducationTech.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<float>("Active")
-                        .HasColumnType("float");
+                    b.Property<int>("Active")
+                        .HasColumnType("int");
 
-                    b.Property<float>("Global")
-                        .HasColumnType("float");
+                    b.Property<int>("Global")
+                        .HasColumnType("int");
 
-                    b.Property<float>("Intuitive")
-                        .HasColumnType("float");
+                    b.Property<int>("Intuitive")
+                        .HasColumnType("int");
 
                     b.Property<int>("LearnerId")
                         .HasColumnType("int");
 
-                    b.Property<float>("Reflective")
-                        .HasColumnType("float");
+                    b.Property<int>("Reflective")
+                        .HasColumnType("int");
 
-                    b.Property<float>("Sensing")
-                        .HasColumnType("float");
+                    b.Property<int>("Sensing")
+                        .HasColumnType("int");
 
-                    b.Property<float>("Sequential")
-                        .HasColumnType("float");
+                    b.Property<int>("Sequential")
+                        .HasColumnType("int");
 
-                    b.Property<float>("Verbal")
-                        .HasColumnType("float");
+                    b.Property<int>("Verbal")
+                        .HasColumnType("int");
 
-                    b.Property<float>("Visual")
-                        .HasColumnType("float");
+                    b.Property<int>("Visual")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1041,13 +1028,11 @@ namespace EducationTech.Migrations
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.LearningStyle", b =>
                 {
-                    b.HasOne("EducationTech.DataAccess.Entities.Recommendation.Learner", "Learner")
+                    b.HasOne("EducationTech.DataAccess.Entities.Recommendation.Learner", null)
                         .WithOne("LearningStyle")
                         .HasForeignKey("EducationTech.DataAccess.Entities.Recommendation.LearningStyle", "LearnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Learner");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Question", b =>

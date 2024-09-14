@@ -6,4 +6,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Numerics.Tensors" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EducationTech.DataAccess.Core\EducationTech.DataAccess.Core.csproj" />
+    <ProjectReference Include="..\EducationTech.DataAccess.Entities\EducationTech.DataAccess.Entities.csproj" />
+    <ProjectReference Include="..\EducationTech.DataAccess.Shared\EducationTech.DataAccess.Shared.csproj" />
+    <ProjectReference Include="..\EducationTech.DataAccess\EducationTech.DataAccess.csproj" />
+  </ItemGroup>
+
 </Project>

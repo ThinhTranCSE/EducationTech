@@ -2,8 +2,6 @@ using EducationTech.DataAccess.Seeders;
 using EducationTech.Extensions;
 using EducationTech.Installers;
 using EducationTech.Middlewares;
-using EducationTech.Shared.Utilities;
-using EducationTech.Storage;
 using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
 
@@ -73,7 +71,7 @@ namespace EducationTech
                     seederExecutor.RegisterSeeders(scope);
 
                     seederExecutor.Execute(cancellationTokenSource, args);
-                    //seederExecutor.Execute(cancellationTokenSource, new string[] {"seeder", "CategorySeeder"});
+                    //seederExecutor.Execute(cancellationTokenSource, new string[] { "seeder", "LearnerLogSeeder" });
                 }
                 if (cancellationToken.IsCancellationRequested)
                 {

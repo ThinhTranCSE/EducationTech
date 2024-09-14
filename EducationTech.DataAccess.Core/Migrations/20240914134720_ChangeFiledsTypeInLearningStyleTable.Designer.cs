@@ -3,6 +3,7 @@ using System;
 using EducationTech.DataAccess.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EducationTech.Migrations
 {
     [DbContext(typeof(EducationTechContext))]
-    partial class MainDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240914134720_ChangeFiledsTypeInLearningStyleTable")]
+    partial class ChangeFiledsTypeInLearningStyleTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -607,6 +609,9 @@ namespace EducationTech.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
+                    b.Property<float>("LearningStyleId")
+                        .HasColumnType("float");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -615,6 +620,8 @@ namespace EducationTech.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LearningStyleId");
 
                     b.ToTable("Learners");
                 });
@@ -625,9 +632,6 @@ namespace EducationTech.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("Attempt")
-                        .HasColumnType("int");
-
                     b.Property<int>("LearnerId")
                         .HasColumnType("int");
 
@@ -635,18 +639,6 @@ namespace EducationTech.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TimeTaken")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("VisitedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("VisitedTime")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -696,9 +688,8 @@ namespace EducationTech.Migrations
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.LearningStyle", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<float>("Id")
+                        .HasColumnType("float");
 
                     b.Property<float>("Active")
                         .HasColumnType("float");
@@ -709,8 +700,8 @@ namespace EducationTech.Migrations
                     b.Property<float>("Intuitive")
                         .HasColumnType("float");
 
-                    b.Property<int>("LearnerId")
-                        .HasColumnType("int");
+                    b.Property<float>("LearnerId")
+                        .HasColumnType("float");
 
                     b.Property<float>("Reflective")
                         .HasColumnType("float");
@@ -728,9 +719,6 @@ namespace EducationTech.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LearnerId")
-                        .IsUnique();
 
                     b.ToTable("LearningStyles");
                 });
@@ -1020,6 +1008,17 @@ namespace EducationTech.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.Learner", b =>
+                {
+                    b.HasOne("EducationTech.DataAccess.Entities.Recommendation.LearningStyle", "LearningStyle")
+                        .WithMany()
+                        .HasForeignKey("LearningStyleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LearningStyle");
+                });
+
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.LearnerLog", b =>
                 {
                     b.HasOne("EducationTech.DataAccess.Entities.Recommendation.Learner", "Learner")
@@ -1037,17 +1036,6 @@ namespace EducationTech.Migrations
                     b.Navigation("Learner");
 
                     b.Navigation("LearningObject");
-                });
-
-            modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.LearningStyle", b =>
-                {
-                    b.HasOne("EducationTech.DataAccess.Entities.Recommendation.Learner", "Learner")
-                        .WithOne("LearningStyle")
-                        .HasForeignKey("EducationTech.DataAccess.Entities.Recommendation.LearningStyle", "LearnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Learner");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Question", b =>
@@ -1113,9 +1101,6 @@ namespace EducationTech.Migrations
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.Learner", b =>
                 {
                     b.Navigation("LearnerLogs");
-
-                    b.Navigation("LearningStyle")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
