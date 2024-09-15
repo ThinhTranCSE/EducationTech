@@ -15,6 +15,7 @@
     <ProjectReference Include="..\EducationTech.DataAccess.Entities\EducationTech.DataAccess.Entities.csproj" />
     <ProjectReference Include="..\EducationTech.DataAccess.Shared\EducationTech.DataAccess.Shared.csproj" />
     <ProjectReference Include="..\EducationTech.DataAccess\EducationTech.DataAccess.csproj" />
+    <ProjectReference Include="..\EducationTech.Shared\EducationTech.Shared.csproj" />
   </ItemGroup>
 
 </Project>

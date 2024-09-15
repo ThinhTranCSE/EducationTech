@@ -61,6 +61,8 @@ public class CosineSimilarityLearnerFilter : ILearnerCollaborativeFilter
             };
 
             var negativeSimilarity = -TensorPrimitives.CosineSimilarity(learnerVector, lVector);
+
+            similarLearners.Enqueue(l, negativeSimilarity);
         }
 
         var result = new Dictionary<Learner, float>();

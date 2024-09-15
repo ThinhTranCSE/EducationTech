@@ -38,7 +38,7 @@ public class OntologyBasedLoRecommender : ILoRecommender
         return result;
     }
 
-    public float LearningObjectScoreCalculation(Learner learner, LearningObject learningObject)
+    private float LearningObjectScoreCalculation(Learner learner, LearningObject learningObject)
     {
         float score = 0;
         int positiveWithRuleCounter = 0;

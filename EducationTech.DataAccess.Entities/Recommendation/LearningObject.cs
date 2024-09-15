@@ -20,6 +20,7 @@ public class LearningObject : Entity
     public InteractivityLevel InteractivityLevel { get; set; }
     public SemanticDensity SemanticDensity { get; set; }
 
+    public virtual ICollection<LearnerLog> LearnerLogs { get; set; }
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<LearningObject>(modelBuilder);

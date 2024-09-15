@@ -1,8 +1,9 @@
 ﻿using EducationTech.DataAccess.Entities.Recommendation;
+using EducationTech.Shared.Utilities.Abstract;
 
 namespace EducationTech.RecommendationSystem.Interfaces;
 
-public interface ILearnerCollaborativeFilter
+public interface ILearnerCollaborativeFilter : IUtils
 {
     /// <summary>
     /// Trả ra n learner tương đồng nhất với learner truyền vào

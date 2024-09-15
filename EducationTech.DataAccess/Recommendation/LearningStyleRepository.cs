@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.DataAccess.Recommendation;
 
-public class LearningObjectRepository : Repository<LearningObject>, ILearningObjectRepository
+public class LearningStyleRepository : Repository<LearningStyle>, ILearningStyleRepository
 {
-    public LearningObjectRepository(EducationTechContext context) : base(context)
+    public LearningStyleRepository(EducationTechContext context) : base(context)
     {
     }
 
-    public override DbSet<LearningObject> Model => _context.LearningObjects;
+    public override DbSet<LearningStyle> Model => _context.LearningStyles;
 }

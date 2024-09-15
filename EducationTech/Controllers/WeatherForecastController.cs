@@ -1,12 +1,11 @@
 using EducationTech.Annotations;
 using EducationTech.Business.Business.Interfaces;
+using EducationTech.DataAccess.Recommendation.Interfaces;
+using EducationTech.RecommendationSystem.Implementations.LearnerCollaborativeFilters;
+using EducationTech.RecommendationSystem.Interfaces;
 using EducationTech.Shared.Utilities.Interfaces;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MimeDetective;
-using Newtonsoft.Json;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace EducationTech.Controllers
 {
@@ -22,11 +21,15 @@ namespace EducationTech.Controllers
 
         private readonly IFileService _fileService;
         private readonly IFileUtils _fileUtils;
+        private readonly ILearnerCollaborativeFilter _learnerCollaborativeFilter;
+        private readonly ILearnerRepository _learnerRepository;
 
-        public WeatherForecastController(IFileService fileService, IFileUtils fileUtils)
+        public WeatherForecastController(IFileService fileService, IFileUtils fileUtils, ILearnerRepository learnerRepository)
         {
             _fileService = fileService;
             _fileUtils = fileUtils;
+            _learnerRepository = learnerRepository;
+            _learnerCollaborativeFilter = new CosineSimilarityLearnerFilter(_learnerRepository);
         }
 
         [AllowAnonymous]
@@ -42,6 +45,17 @@ namespace EducationTech.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [AllowAnonymous]
+        [HttpGet("TestTopNSimilarityLearners/{id}")]
+        public async Task<IActionResult> TestTopNSimilarityLearners(int id)
+        {
+
+            var learner = (await _learnerRepository.Get()).Where(x => x.Id == id).FirstOrDefault();
+            var similarLearners = await _learnerCollaborativeFilter.TopNSimilarityLearners(learner, 5);
+
+            return Ok(similarLearners.AsEnumerable().Select(s => (s.Key.Id, s.Value)));
         }
     }
 }
