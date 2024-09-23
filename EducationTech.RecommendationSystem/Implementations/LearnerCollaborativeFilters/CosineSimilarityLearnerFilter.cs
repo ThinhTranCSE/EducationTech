@@ -1,27 +1,23 @@
 ﻿using EducationTech.DataAccess.Entities.Recommendation;
-using EducationTech.DataAccess.Recommendation.Interfaces;
 using EducationTech.RecommendationSystem.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using System.Numerics.Tensors;
 
 namespace EducationTech.RecommendationSystem.Implementations.LearnerCollaborativeFilters;
 
 public class CosineSimilarityLearnerFilter : ILearnerCollaborativeFilter
 {
-    private readonly ILearnerRepository _learnerRepository;
+    private int _topN;
 
-    public CosineSimilarityLearnerFilter(ILearnerRepository learnerRepository)
+    public CosineSimilarityLearnerFilter(int topN = 5)
     {
-        _learnerRepository = learnerRepository;
+        _topN = topN;
     }
-    public async Task<Dictionary<Learner, float>> TopNSimilarityLearners(Learner learner, int n)
+    public async Task<Dictionary<Learner, float>> TopNSimilarityLearners(Learner learner, IList<Learner> interestedLearners, int n = -1)
     {
-        var query = await _learnerRepository.Get();
-
-        var learners = query
-            .Include(x => x.LearningStyle)
-            .Include(x => x.LearnerLogs)
-            .ToList();
+        if (n == -1)
+        {
+            n = _topN;
+        }
 
         //age, gender, qualification, background knowledge, learning style
         var learnerVector = new float[]
@@ -42,7 +38,7 @@ public class CosineSimilarityLearnerFilter : ILearnerCollaborativeFilter
 
         var similarLearners = new PriorityQueue<Learner, float>();
 
-        foreach (var l in learners)
+        foreach (var l in interestedLearners)
         {
             var lVector = new float[]
             {

@@ -1,5 +1,4 @@
 ﻿using EducationTech.DataAccess.Entities.Recommendation;
-using EducationTech.DataAccess.Recommendation.Interfaces;
 using EducationTech.DataAccess.Shared.Enums.LearningObject;
 using EducationTech.RecommendationSystem.Interfaces;
 
@@ -7,19 +6,11 @@ namespace EducationTech.RecommendationSystem.Implementations.LoRecommenders;
 
 public class OntologyBasedLoRecommender : ILoRecommender
 {
-    private readonly ILearningObjectRepository _learningObjectRepository;
-
-    public OntologyBasedLoRecommender(ILearningObjectRepository learningObjectRepository)
+    public async Task<List<LearningObject>> RecommendTopNLearningObjects(Learner learner, List<Learner> interestedLearners, List<LearningObject> interestedLearningObjects, int numberOfRecommendations)
     {
-        _learningObjectRepository = learningObjectRepository;
-    }
-    public async Task<List<LearningObject>> RecommendTopNLearningObjects(Learner learner, int numberOfRecommendations)
-    {
-        List<LearningObject> learningObjects = (await _learningObjectRepository.Get()).ToList();
-
         var sortedLearningObjects = new PriorityQueue<LearningObject, float>(numberOfRecommendations);
 
-        foreach (var learningObject in learningObjects)
+        foreach (var learningObject in interestedLearningObjects)
         {
             float score = LearningObjectScoreCalculation(learner, learningObject);
             sortedLearningObjects.Enqueue(learningObject, score);

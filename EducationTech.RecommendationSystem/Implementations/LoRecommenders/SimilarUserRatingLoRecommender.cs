@@ -1,33 +1,22 @@
 ﻿using EducationTech.DataAccess.Entities.Recommendation;
-using EducationTech.DataAccess.Recommendation.Interfaces;
 using EducationTech.RecommendationSystem.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.RecommendationSystem.Implementations.LoRecommenders;
 
 public class SimilarUserRatingLoRecommender : ILoRecommender
 {
     private readonly ILearnerCollaborativeFilter _learnerCollaborativeFilter;
-    private readonly ILearningObjectRepository _learningObjectRepository;
 
-
-    public SimilarUserRatingLoRecommender(ILearnerCollaborativeFilter learnerCollaborativeFilter, ILearningObjectRepository learningObjectRepository)
+    public SimilarUserRatingLoRecommender(ILearnerCollaborativeFilter learnerCollaborativeFilter)
     {
         _learnerCollaborativeFilter = learnerCollaborativeFilter;
-        _learningObjectRepository = learningObjectRepository;
     }
-    public async Task<List<LearningObject>> RecommendTopNLearningObjects(Learner learner, int numberOfRecommendations)
+    public async Task<List<LearningObject>> RecommendTopNLearningObjects(Learner learner, List<Learner> interestedLearners, List<LearningObject> interestedLearningObjects, int numberOfRecommendations)
     {
-        var similarLearnersLookUpTable = await _learnerCollaborativeFilter.TopNSimilarityLearners(learner, 5);
+        var similarLearnersLookUpTable = await _learnerCollaborativeFilter.TopNSimilarityLearners(learner, interestedLearners);
         var similarLearnerIds = similarLearnersLookUpTable.Select(x => x.Key.Id).ToHashSet();
 
-        var learningObjectQuery = await _learningObjectRepository.Get();
-        learningObjectQuery = learningObjectQuery
-            .Include(x => x.LearnerLogs)
-            .ThenInclude(x => x.Learner)
-            .Where(x => x.LearnerLogs.Any(ll => similarLearnerIds.Contains(ll.LearnerId)));
-
-        var learningObjects = await learningObjectQuery.ToListAsync();
+        var learningObjects = interestedLearningObjects.Where(x => x.LearnerLogs.Any(ll => similarLearnerIds.Contains(ll.LearnerId))); ;
 
         var sortedLearningObjects = new PriorityQueue<LearningObject, float>(numberOfRecommendations);
 

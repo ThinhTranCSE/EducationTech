@@ -71,6 +71,9 @@ namespace EducationTech
                     seederExecutor.RegisterSeeders(scope);
 
                     seederExecutor.Execute(cancellationTokenSource, args);
+                    //seederExecutor.Execute(cancellationTokenSource, new string[] { "seeder", "LearnerSeeder" });
+                    //seederExecutor.Execute(cancellationTokenSource, new string[] { "seeder", "RecommendTopicSeeder" });
+                    //seederExecutor.Execute(cancellationTokenSource, new string[] { "seeder", "LearningObjectSeeder" });
                     //seederExecutor.Execute(cancellationTokenSource, new string[] { "seeder", "LearnerLogSeeder" });
                 }
                 if (cancellationToken.IsCancellationRequested)

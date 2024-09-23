@@ -3,13 +3,11 @@ using EducationTech.Business.Business.Interfaces;
 using EducationTech.DataAccess.Recommendation.Interfaces;
 using EducationTech.RecommendationSystem.DataStructures;
 using EducationTech.RecommendationSystem.Implementations.LearnerCollaborativeFilters;
-using EducationTech.RecommendationSystem.Implementations.LoRecommenders;
 using EducationTech.RecommendationSystem.Implementations.SequenceMiners;
 using EducationTech.RecommendationSystem.Interfaces;
 using EducationTech.Shared.Utilities.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Controllers
 {
@@ -28,13 +26,25 @@ namespace EducationTech.Controllers
         private readonly ILearnerCollaborativeFilter _learnerCollaborativeFilter;
         private readonly ILearnerRepository _learnerRepository;
         private readonly ILearningObjectRepository _learningObjectRepository;
-        public WeatherForecastController(IFileService fileService, IFileUtils fileUtils, ILearnerRepository learnerRepository, ILearningObjectRepository learningObjectRepository)
+        private readonly IRecommendTopicRepository _recommendTopicRepository;
+        private readonly ILoSequenceRecommender _loSequenceRecommender;
+        public WeatherForecastController(
+            IFileService fileService,
+            IFileUtils fileUtils,
+            ILearnerRepository learnerRepository,
+            ILearningObjectRepository learningObjectRepository,
+            IRecommendTopicRepository recommendTopicRepository,
+            ILoSequenceRecommender loSequenceRecommender
+            )
         {
             _fileService = fileService;
             _fileUtils = fileUtils;
             _learnerRepository = learnerRepository;
-            _learnerCollaborativeFilter = new CosineSimilarityLearnerFilter(_learnerRepository);
+            _learnerCollaborativeFilter = new CosineSimilarityLearnerFilter();
             _learningObjectRepository = learningObjectRepository;
+            _recommendTopicRepository = recommendTopicRepository;
+            _loSequenceRecommender = loSequenceRecommender;
+
         }
 
         [AllowAnonymous]
@@ -52,27 +62,27 @@ namespace EducationTech.Controllers
             .ToArray();
         }
 
-        [AllowAnonymous]
-        [HttpGet("TestTopNSimilarityLearners/{id}")]
-        public async Task<IActionResult> TestTopNSimilarityLearners(int id)
-        {
+        //[AllowAnonymous]
+        //[HttpGet("TestTopNSimilarityLearners/{id}")]
+        //public async Task<IActionResult> TestTopNSimilarityLearners(int id)
+        //{
 
-            var learner = (await _learnerRepository.Get()).Where(x => x.Id == id).FirstOrDefault();
-            var similarLearners = await _learnerCollaborativeFilter.TopNSimilarityLearners(learner, 5);
+        //    var learner = (await _learnerRepository.Get()).Where(x => x.Id == id).FirstOrDefault();
+        //    var similarLearners = await _learnerCollaborativeFilter.TopNSimilarityLearners(learner, 5);
 
-            return Ok(similarLearners.AsEnumerable().Select(s => (s.Key.Id, s.Value)));
-        }
+        //    return Ok(similarLearners.AsEnumerable().Select(s => (s.Key.Id, s.Value)));
+        //}
 
-        [AllowAnonymous]
-        [HttpGet("TestRecommendTopNLearningObjects/{learnerId}")]
-        public async Task<IActionResult> TestRecommendTopNLearningObjects(int learnerId)
-        {
-            var learner = (await _learnerRepository.Get()).Where(x => x.Id == learnerId).Include(x => x.LearningStyle).FirstOrDefault();
-            var recommender = new OntologyBasedLoRecommender(_learningObjectRepository);
-            var learningObjects = await recommender.RecommendTopNLearningObjects(learner, 5);
+        //[AllowAnonymous]
+        //[HttpGet("TestRecommendTopNLearningObjects/{learnerId}")]
+        //public async Task<IActionResult> TestRecommendTopNLearningObjects(int learnerId)
+        //{
+        //    var learner = (await _learnerRepository.Get()).Where(x => x.Id == learnerId).Include(x => x.LearningStyle).FirstOrDefault();
+        //    var recommender = new OntologyBasedLoRecommender(_learningObjectRepository);
+        //    var learningObjects = await recommender.RecommendTopNLearningObjects(learner, 5);
 
-            return Ok(learningObjects);
-        }
+        //    return Ok(learningObjects);
+        //}
 
         [AllowAnonymous]
         [HttpGet("TestPrefixSpanSequenceMiner")]
@@ -86,5 +96,15 @@ namespace EducationTech.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
+        [HttpGet("TestLoSequenceRecommender")]
+        public async Task<IActionResult> TestLoSequenceRecommender(int learnerId, int topicId)
+        {
+            var learner = (await _learnerRepository.Get(x => x.Id == learnerId)).FirstOrDefault();
+            var topic = (await _recommendTopicRepository.Get(x => x.Id == topicId)).FirstOrDefault();
+            var sequences = await _loSequenceRecommender.RecommendTopNLearningObjectSequences(learner, topic);
+
+            return Ok(sequences);
+        }
     }
 }
