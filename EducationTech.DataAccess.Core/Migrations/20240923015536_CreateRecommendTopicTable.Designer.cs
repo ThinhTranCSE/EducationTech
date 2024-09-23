@@ -3,6 +3,7 @@ using System;
 using EducationTech.DataAccess.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EducationTech.Migrations
 {
     [DbContext(typeof(EducationTechContext))]
-    partial class MainDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240923015536_CreateRecommendTopicTable")]
+    partial class CreateRecommendTopicTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -689,12 +691,7 @@ namespace EducationTech.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("TopicId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TopicId");
 
                     b.ToTable("LearningObjects");
                 });
@@ -1078,17 +1075,6 @@ namespace EducationTech.Migrations
                     b.Navigation("Learner");
 
                     b.Navigation("LearningObject");
-                });
-
-            modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.LearningObject", b =>
-                {
-                    b.HasOne("EducationTech.DataAccess.Entities.Recommendation.RecommendTopic", "Topic")
-                        .WithMany()
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Topic");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.LearningStyle", b =>

@@ -11,6 +11,7 @@ public class LearningObject : Entity
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
+    public int TopicId { get; set; }
     public string Title { get; set; }
     public Structure Structure { get; set; }
     public AggregationLevel AggregationLevel { get; set; }
@@ -19,6 +20,8 @@ public class LearningObject : Entity
     public InteractivityType InteractivityType { get; set; }
     public InteractivityLevel InteractivityLevel { get; set; }
     public SemanticDensity SemanticDensity { get; set; }
+
+    public virtual RecommendTopic Topic { get; set; }
 
     public virtual ICollection<LearnerLog> LearnerLogs { get; set; }
     public override void OnModelCreating(ModelBuilder modelBuilder)

@@ -24,12 +24,12 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                 {
                     var learner = new Learner
                     {
-                        Name = $"{record.first_name} {record.last_name}",
-                        Gender = (Gender)Enum.Parse(typeof(Gender), record.gender),
-                        Age = Convert.ToInt32(record.age),
-                        BackgroundKnowledge = (BackgroundKnowledge)Enum.Parse(typeof(BackgroundKnowledge), record.background_knowledge),
-                        Qualification = (Qualification)Enum.Parse(typeof(Qualification), record.qualification),
-                        Branch = record.branch
+                        Name = record.Name,
+                        Gender = (Gender)Enum.Parse(typeof(Gender), record.Gender),
+                        Age = Convert.ToInt32(record.Age),
+                        BackgroundKnowledge = (BackgroundKnowledge)Enum.Parse(typeof(BackgroundKnowledge), record.BackgroundKnowledge),
+                        Qualification = (Qualification)Enum.Parse(typeof(Qualification), record.Qualification),
+                        Branch = record.Branch
                     };
                     if (_context.Learners.Any(x =>
                         x.Name == learner.Name &&
@@ -47,14 +47,14 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                     learner.LearningStyle = new LearningStyle
                     {
                         LearnerId = learner.Id,
-                        Active = Convert.ToSingle(record.active, CultureInfo.InvariantCulture),
-                        Reflective = 1 - Convert.ToSingle(record.active, CultureInfo.InvariantCulture),
-                        Intuitive = Convert.ToSingle(record.intuitive, CultureInfo.InvariantCulture),
-                        Sensing = 1 - Convert.ToSingle(record.intuitive, CultureInfo.InvariantCulture),
-                        Visual = Convert.ToSingle(record.visual, CultureInfo.InvariantCulture),
-                        Verbal = 1 - Convert.ToSingle(record.visual, CultureInfo.InvariantCulture),
-                        Global = Convert.ToSingle(record.global, CultureInfo.InvariantCulture),
-                        Sequential = 1 - Convert.ToSingle(record.global, CultureInfo.InvariantCulture),
+                        Active = Convert.ToSingle(record.Active, CultureInfo.InvariantCulture),
+                        Reflective = 1 - Convert.ToSingle(record.Active, CultureInfo.InvariantCulture),
+                        Intuitive = Convert.ToSingle(record.Intuitive, CultureInfo.InvariantCulture),
+                        Sensing = 1 - Convert.ToSingle(record.Intuitive, CultureInfo.InvariantCulture),
+                        Visual = Convert.ToSingle(record.Visual, CultureInfo.InvariantCulture),
+                        Verbal = 1 - Convert.ToSingle(record.Visual, CultureInfo.InvariantCulture),
+                        Global = Convert.ToSingle(record.Global, CultureInfo.InvariantCulture),
+                        Sequential = 1 - Convert.ToSingle(record.Global, CultureInfo.InvariantCulture),
                     };
                     _context.LearningStyles.Add(learner.LearningStyle);
                     _context.SaveChanges();

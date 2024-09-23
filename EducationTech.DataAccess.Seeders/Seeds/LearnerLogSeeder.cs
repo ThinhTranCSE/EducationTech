@@ -48,16 +48,24 @@ namespace EducationTech.DataAccess.Seeders.Seeds
     {
         public LearnerLogRecord()
         {
-            Map(x => x.LearnerId).Name("learner_id").TypeConverter<Int32Converter>();
-            Map(x => x.LearningObjectId).Name("learning_material_id").TypeConverter<Int32Converter>();
-            Map(x => x.Rating).Name("rating").TypeConverter<Int32Converter>();
-            Map(x => x.Score).Name("score").TypeConverter<Int32Converter>();
-            Map(x => x.Attempt).Name("attemps").TypeConverter<Int32Converter>();
-            Map(x => x.TimeTaken).Name("time_taken").TypeConverter<Int32Converter>();
+            Map(x => x.LearnerId).Name("LearnerId").TypeConverter<Int32Converter>();
+            Map(x => x.LearningObjectId).Name("LearningObjectId").TypeConverter<Int32Converter>();
+            Map(x => x.Rating).Name("Rating").TypeConverter<RatingConverter>();
+            Map(x => x.Score).Name("Score").TypeConverter<Int32Converter>();
+            Map(x => x.Attempt).Name("Attempts").TypeConverter<Int32Converter>();
+            Map(x => x.TimeTaken).Name("TimeTaken").TypeConverter<Int32Converter>();
             //2023-06-11T21:16:58Z
-            Map(x => x.VisitedAt).Name("visited_at").TypeConverter<DateTimeConverter>();
+            Map(x => x.VisitedAt).Name("VisitedAt").TypeConverter<DateTimeConverter>();
 
-            Map(x => x.VisitedTime).Name("visited_time").TypeConverter<Int32Converter>();
+            Map(x => x.VisitedTime).Name("VisitedTime").TypeConverter<Int32Converter>();
+        }
+    }
+
+    public class RatingConverter : DefaultTypeConverter
+    {
+        public override object ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData)
+        {
+            return (int)float.Parse(text, CultureInfo.InvariantCulture);
         }
     }
 }

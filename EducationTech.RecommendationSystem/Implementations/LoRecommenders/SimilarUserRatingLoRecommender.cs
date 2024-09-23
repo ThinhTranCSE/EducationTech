@@ -8,17 +8,13 @@ namespace EducationTech.RecommendationSystem.Implementations.LoRecommenders;
 public class SimilarUserRatingLoRecommender : ILoRecommender
 {
     private readonly ILearnerCollaborativeFilter _learnerCollaborativeFilter;
-    private readonly ILearnerRepository _learnerRepository;
     private readonly ILearningObjectRepository _learningObjectRepository;
-    private readonly ILearnerLogRepository _learnerLogRepository;
 
 
-    public SimilarUserRatingLoRecommender(ILearnerCollaborativeFilter learnerCollaborativeFilter, ILearnerRepository learnerRepository, ILearningObjectRepository learningObjectRepository, ILearnerLogRepository learnerLogRepository)
+    public SimilarUserRatingLoRecommender(ILearnerCollaborativeFilter learnerCollaborativeFilter, ILearningObjectRepository learningObjectRepository)
     {
         _learnerCollaborativeFilter = learnerCollaborativeFilter;
-        _learnerRepository = learnerRepository;
         _learningObjectRepository = learningObjectRepository;
-        _learnerLogRepository = learnerLogRepository;
     }
     public async Task<List<LearningObject>> RecommendTopNLearningObjects(Learner learner, int numberOfRecommendations)
     {
