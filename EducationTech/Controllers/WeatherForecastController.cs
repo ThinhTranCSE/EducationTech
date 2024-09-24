@@ -88,10 +88,52 @@ namespace EducationTech.Controllers
         [HttpGet("TestPrefixSpanSequenceMiner")]
         public async Task<IActionResult> TestPrefixSpanSequenceMiner()
         {
-            var database = DataGenerator.GenerateData(1000, 100, 10);
+            //db = [
+            //    [0, 1, 2, 3, 4],
+            //    [1, 1, 1, 3, 4],
+            //    [2, 1, 2, 2, 0],
+            //    [1, 1, 1, 2, 2],
+            //]
+
+            var database = new List<Sequence<string>>
+            {
+                new Sequence<string>(new List<List<string>>
+                {
+                    new List<string> { "0" },
+                    new List<string> { "1" },
+                    new List<string> { "2" },
+                    new List<string> { "3" },
+                    new List<string> { "4" },
+                }),
+                new Sequence<string>(new List<List<string>>
+                {
+                    new List<string> { "1" },
+                    new List<string> { "1" },
+                    new List<string> { "1" },
+                    new List<string> { "3" },
+                    new List<string> { "4" },
+                }),
+                new Sequence<string>(new List<List<string>>
+                {
+                    new List<string> { "2" },
+                    new List<string> { "1" },
+                    new List<string> { "2" },
+                    new List<string> { "2" },
+                    new List<string> { "0" },
+                }),
+                new Sequence<string>(new List<List<string>>
+                {
+                    new List<string> { "1" },
+                    new List<string> { "1" },
+                    new List<string> { "1" },
+                    new List<string> { "2" },
+                    new List<string> { "2" },
+                }),
+            };
+
             var miner = new PrefixSpanSequenceMiner<string>();
             var result = new List<FrequentSequence<string>>();
-            miner.MineSequences(new List<List<string>>(), database, 3, result);
+            miner.MineSequences(new List<List<string>>(), database, 2, result);
 
             return Ok(result);
         }

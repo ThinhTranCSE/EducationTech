@@ -13,6 +13,7 @@ public class RecommendTopic : Entity
     public string Name { get; set; }
 
     public virtual ICollection<TopicConjunction> NextTopicConjuctions { get; set; }
+    public virtual ICollection<LearningObject> LearningObjects { get; set; }
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<RecommendTopic>(modelBuilder);

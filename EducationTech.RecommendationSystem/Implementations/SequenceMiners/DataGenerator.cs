@@ -18,11 +18,11 @@ namespace EducationTech.RecommendationSystem.Implementations.SequenceMiners
             // Các chuỗi mẫu (được lặp lại nhiều lần để đảm bảo support >= minSupport)
             List<List<List<string>>> frequentPatterns = new List<List<List<string>>>
             {
-            new List<List<string>> { new List<string> { "Item1" }, new List<string> { "Item2" } },
-            new List<List<string>> { new List<string> { "Item3", "Item4" }, new List<string> { "Item5" } },
-            new List<List<string>> { new List<string> { "Item6" }, new List<string> { "Item7", "Item8" } },
-            new List<List<string>> { new List<string> { "Item9" }, new List<string> { "Item10" } },
-            new List<List<string>> { new List<string> { "Item11", "Item12" }, new List<string> { "Item13" } }
+                new List<List<string>> { new List<string> { "Item1" }, new List<string> { "Item2" } },
+                new List<List<string>> { new List<string> { "Item3", "Item4" }, new List<string> { "Item5" } },
+                new List<List<string>> { new List<string> { "Item6" }, new List<string> { "Item7", "Item8" } },
+                new List<List<string>> { new List<string> { "Item9" }, new List<string> { "Item10" } },
+                new List<List<string>> { new List<string> { "Item11", "Item12" }, new List<string> { "Item13" } }
             };
 
             // Lặp lại mỗi mẫu ít nhất minSupport lần để đảm bảo điều kiện
