@@ -1,9 +1,7 @@
 using EducationTech.Annotations;
 using EducationTech.Business.Business.Interfaces;
 using EducationTech.DataAccess.Recommendation.Interfaces;
-using EducationTech.RecommendationSystem.DataStructures.SequenceMiners;
 using EducationTech.RecommendationSystem.Implementations.LearnerCollaborativeFilters;
-using EducationTech.RecommendationSystem.Implementations.SequenceMiners;
 using EducationTech.RecommendationSystem.Interfaces;
 using EducationTech.Shared.Utilities.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -95,59 +93,59 @@ namespace EducationTech.Controllers
         //    return Ok(learningObjects);
         //}
 
-        [AllowAnonymous]
-        [HttpGet("TestPrefixSpanSequenceMiner")]
-        public async Task<IActionResult> TestPrefixSpanSequenceMiner()
-        {
-            //db = [
-            //    [0, 1, 2, 3, 4],
-            //    [1, 1, 1, 3, 4],
-            //    [2, 1, 2, 2, 0],
-            //    [1, 1, 1, 2, 2],
-            //]
+        //[AllowAnonymous]
+        //[HttpGet("TestPrefixSpanSequenceMiner")]
+        //public async Task<IActionResult> TestPrefixSpanSequenceMiner()
+        //{
+        //    //db = [
+        //    //    [0, 1, 2, 3, 4],
+        //    //    [1, 1, 1, 3, 4],
+        //    //    [2, 1, 2, 2, 0],
+        //    //    [1, 1, 1, 2, 2],
+        //    //]
 
-            var database = new List<Sequence<string>>
-            {
-                new Sequence<string>(new List<List<string>>
-                {
-                    new List<string> { "0" },
-                    new List<string> { "1" },
-                    new List<string> { "2" },
-                    new List<string> { "3" },
-                    new List<string> { "4" },
-                }),
-                new Sequence<string>(new List<List<string>>
-                {
-                    new List<string> { "1" },
-                    new List<string> { "1" },
-                    new List<string> { "1" },
-                    new List<string> { "3" },
-                    new List<string> { "4" },
-                }),
-                new Sequence<string>(new List<List<string>>
-                {
-                    new List<string> { "2" },
-                    new List<string> { "1" },
-                    new List<string> { "2" },
-                    new List<string> { "2" },
-                    new List<string> { "0" },
-                }),
-                new Sequence<string>(new List<List<string>>
-                {
-                    new List<string> { "1" },
-                    new List<string> { "1" },
-                    new List<string> { "1" },
-                    new List<string> { "2" },
-                    new List<string> { "2" },
-                }),
-            };
+        //    var database = new List<Sequence<string>>
+        //    {
+        //        new Sequence<string>(new List<List<string>>
+        //        {
+        //            new List<string> { "0" },
+        //            new List<string> { "1" },
+        //            new List<string> { "2" },
+        //            new List<string> { "3" },
+        //            new List<string> { "4" },
+        //        }),
+        //        new Sequence<string>(new List<List<string>>
+        //        {
+        //            new List<string> { "1" },
+        //            new List<string> { "1" },
+        //            new List<string> { "1" },
+        //            new List<string> { "3" },
+        //            new List<string> { "4" },
+        //        }),
+        //        new Sequence<string>(new List<List<string>>
+        //        {
+        //            new List<string> { "2" },
+        //            new List<string> { "1" },
+        //            new List<string> { "2" },
+        //            new List<string> { "2" },
+        //            new List<string> { "0" },
+        //        }),
+        //        new Sequence<string>(new List<List<string>>
+        //        {
+        //            new List<string> { "1" },
+        //            new List<string> { "1" },
+        //            new List<string> { "1" },
+        //            new List<string> { "2" },
+        //            new List<string> { "2" },
+        //        }),
+        //    };
 
-            var miner = new PrefixSpanSequenceMiner<string>();
-            var result = new List<FrequentSequence<string>>();
-            miner.MineSequences(new List<List<string>>(), database, 2, result);
+        //    var miner = new PrefixSpanSequenceMiner<string>();
+        //    var result = new List<FrequentSequence<string>>();
+        //    miner.MineSequences(new List<List<string>>(), database, 2, result);
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
 
         [AllowAnonymous]
         [HttpGet("TestLoSequenceRecommender")]
