@@ -26,6 +26,11 @@ public class LoPathVisitor : ILoPathVisitor
 
         await DFS(learner, startTopic, targetTopic, initialPath, initialVisited, paths);
 
+        foreach (var path in paths)
+        {
+            await path.AssignSuitableLos(_loSuitableSelector, learner);
+        }
+
         return paths;
 
     }
@@ -48,8 +53,8 @@ public class LoPathVisitor : ILoPathVisitor
         topicQuery = topicQuery.Where(x => x.Id == currentTopic.Id).Include(x => x.NextTopicConjuctions).ThenInclude(x => x.NextTopic);
         currentTopic = await topicQuery.FirstOrDefaultAsync();
 
-        var (explanatoryLearningObject, evaluativeLearningObject) = await _loSuitableSelector.SelectSuitableLoPair(learner, currentTopic);
-        path.AddLearningNode(currentTopic, explanatoryLearningObject, evaluativeLearningObject);
+        //var (explanatoryLearningObject, evaluativeLearningObject) = await _loSuitableSelector.SelectSuitableLoPair(learner, currentTopic);
+        path.AddLearningNode(currentTopic);
 
         if (currentTopic.Id == targetUnit.Id)
         {
