@@ -1,6 +1,6 @@
 ﻿using EducationTech.DataAccess.Entities.Recommendation;
 using EducationTech.DataAccess.Recommendation.Interfaces;
-using EducationTech.RecommendationSystem.DataStructures;
+using EducationTech.RecommendationSystem.DataStructures.SequenceMiners;
 using EducationTech.RecommendationSystem.Implementations.LearnerCollaborativeFilters;
 using EducationTech.RecommendationSystem.Implementations.LoRecommenders;
 using EducationTech.RecommendationSystem.Implementations.SequenceMiners;

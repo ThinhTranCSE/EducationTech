@@ -1,4 +1,4 @@
-﻿using EducationTech.RecommendationSystem.DataStructures;
+﻿using EducationTech.RecommendationSystem.DataStructures.SequenceMiners;
 
 namespace EducationTech.RecommendationSystem.Interfaces;
 

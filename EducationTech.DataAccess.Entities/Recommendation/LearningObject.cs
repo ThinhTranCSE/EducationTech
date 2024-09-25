@@ -21,6 +21,10 @@ public class LearningObject : Entity
     public InteractivityLevel InteractivityLevel { get; set; }
     public SemanticDensity SemanticDensity { get; set; }
 
+    public int Difficulty { get; set; }
+    public int MaxScore { get; set; }
+    public int MaxLearningTime { get; set; }
+    public LOType Type { get; set; }
     public virtual RecommendTopic Topic { get; set; }
 
     public virtual ICollection<LearnerLog> LearnerLogs { get; set; }

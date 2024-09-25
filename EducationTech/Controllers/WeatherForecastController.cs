@@ -1,13 +1,14 @@
 using EducationTech.Annotations;
 using EducationTech.Business.Business.Interfaces;
 using EducationTech.DataAccess.Recommendation.Interfaces;
-using EducationTech.RecommendationSystem.DataStructures;
+using EducationTech.RecommendationSystem.DataStructures.SequenceMiners;
 using EducationTech.RecommendationSystem.Implementations.LearnerCollaborativeFilters;
 using EducationTech.RecommendationSystem.Implementations.SequenceMiners;
 using EducationTech.RecommendationSystem.Interfaces;
 using EducationTech.Shared.Utilities.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Controllers
 {
@@ -28,13 +29,20 @@ namespace EducationTech.Controllers
         private readonly ILearningObjectRepository _learningObjectRepository;
         private readonly IRecommendTopicRepository _recommendTopicRepository;
         private readonly ILoSequenceRecommender _loSequenceRecommender;
+        private readonly ILoSuitableSelector _loSuitableSelector;
+        private readonly ILoPathVisitor _loPathVisitor;
+        private readonly ILearningPathRecommender _learningPathRecommender;
         public WeatherForecastController(
             IFileService fileService,
             IFileUtils fileUtils,
             ILearnerRepository learnerRepository,
             ILearningObjectRepository learningObjectRepository,
             IRecommendTopicRepository recommendTopicRepository,
-            ILoSequenceRecommender loSequenceRecommender
+            ILoSequenceRecommender loSequenceRecommender,
+            ILoSuitableSelector loSuitableSelector,
+            ILoPathVisitor loPathVisitor,
+            ILearningPathRecommender learningPathRecommender
+
             )
         {
             _fileService = fileService;
@@ -44,6 +52,9 @@ namespace EducationTech.Controllers
             _learningObjectRepository = learningObjectRepository;
             _recommendTopicRepository = recommendTopicRepository;
             _loSequenceRecommender = loSequenceRecommender;
+            _loSuitableSelector = loSuitableSelector;
+            _loPathVisitor = loPathVisitor;
+            _learningPathRecommender = learningPathRecommender;
 
         }
 
@@ -148,5 +159,42 @@ namespace EducationTech.Controllers
 
             return Ok(sequences);
         }
+
+        [AllowAnonymous]
+        [HttpGet("TestSelectSuitableLoPair")]
+        public async Task<IActionResult> TestSelectSuitableLoPair(int learnerId, int topicId)
+        {
+            var learner = (await _learnerRepository.Get(x => x.Id == learnerId)).FirstOrDefault();
+            var topic = (await _recommendTopicRepository.Get(x => x.Id == topicId)).Include(x => x.NextTopicConjuctions).ThenInclude(x => x.NextTopic).FirstOrDefault();
+            var (exLo, evLo) = await _loSuitableSelector.SelectSuitableLoPair(learner, topic);
+
+            return Ok(new List<int> { exLo.Id, evLo.Id });
+        }
+
+        [AllowAnonymous]
+        [HttpGet("TestSelectAllLoPaths")]
+        public async Task<IActionResult> TestSelectAllLoPaths(int learnerId, int startTopicId, int targetTopicId)
+        {
+            var learner = (await _learnerRepository.Get(x => x.Id == learnerId)).FirstOrDefault();
+            var startTopic = (await _recommendTopicRepository.Get(x => x.Id == startTopicId)).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
+            var targetTopic = (await _recommendTopicRepository.Get(x => x.Id == targetTopicId)).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
+            var paths = await _loPathVisitor.SelectAllLoPaths(learner, startTopic, targetTopic);
+
+            return Ok(paths);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("TestRecommendLearningPath")]
+        public async Task<IActionResult> TestRecommendLearningPath(int learnerId, int startTopicId, int targetTopicId)
+        {
+            var learner = (await _learnerRepository.Get(x => x.Id == learnerId)).FirstOrDefault();
+            var startTopic = (await _recommendTopicRepository.Get(x => x.Id == startTopicId)).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
+            var targetTopic = (await _recommendTopicRepository.Get(x => x.Id == targetTopicId)).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
+            var learningObjects = await _learningPathRecommender.RecommendLearningPath(learner, startTopic, targetTopic);
+
+            var learningObjectIds = learningObjects.Select(lo => lo.Id).ToList();
+            return Ok(learningObjectIds);
+        }
+
     }
 }

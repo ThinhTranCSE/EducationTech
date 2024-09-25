@@ -34,7 +34,12 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                         x.LearningResourceType == record.LearningResourceType &&
                         x.InteractivityType == record.InteractivityType &&
                         x.InteractivityLevel == record.InteractivityLevel &&
-                        x.SemanticDensity == record.SemanticDensity))
+                        x.SemanticDensity == record.SemanticDensity &&
+                        x.MaxScore == record.MaxScore &&
+                        x.MaxLearningTime == record.MaxLearningTime &&
+                        x.Type == record.Type &&
+                        x.Difficulty == record.Difficulty
+                        ))
                     {
                         continue;
                     }
@@ -59,6 +64,10 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             Map(x => x.InteractivityType).Name("InteractivityType").TypeConverter(new EnumConverter(typeof(InteractivityType))).TypeConverterOption.EnumIgnoreCase(true);
             Map(x => x.InteractivityLevel).Name("InteractivityLevel").TypeConverter(new EnumConverter(typeof(InteractivityLevel))).TypeConverterOption.EnumIgnoreCase(true);
             Map(x => x.SemanticDensity).Name("SemanticDensity").TypeConverter(new EnumConverter(typeof(SemanticDensity))).TypeConverterOption.EnumIgnoreCase(true);
+            Map(x => x.MaxScore).Name("MaxScore").TypeConverter<Int32Converter>();
+            Map(x => x.MaxLearningTime).Name("MaxLearningTime").TypeConverter<Int32Converter>();
+            Map(x => x.Type).Name("LOexev").TypeConverter(new EnumConverter(typeof(LOType))).TypeConverterOption.EnumIgnoreCase(true);
+            Map(x => x.Difficulty).Name("Difficulty").TypeConverter<Int32Converter>();
         }
     }
 }

@@ -21,9 +21,6 @@ public class TopicConjunction : Entity
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<TopicConjunction>(modelBuilder);
-        //1. RecommendTopic has many TopicConjunctions
-        //2. TopicConjunction has one RecommendTopic (Topic) with TopicId (this is relationship with NextTopicConjuctions field in RecommendTopic entities) 
-        //3. TopicConjunction has one RecommendTopic (NextTopic) with NextTopicId
 
         modelBuilder.Entity<TopicConjunction>()
             .HasOne(x => x.Topic)

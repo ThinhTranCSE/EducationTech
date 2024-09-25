@@ -1,4 +1,4 @@
-﻿namespace EducationTech.RecommendationSystem.DataStructures;
+﻿namespace EducationTech.RecommendationSystem.DataStructures.SequenceMiners;
 
 public class FrequentSequence<T>
 {
