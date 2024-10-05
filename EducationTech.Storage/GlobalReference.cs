@@ -1,21 +1,33 @@
 ﻿using EducationTech.Storage.Enums;
-using System.Dynamic;
 using System.Runtime.CompilerServices;
 
 namespace EducationTech.Storage
 {
-    public class GlobalUsings
+    public class GlobalReference
     {
+        private static GlobalReference _instance { get; set; }
+        public static GlobalReference Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new GlobalReference();
+                }
+                return _instance;
+            }
+        }
+
         #region Host Information
         public string HostName => "localhost:5013";
         public string HostScheme => "http";
         #endregion
 
         #region Paths
-        private string _currentDirctoryPath { get; set; }   
+        private string _currentDirctoryPath { get; set; }
         public string StorageRootPath => _currentDirctoryPath;
         public string ContentRootPath => GetContentRootPath();
-        public string StaticFilesPath => Path.Combine(StorageRootPath,"Static");
+        public string StaticFilesPath => Path.Combine(StorageRootPath, "Static");
         public string TempFilesPath => GetCategoryDirectoryPath("Temps");
         public string ImageFilesPath => GetCategoryDirectoryPath("Images");
         public string StreamFilesPath => GetCategoryDirectoryPath("Streams");
@@ -32,7 +44,7 @@ namespace EducationTech.Storage
         public FileTypeCollection FileTypeCollection { get; set; }
         #endregion
 
-        public GlobalUsings()
+        private GlobalReference()
         {
             string currentFilePath = GetThisFilePath();
             _currentDirctoryPath = Path.GetDirectoryName(currentFilePath)!;
@@ -62,8 +74,8 @@ namespace EducationTech.Storage
             {
                 throw new ArgumentNullException(nameof(category));
             }
-            string categoryPath= Path.Combine(StaticFilesPath, category);
-            if(!Directory.Exists(categoryPath))
+            string categoryPath = Path.Combine(StaticFilesPath, category);
+            if (!Directory.Exists(categoryPath))
             {
                 Directory.CreateDirectory(categoryPath);
             }
@@ -79,4 +91,4 @@ namespace EducationTech.Storage
             return Path.Combine(rootPath, "EducationTech");
         }
     }
-} 
+}

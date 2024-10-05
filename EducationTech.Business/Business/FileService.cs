@@ -22,7 +22,7 @@ namespace EducationTech.Business.Business
     public class FileService : IFileService
     {
         private readonly IFileUtils _fileUtils;
-        private readonly GlobalUsings _globalUsings;
+        private readonly GlobalReference _globalUsings;
         private readonly IUploadedFileRepository _uploadedFileRepository;
         private readonly IImageRepository _imageRepository;
         private readonly IVideoRepository _videoRepository;
@@ -32,7 +32,7 @@ namespace EducationTech.Business.Business
         private readonly VideoConvertPublisher _videoConvertPublisher;
         public FileService(
             IFileUtils fileUtils, 
-            GlobalUsings globalUsings, 
+            GlobalReference globalUsings, 
             IUploadedFileRepository uploadedFileRepository, 
             IImageRepository imageRepository,
             IVideoRepository videoRepository,

@@ -6,7 +6,7 @@ namespace EducationTech.Installers
     {
         public IServiceCollection InstallServicesToServiceCollection(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<GlobalUsings>();
+            services.AddSingleton<GlobalReference>();
             return services;
         }
 

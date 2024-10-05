@@ -1,10 +1,5 @@
 ﻿using EducationTech.Storage;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.Shared.DataStructures
 {
@@ -15,15 +10,14 @@ namespace EducationTech.Shared.DataStructures
         private Thread _cleanerThread;
         public int MaxChunkSize { get; private set; }
         public long SessionTimeOut { get; private set; }
-        public GlobalUsings _globalUsings { get; set; }
+        public GlobalReference _globalReference { get; set; } = GlobalReference.Instance;
 
         private Dictionary<Guid, UploadFileSession> _sessions = new Dictionary<Guid, UploadFileSession>();
-        public UploadFileSessionManager(GlobalUsings globalUsings, IHostApplicationLifetime lifeTime)
+        public UploadFileSessionManager(GlobalReference globalUsings, IHostApplicationLifetime lifeTime)
         {
             MaxChunkSize = globalUsings.UploadChunkSize;
             SessionTimeOut = globalUsings.UploadSessionTimeOut;
 
-            _globalUsings = new GlobalUsings();
             lifeTime.ApplicationStopping.Register(Dispose);
             _cleanerThread = new Thread(ExpiredSessionCleaner);
             _cleanerThread.Start();
@@ -148,13 +142,13 @@ namespace EducationTech.Shared.DataStructures
             {
                 return;
             }
-            
+
         }
 
         private void RemoveSession(Guid sessionId)
         {
             _sessions.Remove(sessionId);
-            string tempDirectory = _globalUsings.TempFilesPath;
+            string tempDirectory = _globalReference.TempFilesPath;
             string[] chunkFiles = Directory.GetFiles(tempDirectory, $"{sessionId}.total*.part*", SearchOption.TopDirectoryOnly);
             Parallel.ForEach(chunkFiles, (chunkPath) =>
             {

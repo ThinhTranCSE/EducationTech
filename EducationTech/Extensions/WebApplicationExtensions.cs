@@ -1,11 +1,5 @@
-﻿using EducationTech.Business.Abstract;
-using EducationTech.MessageQueue.Common.Abstracts;
+﻿using EducationTech.MessageQueue.Common.Abstracts;
 using EducationTech.Storage;
-using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Extensions.FileProviders;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Mime;
 
 namespace EducationTech.Extensions
 {
@@ -15,7 +9,7 @@ namespace EducationTech.Extensions
         {
 
             //create directory for static files
-            var globalUsing = new GlobalUsings();
+            var globalUsing = GlobalReference.Instance;
             string staticFilesPath = Path.Combine(globalUsing.StorageRootPath, "Static");
             if (!Directory.Exists(staticFilesPath))
             {

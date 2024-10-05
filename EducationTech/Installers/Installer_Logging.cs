@@ -1,13 +1,10 @@
-﻿using Serilog.Events;
-using Serilog;
-using Serilog.Sinks.SystemConsole.Themes;
-using Serilog.Formatting.Compact;
-using System.Linq;
-using EducationTech.Extensions;
-using System;
-using Serilog.Filters;
-using EducationTech.DataAccess.Shared.Enums;
+﻿using EducationTech.DataAccess.Shared.Enums;
 using EducationTech.Storage;
+using Serilog;
+using Serilog.Events;
+using Serilog.Filters;
+using Serilog.Formatting.Compact;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace EducationTech.Installers
 {
@@ -24,7 +21,7 @@ namespace EducationTech.Installers
             builder.Logging.ClearProviders();
             builder.Host.UseSerilog();
 
-            string storagePath = new GlobalUsings().StorageRootPath;
+            string storagePath = GlobalReference.Instance.StorageRootPath;
             CreateFolder(Path.Combine(storagePath, "Logs"));
 
             var loggerConfiguration = new LoggerConfiguration();
@@ -55,7 +52,7 @@ namespace EducationTech.Installers
                         lc
                         .WriteTo.File(
                                 new RenderedCompactJsonFormatter(),
-                                Path.Combine(storagePath, "Logs","log-.txt"),
+                                Path.Combine(storagePath, "Logs", "log-.txt"),
                                 rollingInterval: RollingInterval.Day,
                                 fileSizeLimitBytes: 10 * 1024 * 1024,
                                 rollOnFileSizeLimit: true
@@ -121,6 +118,6 @@ namespace EducationTech.Installers
             }
         }
 
-        
+
     }
 }

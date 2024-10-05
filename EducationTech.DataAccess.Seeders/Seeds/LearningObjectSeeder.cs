@@ -17,7 +17,7 @@ namespace EducationTech.DataAccess.Seeders.Seeds
 
         public override void Seed()
         {
-            var globalUsings = new GlobalUsings();
+            var globalUsings = GlobalReference.Instance;
             using (var reader = new StreamReader(Path.Combine(globalUsings.StaticFilesPath, "LearningObjects.csv")))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {

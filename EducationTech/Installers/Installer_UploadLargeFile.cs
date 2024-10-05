@@ -13,7 +13,7 @@ namespace EducationTech.Installers
                 options.MultipartBodyLengthLimit = long.MaxValue;
             });
 
-            var globalUsings = new GlobalUsings();
+            var globalUsings = GlobalReference.Instance;
             int chunkSize = globalUsings.UploadChunkSize;
             long sessionTimeOut = globalUsings.UploadSessionTimeOut;
 

@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using EducationTech.Storage;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.Business.Shared.DTOs.Abstracts
 {
@@ -14,7 +9,7 @@ namespace EducationTech.Business.Shared.DTOs.Abstracts
         where TDto : class
         where TEntity : class
     {
-        protected static GlobalUsings GlobalUsings = new GlobalUsings();
+        protected static GlobalReference GlobalUsings = GlobalReference.Instance;
 
         public virtual void Configure(IMapperConfigurationExpression cfg)
         {
