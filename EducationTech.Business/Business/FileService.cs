@@ -1,21 +1,20 @@
-﻿using EducationTech.Business.Business.Interfaces;
+﻿using AutoMapper;
+using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Shared.DTOs.Business.File;
 using EducationTech.Business.Shared.Exceptions.Http;
-using EducationTech.DataAccess.Business.Interfaces;
-using EducationTech.DataAccess.Entities.Master;
-using EducationTech.Shared.Utilities.Interfaces;
-using HeyRed.Mime;
-using System.Net;
-using EducationTech.Shared.Extensions;
-using Microsoft.AspNetCore.Http;
-using EducationTech.Storage;
-using EducationTech.Shared.DataStructures;
-using AutoMapper;
-using EducationTech.Storage.Enums;
-using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Business;
+using EducationTech.DataAccess.Entities.Master;
 using EducationTech.MessageQueue.VideoConvert;
+using EducationTech.Shared.DataStructures;
+using EducationTech.Shared.Extensions;
+using EducationTech.Shared.Utilities.Interfaces;
+using EducationTech.Storage;
+using EducationTech.Storage.Enums;
+using HeyRed.Mime;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace EducationTech.Business.Business
 {
@@ -23,31 +22,21 @@ namespace EducationTech.Business.Business
     {
         private readonly IFileUtils _fileUtils;
         private readonly GlobalReference _globalUsings;
-        private readonly IUploadedFileRepository _uploadedFileRepository;
-        private readonly IImageRepository _imageRepository;
-        private readonly IVideoRepository _videoRepository;
-        private readonly ITransactionManager _transactionManager;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly UploadFileSessionManager _uploadFileSessionManager;
         private readonly IMapper _mapper;
         private readonly VideoConvertPublisher _videoConvertPublisher;
         public FileService(
-            IFileUtils fileUtils, 
-            GlobalReference globalUsings, 
-            IUploadedFileRepository uploadedFileRepository, 
-            IImageRepository imageRepository,
-            IVideoRepository videoRepository,
-            ITransactionManager transactionManager,
+            IFileUtils fileUtils,
+            IUnitOfWork unitOfWork,
             UploadFileSessionManager uploadFileSessionManager,
             IMapper mapper,
             VideoConvertPublisher videoConvertPublisher
             )
         {
             _fileUtils = fileUtils;
-            _globalUsings = globalUsings;
-            _uploadedFileRepository = uploadedFileRepository;
-            _imageRepository = imageRepository;
-            _videoRepository = videoRepository;
-            _transactionManager = transactionManager;
+            _globalUsings = GlobalReference.Instance;
+            _unitOfWork = unitOfWork;
             _uploadFileSessionManager = uploadFileSessionManager;
             _mapper = mapper;
             _videoConvertPublisher = videoConvertPublisher;
@@ -55,7 +44,7 @@ namespace EducationTech.Business.Business
 
         public async Task<File_GetFileContentDto> GetFile(Guid fileId)
         {
-            var fileEntity = await _uploadedFileRepository.GetSingle(f => f.Id == fileId);
+            var fileEntity = _unitOfWork.UploadedFiles.Find(f => f.Id == fileId).FirstOrDefault();
             if (fileEntity == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "File not found");
@@ -129,23 +118,23 @@ namespace EducationTech.Business.Business
 
         public async Task<File_ChunkInfomationDto> UploadChunk(Guid sessionId, int index, IFormFile chunkFormFile)
         {
-            if(chunkFormFile.Length == 0)
+            if (chunkFormFile.Length == 0)
             {
                 throw new HttpException(HttpStatusCode.BadRequest, "ChunkFormFile size is 0");
             }
-            if(chunkFormFile.Length > _uploadFileSessionManager.MaxChunkSize)
+            if (chunkFormFile.Length > _uploadFileSessionManager.MaxChunkSize)
             {
                 throw new HttpException(HttpStatusCode.BadRequest, "ChunkFormFile size is greater than maximum chunk size");
             }
-            
+
             if (!_uploadFileSessionManager.IsSessionAvailable(sessionId))
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Session is not available");
             }
-            
+
             //prevent session dispose from cleaner thread
             _uploadFileSessionManager.StartProcessing(sessionId);
-            
+
             //save chunk file
             int totalChunks = _uploadFileSessionManager.GetTotalChunks(sessionId);
             string chunkName = $"{sessionId}.total{totalChunks}.part{index}";
@@ -157,7 +146,7 @@ namespace EducationTech.Business.Business
 
             //if all chunks are persisted, merge them to a single file
             bool isSessionCompleted = _uploadFileSessionManager.IsSessionCompleted(sessionId);
-            if(isSessionCompleted)
+            if (isSessionCompleted)
             {
                 await MergeFile(sessionId);
             }
@@ -213,7 +202,8 @@ namespace EducationTech.Business.Business
                     UserId = _uploadFileSessionManager.GetSessionOwner(sessionId)
                 };
 
-                await _uploadedFileRepository.Insert(fileEntity, true);
+                _unitOfWork.UploadedFiles.Add(fileEntity);
+                _unitOfWork.SaveChanges();
 
                 string categoryDirectory = _globalUsings.PathCollection[extension];
                 string fileName = $"{fileEntity.Id}.{extension}";
@@ -236,20 +226,21 @@ namespace EducationTech.Business.Business
                 FileType? fileType = _globalUsings.FileTypeCollection[extension];
                 fileEntity.FileType = fileType ?? FileType.Unknown;
 
-                await _uploadedFileRepository.Update(fileEntity);
+                _unitOfWork.SaveChanges();
+
                 if (fileType != null)
                 {
                     switch (fileType)
                     {
                         case FileType.Image:
-                            await _imageRepository.Insert(new Image
+                            _unitOfWork.Images.Add(new Image
                             {
                                 FileId = fileEntity.Id,
                                 Url = $"api/v1/File/{fileEntity.Id}"
                             });
                             break;
                         case FileType.Video:
-                            await _videoRepository.Insert(new Video
+                            _unitOfWork.Videos.Add(new Video
                             {
                                 FileId = fileEntity.Id,
                                 Url = $"api/v1/File/Stream/{fileEntity.Id}/input.m3u8"
@@ -262,7 +253,7 @@ namespace EducationTech.Business.Business
                             break;
                     }
                 }
-                _transactionManager.SaveChanges();
+                _unitOfWork.SaveChanges();
                 return true;
             }
             catch (Exception ex)
@@ -277,11 +268,11 @@ namespace EducationTech.Business.Business
 
         public async Task<UploadedFileDto> UploadFile(IFormFile file, Guid userId)
         {
-            if(file.Length == 0)
+            if (file.Length == 0)
             {
                 throw new HttpException(HttpStatusCode.BadRequest, "File size is 0");
             }
-            if(file.Length > _globalUsings.UploadChunkSize)
+            if (file.Length > _globalUsings.UploadChunkSize)
             {
                 throw new HttpException(HttpStatusCode.BadRequest, "File is large, please use method for large file");
             }
@@ -306,7 +297,8 @@ namespace EducationTech.Business.Business
                 IsCompleted = true,
                 UserId = userId
             };
-            await _uploadedFileRepository.Insert(fileEntity, true);
+            _unitOfWork.UploadedFiles.Add(fileEntity);
+            _unitOfWork.SaveChanges();
 
             string categoryDirectory = _globalUsings.PathCollection[extension];
             string fileName = $"{fileEntity.Id}.{extension}";
@@ -320,20 +312,22 @@ namespace EducationTech.Business.Business
 
             fileEntity.FileType = fileType ?? FileType.Unknown;
 
-            await _uploadedFileRepository.Update(fileEntity);
+            _unitOfWork.UploadedFiles.Add(fileEntity);
+            _unitOfWork.SaveChanges();
+
             if (fileType != null)
             {
                 switch (fileType)
                 {
                     case FileType.Image:
-                        await _imageRepository.Insert(new Image
+                        _unitOfWork.Images.Add(new Image
                         {
                             FileId = fileEntity.Id,
                             Url = $"api/v1/File/{fileEntity.Id}"
                         });
                         break;
                     case FileType.Video:
-                        await _videoRepository.Insert(new Video
+                        _unitOfWork.Videos.Add(new Video
                         {
                             FileId = fileEntity.Id,
                             Url = $"api/v1/File/Stream/{fileEntity.Id}/input.m3u8"
@@ -346,18 +340,18 @@ namespace EducationTech.Business.Business
                         break;
                 }
             }
-            _transactionManager.SaveChanges();
+            _unitOfWork.SaveChanges();
             return _mapper.Map<UploadedFileDto>(fileEntity);
         }
 
         public async Task<IEnumerable<UploadedFileDto>> GetFileInformation(File_GetFileInformationRequestDto requestDto, User? currentUser)
         {
-            if(currentUser == null)
+            if (currentUser == null)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "User is not authenticated");
             }
 
-            var fileQuery = await _uploadedFileRepository.Get();
+            var fileQuery = _unitOfWork.UploadedFiles.GetAll();
             fileQuery = fileQuery
                 .Include(f => f.Image)
                 .Include(f => f.Video)

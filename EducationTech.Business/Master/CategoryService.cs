@@ -2,27 +2,22 @@
 using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Categories;
 using EducationTech.Business.Shared.Exceptions.Http;
+using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Master;
-using EducationTech.DataAccess.Master.Interfaces;
 using EducationTech.DataAccess.Shared.NestedSet;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.Business.Master
 {
     public class CategoryService : ICategoryService
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
+        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _categoryRepository = categoryRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -30,7 +25,7 @@ namespace EducationTech.Business.Master
         public async Task<IEnumerable<NestedSetRecursiveNodeDto<CategoryDto>>> GetCategories()
         {
 
-            var query = await _categoryRepository.Get();
+            var query = _unitOfWork.Categories.GetAll();
             List<Category> categories = await query.ToListAsync()!;
             int left = categories.Min(x => x.Left) - 1;
 
@@ -44,7 +39,7 @@ namespace EducationTech.Business.Master
 
         public async Task<IEnumerable<NestedSetRecursiveNodeDto<CategoryDto>>> DeleteCategories(int id)
         {
-            var query = await _categoryRepository.Get();
+            var query = _unitOfWork.Categories.GetAll();
             query = query.Where(x => x.Id == id);
 
             var category = await query.FirstOrDefaultAsync()!;
@@ -54,13 +49,13 @@ namespace EducationTech.Business.Master
                 throw new HttpException(HttpStatusCode.NotFound, "Category not found");
             }
 
-            var categoryTree = _categoryRepository.GetTree(category);
+            var categoryTree = _unitOfWork.Categories.GetTree(category);
             int left = category.Left - 1;
 
-            _categoryRepository.RemoveNode(category);
+            _unitOfWork.Categories.RemoveNode(category);
 
             var categoryDtos = _mapper.Map<List<CategoryDto>>(categoryTree);
-           
+
 
             var tree = categoryDtos.ToTrees(left);
 

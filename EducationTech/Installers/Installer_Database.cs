@@ -1,5 +1,4 @@
 ﻿using EducationTech.DataAccess.Core;
-using Serilog;
 
 namespace EducationTech.Installers
 {
@@ -9,8 +8,8 @@ namespace EducationTech.Installers
         {
 
             services.AddDbContext<EducationTechContext>();
-
-            services.AddScoped<ITransactionManager, TransactionManager>();
+            services.AddScoped<IMainDatabaseContext>(provider => provider.GetService<EducationTechContext>());
+            //services.AddScoped<ITransactionManager, TransactionManager>();
             //Log.Information("Installed Database");
             return services;
         }

@@ -1,5 +1,5 @@
-﻿using EducationTech.DataAccess.Entities.Recommendation;
-using EducationTech.DataAccess.Recommendation.Interfaces;
+﻿using EducationTech.DataAccess.Abstract;
+using EducationTech.DataAccess.Entities.Recommendation;
 using EducationTech.RecommendationSystem.DataStructures.PathGenerations;
 using EducationTech.RecommendationSystem.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +9,11 @@ namespace EducationTech.RecommendationSystem.Implementations.PathGenerations;
 public class LoPathVisitor : ILoPathVisitor
 {
     private readonly ILoSuitableSelector _loSuitableSelector;
-    private readonly IRecommendTopicRepository _recommendTopicRepository;
-    public LoPathVisitor(ILoSuitableSelector loSuitableSelector, IRecommendTopicRepository recommendTopicRepository)
+    private readonly IUnitOfWork _unitOfWork;
+    public LoPathVisitor(ILoSuitableSelector loSuitableSelector, IUnitOfWork unitOfWork)
     {
         _loSuitableSelector = loSuitableSelector;
-        _recommendTopicRepository = recommendTopicRepository;
+        _unitOfWork = unitOfWork;
     }
     public async Task<List<LearningPath>> SelectAllLoPaths(Learner learner, RecommendTopic startTopic, RecommendTopic targetTopic)
     {
@@ -49,7 +49,7 @@ public class LoPathVisitor : ILoPathVisitor
         var path = new LearningPath(currentPath);
         //visit current node
 
-        var topicQuery = await _recommendTopicRepository.Get();
+        var topicQuery = _unitOfWork.RecommendTopics.GetAll();
         topicQuery = topicQuery.Where(x => x.Id == currentTopic.Id).Include(x => x.NextTopicConjuctions).ThenInclude(x => x.NextTopic);
         currentTopic = await topicQuery.FirstOrDefaultAsync();
 

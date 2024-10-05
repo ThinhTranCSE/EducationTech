@@ -1,5 +1,5 @@
-﻿using EducationTech.DataAccess.Entities.Recommendation;
-using EducationTech.DataAccess.Recommendation.Interfaces;
+﻿using EducationTech.DataAccess.Abstract;
+using EducationTech.DataAccess.Entities.Recommendation;
 using EducationTech.RecommendationSystem.DataStructures.SequenceMiners;
 using EducationTech.RecommendationSystem.Implementations.LearnerCollaborativeFilters;
 using EducationTech.RecommendationSystem.Implementations.LoRecommenders;
@@ -20,23 +20,19 @@ public class LoSequenceRecommender : ILoSequenceRecommender
     private readonly ILoRecommender _loRecommender;
     private readonly ISequenceMiner<int> _sequenceMiner;
 
-    private readonly ILearningObjectRepository _learningObjectRepository;
-    private readonly ILearnerRepository _learnerRepository;
-    private readonly ILearnerLogRepository _learnerLogRepository;
-    public LoSequenceRecommender(ILearningObjectRepository learningObjectRepository, ILearnerRepository learnerRepository, ILearnerLogRepository learnerLogRepository)
+    private readonly IUnitOfWork _unitOfWork;
+    public LoSequenceRecommender(IUnitOfWork unitOfWork)
     {
         _learnerCollaborativeFilter = new CosineSimilarityLearnerFilter(NUMBER_OF_SIMILAR_LEARNERS);
         _loRecommender = new SimilarUserRatingLoRecommender(_learnerCollaborativeFilter);
         _sequenceMiner = new PrefixSpanSequenceMiner<int>();
 
-        _learningObjectRepository = learningObjectRepository;
-        _learnerRepository = learnerRepository;
-        _learnerLogRepository = learnerLogRepository;
+        _unitOfWork = unitOfWork;
     }
     public async Task<List<FrequentSequence<int>>> RecommendTopNLearningObjectSequences(Learner learner, RecommendTopic searchedTopic)
     {
         //lấy tất cả learner (do trong thuật toán cần so sánh với tất cả learner)
-        var learnerQuery = await _learnerRepository.Get();
+        var learnerQuery = _unitOfWork.Learners.GetAll();
         learnerQuery = learnerQuery.Include(x => x.LearningStyle).Include(x => x.LearnerLogs);
 
         var interestedLearners = await learnerQuery.ToListAsync();
@@ -46,7 +42,7 @@ public class LoSequenceRecommender : ILoSequenceRecommender
         var similarLearnerIdsHashedSet = similarLearners.Select(x => x.Id).ToHashSet();
 
         //chỉ quan tâm LOs của topic mà learner search
-        var learningObjectQuery = await _learningObjectRepository.Get();
+        var learningObjectQuery = _unitOfWork.LearningObjects.GetAll();
         learningObjectQuery = learningObjectQuery
             .Include(x => x.LearnerLogs)
             .ThenInclude(x => x.Learner)
@@ -58,7 +54,7 @@ public class LoSequenceRecommender : ILoSequenceRecommender
         var topNLos = await _loRecommender.RecommendTopNLearningObjects(learner, similarLearners, interestedLearningObjects, NUMBER_OF_RECOMMENDATION_FOR_LOS);
         var topNLoIdsHashedSet = topNLos.Select(x => x.Id).ToHashSet();
 
-        var learnerLogQuery = await _learnerLogRepository.Get();
+        var learnerLogQuery = _unitOfWork.LearnerLogs.GetAll();
         learnerLogQuery = learnerLogQuery
             .Include(x => x.Learner)
             .Include(x => x.LearningObject)

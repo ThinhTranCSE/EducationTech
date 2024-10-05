@@ -2,16 +2,13 @@
 using EducationTech.DataAccess.Business.Interfaces;
 using EducationTech.DataAccess.Core;
 using EducationTech.DataAccess.Entities.Business;
-using Microsoft.EntityFrameworkCore;
 
-namespace EducationTech.DataAccess.Business
+namespace EducationTech.DataAccess.Business;
+
+public class TopicRepository : Repository<Topic>, ITopicRepository
 {
-    public class TopicRepository : Repository<Topic>, ITopicRepository
+    public TopicRepository(IMainDatabaseContext context) : base(context)
     {
-        public override DbSet<Topic> Model => _context.Topics;
-        public TopicRepository(EducationTechContext context) : base(context)
-        {
-        }
-
     }
+
 }

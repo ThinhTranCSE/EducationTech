@@ -2,16 +2,13 @@
 using EducationTech.DataAccess.Business.Interfaces;
 using EducationTech.DataAccess.Core;
 using EducationTech.DataAccess.Entities.Master;
-using Microsoft.EntityFrameworkCore;
 
-namespace EducationTech.DataAccess.Business
+namespace EducationTech.DataAccess.Business;
+
+public class UploadedFileRepository : Repository<UploadedFile>, IUploadedFileRepository
 {
-    public class UploadedFileRepository : Repository<UploadedFile>, IUploadedFileRepository
+    public UploadedFileRepository(IMainDatabaseContext context) : base(context)
     {
-        public override DbSet<UploadedFile> Model => _context.UploadedFiles;
-        public UploadedFileRepository(EducationTechContext context) : base(context)
-        {
-        }
-
     }
+
 }

@@ -1,35 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Net;
+﻿using AutoMapper;
 using EducationTech.Business.Master.Interfaces;
-using EducationTech.DataAccess.Master.Interfaces;
-using EducationTech.DataAccess.Core;
-using EducationTech.DataAccess.Entities.Master;
-using EducationTech.Business.Shared.Exceptions.Http;
 using EducationTech.Business.Shared.DTOs.Masters.Users;
-using AutoMapper;
+using EducationTech.Business.Shared.Exceptions.Http;
+using EducationTech.DataAccess.Abstract;
+using EducationTech.DataAccess.Entities.Master;
+using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace EducationTech.Business.Master
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IRoleRepository _roleRepository;
-        private readonly ITransactionManager _transactionManager;
-        private readonly IUserRoleRepository _userRoleRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public UserService(ITransactionManager transactionFactory, IUserRepository userRepository, IRoleRepository roleRepository, IUserRoleRepository userRoleRepository, IMapper mapper)
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _userRepository = userRepository;
-            _roleRepository = roleRepository;
-            _transactionManager = transactionFactory;
-            _userRoleRepository = userRoleRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
 
         public async Task<UserDto?> GetUserById(Guid id)
         {
-            var user = (await _userRepository.Get(u => u.Id == id))
+            var user = _unitOfWork.Users.Find(u => u.Id == id)
                 .Include(u => u.Roles)
                 .FirstOrDefault();
 
@@ -41,7 +34,7 @@ namespace EducationTech.Business.Master
 
             try
             {
-                var user = (await _userRepository.Get(u => u.Id == userId))
+                var user = _unitOfWork.Users.Find(u => u.Id == userId)
                     .Include(u => u.Roles)
                     .Include(u => u.UserRoles)
                     .FirstOrDefault();
@@ -50,11 +43,11 @@ namespace EducationTech.Business.Master
                 {
                     throw new HttpException(HttpStatusCode.NotFound, "User not found");
                 }
-                _userRepository.Entry(currentUser)
+                _unitOfWork.Entry(currentUser)
                     .Collection(u => u.Roles)
                     .Load();
 
-                var adminRole = await _roleRepository.GetSingle(r => r.Name == "Admin");
+                var adminRole = _unitOfWork.Roles.Find(r => r.Name == "Admin").FirstOrDefault();
                 if (!currentUser.Roles.Any(r => r.Id == adminRole!.Id) && currentUser.Id != userId)
                 {
                     throw new HttpException(HttpStatusCode.Unauthorized, "Not have permission to change information");
@@ -85,14 +78,11 @@ namespace EducationTech.Business.Master
                         return roleRemovedIds.Contains(ur.RoleId);
                     });
 
-                    await Task.WhenAll(
-                        _userRoleRepository.Insert(roleAddeds),
-                        _userRoleRepository.Delete(roleRemoveds)
-                    );
+                    _unitOfWork.UserRoles.AddRange(roleAddeds);
+                    _unitOfWork.UserRoles.RemoveRange(roleRemoveds);
 
                 }
-                await _userRepository.Update(user);
-                _transactionManager.SaveChanges();
+                _unitOfWork.SaveChanges();
 
                 return user;
             }

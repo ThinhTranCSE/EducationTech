@@ -1,11 +1,9 @@
 ﻿using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Shared.DTOs.Business.Auth;
 using EducationTech.Business.Shared.Exceptions.Http;
-using EducationTech.DataAccess.Business.Interfaces;
-using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
-using EducationTech.DataAccess.Master.Interfaces;
 using EducationTech.Shared.Utilities.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -19,37 +17,30 @@ namespace EducationTech.Business.Business
     public class AuthService : IAuthService
     {
         private readonly IEncryptionUtils _encryptionUtils;
-        private readonly IUserRepository _userRepository;
-        private readonly IUserKeyRepository _userKeyRepository;
-        private readonly IUserRoleRepository _userRoleRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IAuthUtils _authUtils;
         private readonly ICacheService _cacheService;
-        private readonly EducationTechContext _context;
-
 
         public AuthService(
-            EducationTechContext context,
             IAuthUtils authUtils,
             IEncryptionUtils encryptionUtils,
-            IUserRepository userRepository,
-            IUserKeyRepository userKeyRepository,
-            IUserRoleRepository userRoleRepository,
+            IUnitOfWork unitOfWork,
             ICacheService cacheService
             )
         {
-            _context = context;
             _authUtils = authUtils;
-            _userRepository = userRepository;
+
             _encryptionUtils = encryptionUtils;
-            _userKeyRepository = userKeyRepository;
-            _userRoleRepository = userRoleRepository;
+
             _cacheService = cacheService;
+
+            _unitOfWork = unitOfWork;
         }
 
 
         public async Task<TokensReponseDto> Login(LoginDto loginDto)
         {
-            var userQuery = await _userRepository.Get(u => u.Username == loginDto.Username);
+            var userQuery = _unitOfWork.Users.Find(u => u.Username == loginDto.Username);
             userQuery = userQuery
                 .Include(u => u.UserKey)
                 .Include(u => u.UserRoles)
@@ -90,16 +81,20 @@ namespace EducationTech.Business.Business
 
             using var rsa = RSA.Create();
 
-            var transaction = await _context.Database.BeginTransactionAsync();
+            using var transaction = _unitOfWork.BeginTransaction();
             try
             {
                 if (user.UserKey == null)
                 {
-                    var userKey = await _userKeyRepository.Insert(new UserKey()
+                    var userKey = new UserKey()
                     {
                         UserId = user.Id,
                         PublicKey = rsa.ToXmlString(false)
-                    });
+                    };
+
+                    _unitOfWork.UserKeys.Add(userKey);
+                    _unitOfWork.SaveChanges();
+
                     user.UserKey = userKey;
                 }
                 else
@@ -107,9 +102,9 @@ namespace EducationTech.Business.Business
                     user.UserKey.PublicKey = rsa.ToXmlString(false);
 
                 }
-                await _context.SaveChangesAsync();
+                _unitOfWork.SaveChanges();
 
-                await transaction.CommitAsync();
+                transaction.Commit();
 
                 await _cacheService.SetAsync($"UserKey_{user.Id}", user.UserKey?.PublicKey, TimeSpan.FromMinutes(10));
             }
@@ -133,7 +128,7 @@ namespace EducationTech.Business.Business
 
         public async Task<bool?> Logout(Guid userId)
         {
-            User? user = (await _userRepository.Get(u => u.Id == userId))
+            User? user = _unitOfWork.Users.Find(u => u.Id == userId)
                 .Include(u => u.UserKey)
                 .FirstOrDefault();
             if (user == null)
@@ -142,24 +137,24 @@ namespace EducationTech.Business.Business
             }
 
             //if user and key not null, then remove key from db and cache
-            var transaction = await _context.Database.BeginTransactionAsync();
+            using var transaction = _unitOfWork.BeginTransaction();
             try
             {
                 if (user.UserKey == null)
                 {
                     throw new HttpException(HttpStatusCode.NotFound, "User did not login");
                 }
-                await _userKeyRepository.Delete(user.UserKey);
+                _unitOfWork.UserKeys.Remove(user.UserKey);
 
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                _unitOfWork.SaveChanges();
+                transaction.Commit();
 
                 await _cacheService.RemoveAsync($"UserKey_{user.Id}");
                 return true;
             }
             catch (Exception e)
             {
-                await transaction.RollbackAsync();
+                transaction.Rollback();
                 throw;
             }
 
@@ -167,7 +162,7 @@ namespace EducationTech.Business.Business
 
         public async Task<TokensReponseDto> RefreshExpiredTokens(Guid userId)
         {
-            User? user = await _userRepository.Model
+            User? user = await _unitOfWork.Users.GetAll()
                 .Include(u => u.UserKey)
                 .FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null)
@@ -192,16 +187,20 @@ namespace EducationTech.Business.Business
 
             using var rsa = RSA.Create();
 
-            var transaction = await _context.Database.BeginTransactionAsync();
+            using var transaction = _unitOfWork.BeginTransaction();
             try
             {
                 if (user.UserKey == null)
                 {
-                    var userKey = await _userKeyRepository.Insert(new UserKey()
+                    var userKey = new UserKey()
                     {
                         UserId = user.Id,
                         PublicKey = rsa.ToXmlString(false)
-                    });
+                    };
+
+                    _unitOfWork.UserKeys.Add(userKey);
+                    _unitOfWork.SaveChanges();
+
                     user.UserKey = userKey;
                 }
                 else
@@ -209,15 +208,15 @@ namespace EducationTech.Business.Business
                     user.UserKey.PublicKey = rsa.ToXmlString(false);
 
                 }
-                await _context.SaveChangesAsync();
+                _unitOfWork.SaveChanges();
 
-                await transaction.CommitAsync();
+                transaction.Commit();
 
                 await _cacheService.SetAsync($"UserKey_{user.Id}", user.UserKey.PublicKey, TimeSpan.FromMinutes(10));
             }
             catch (Exception e)
             {
-                await transaction.RollbackAsync();
+                transaction.Rollback();
                 throw;
             }
 
@@ -235,7 +234,7 @@ namespace EducationTech.Business.Business
 
         public async Task<User?> Register(RegisterDto registerDto)
         {
-            User? user = await _userRepository.GetUserByUsername(registerDto.Username);
+            User? user = _unitOfWork.Users.Find(u => u.Username == registerDto.Username).FirstOrDefault();
             if (user != null)
             {
                 throw new HttpException(HttpStatusCode.Conflict, "Username already exists");
@@ -244,7 +243,7 @@ namespace EducationTech.Business.Business
             {
                 string hashedPassword = _encryptionUtils.HashPassword(registerDto.Password, out var salt);
 
-                User? createdUser = await _userRepository.Insert(new User()
+                User createdUser = new User()
                 {
                     Username = registerDto.Username,
                     Password = hashedPassword,
@@ -255,13 +254,18 @@ namespace EducationTech.Business.Business
 
                     Salt = salt
 
-                }, true);
+                };
 
-                await _userRoleRepository.Insert(new UserRole()
+                _unitOfWork.Users.Add(createdUser);
+                _unitOfWork.SaveChanges();
+
+                var createdUserRole = new UserRole()
                 {
                     UserId = createdUser.Id,
-                    RoleId = (await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Learner"))!.Id
-                }, true);
+                    RoleId = _unitOfWork.Roles.Find(r => r.Name == "Learner").FirstOrDefault()!.Id
+                };
+                _unitOfWork.UserRoles.Add(createdUserRole);
+                _unitOfWork.SaveChanges();
 
                 return createdUser;
             }
@@ -283,7 +287,7 @@ namespace EducationTech.Business.Business
 
             string? publicKey = _cacheService.TryGetAndSetAsync<string>(cacheKey, async () =>
             {
-                User user = _context.Users.Include(u => u.UserKey).FirstOrDefault(u => u.Id == userId);
+                User user = _unitOfWork.Users.GetAll().Include(u => u.UserKey).FirstOrDefault(u => u.Id == userId);
                 return user?.UserKey?.PublicKey;
             },
             TimeSpan.FromMinutes(10))
@@ -325,7 +329,7 @@ namespace EducationTech.Business.Business
                 return null;
             }
             Guid? userId = GetUserIdFromToken(token.Split(" ")[1]);
-            return _context.Users
+            return _unitOfWork.Users.GetAll()
                 .Where(u => u.Id == userId).FirstOrDefault();
         }
     }

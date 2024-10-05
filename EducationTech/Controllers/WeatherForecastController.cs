@@ -77,8 +77,8 @@ namespace EducationTech.Controllers
         public async Task<IActionResult> TestTopNSimilarityLearners(int id)
         {
 
-            var learner = (await _learnerRepository.Get()).Where(x => x.Id == id).Include(x => x.LearningStyle).FirstOrDefault();
-            var interestedLearners = (await _learnerRepository.Get()).Where(x => x.Id != learner.Id).Include(x => x.LearningStyle).Include(x => x.LearnerLogs).ToList();
+            var learner = (_learnerRepository.GetAll()).Where(x => x.Id == id).Include(x => x.LearningStyle).FirstOrDefault();
+            var interestedLearners = _learnerRepository.GetAll().Where(x => x.Id != learner.Id).Include(x => x.LearningStyle).Include(x => x.LearnerLogs).ToList();
             var similarLearners = await _learnerCollaborativeFilter.TopNSimilarityLearners(learner, interestedLearners, 5);
 
             return Ok(similarLearners.AsEnumerable().Select(s => (s.Key.Id, s.Value)));
@@ -88,11 +88,11 @@ namespace EducationTech.Controllers
         [HttpGet("TestRecommendTopNLearningObjects/{learnerId}")]
         public async Task<IActionResult> TestRecommendTopNLearningObjects(int learnerId)
         {
-            var learner = (await _learnerRepository.Get()).Where(x => x.Id == learnerId).Include(x => x.LearningStyle).FirstOrDefault();
+            var learner = (_learnerRepository.GetAll()).Where(x => x.Id == learnerId).Include(x => x.LearningStyle).FirstOrDefault();
             var recommender = new SimilarUserRatingLoRecommender(_learnerCollaborativeFilter);
 
-            var interestedLearners = (await _learnerRepository.Get()).Where(x => x.Id != learnerId).Include(x => x.LearningStyle).Include(x => x.LearnerLogs).ToList();
-            var interestedLearningObjects = (await _learningObjectRepository.Get()).Include(x => x.LearnerLogs).ThenInclude(x => x.Learner).ToList();
+            var interestedLearners = (_learnerRepository.GetAll()).Where(x => x.Id != learnerId).Include(x => x.LearningStyle).Include(x => x.LearnerLogs).ToList();
+            var interestedLearningObjects = (_learningObjectRepository.GetAll()).Include(x => x.LearnerLogs).ThenInclude(x => x.Learner).ToList();
 
             var learningObjects = await recommender.RecommendTopNLearningObjects(learner, interestedLearners, interestedLearningObjects, 5);
 
@@ -157,8 +157,8 @@ namespace EducationTech.Controllers
         [HttpGet("TestLoSequenceRecommender")]
         public async Task<IActionResult> TestLoSequenceRecommender(int learnerId, int topicId)
         {
-            var learner = (await _learnerRepository.Get(x => x.Id == learnerId)).FirstOrDefault();
-            var topic = (await _recommendTopicRepository.Get(x => x.Id == topicId)).FirstOrDefault();
+            var learner = _learnerRepository.Find(x => x.Id == learnerId).FirstOrDefault();
+            var topic = _recommendTopicRepository.Find(x => x.Id == topicId).FirstOrDefault();
             var sequences = await _loSequenceRecommender.RecommendTopNLearningObjectSequences(learner, topic);
 
             return Ok(sequences);
@@ -191,9 +191,9 @@ namespace EducationTech.Controllers
         [HttpGet("TestRecommendLearningPath")]
         public async Task<IActionResult> TestRecommendLearningPath(int learnerId, int startTopicId, int targetTopicId)
         {
-            var learner = (await _learnerRepository.Get(x => x.Id == learnerId)).FirstOrDefault();
-            var startTopic = (await _recommendTopicRepository.Get(x => x.Id == startTopicId)).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
-            var targetTopic = (await _recommendTopicRepository.Get(x => x.Id == targetTopicId)).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
+            var learner = _learnerRepository.Find(x => x.Id == learnerId).FirstOrDefault();
+            var startTopic = _recommendTopicRepository.Find(x => x.Id == startTopicId).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
+            var targetTopic = _recommendTopicRepository.Find(x => x.Id == targetTopicId).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
             var learningObjects = await _learningPathRecommender.RecommendLearningPath(learner, startTopic, targetTopic);
 
             var learningObjectIds = learningObjects.Select(lo => lo.Id).ToList();

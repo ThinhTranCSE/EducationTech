@@ -9,14 +9,14 @@ using Microsoft.Extensions.Configuration;
 
 namespace EducationTech.DataAccess.Core
 {
-    public class EducationTechContext : DbContext
+    public class EducationTechContext : DbContext, IMainDatabaseContext
     {
         private readonly IConfiguration _configuration;
         public EducationTechContext(DbContextOptions<EducationTechContext> options, IConfiguration configuration) : base(options)
         {
             _configuration = configuration;
         }
-
+        public DbContext Instance => this;
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }

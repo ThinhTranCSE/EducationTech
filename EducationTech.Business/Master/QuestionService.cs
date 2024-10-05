@@ -1,45 +1,33 @@
 ﻿using AutoMapper;
 using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Questions;
-using EducationTech.DataAccess.Business.Interfaces;
-using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.Business.Master
 {
     public class QuestionService : IQuestionService
     {
-        private readonly IQuestionRepository _questionRepository;
-        private readonly IAnswerRepository _answerRepository;
-        private readonly IQuizRepository _quizRepository;
-        private readonly ITransactionManager _transactionManager;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public QuestionService(IQuestionRepository questionRepository, IAnswerRepository answerRepository, IQuizRepository quizRepository, ITransactionManager transactionManager, IMapper mapper)
+        public QuestionService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _questionRepository = questionRepository;
-            _answerRepository = answerRepository;
-            _quizRepository = quizRepository;
-            _transactionManager = transactionManager;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
 
         public async Task<QuestionDto> CreateQuestion(Question_CreateRequestDto requestDto, User? currentUser)
         {
-            if(currentUser == null)
+            if (currentUser == null)
             {
                 throw new Exception("User not found");
             }
 
-            var quizQuery = await _quizRepository.Get();
+            var quizQuery = _unitOfWork.Quizzes.GetAll();
             quizQuery = quizQuery
                 .Include(q => q.Lesson)
                     .ThenInclude(q => q.CourseSection)
@@ -49,21 +37,22 @@ namespace EducationTech.Business.Master
 
             var quiz = await quizQuery.FirstOrDefaultAsync();
 
-            if(quiz == null)
+            if (quiz == null)
             {
                 throw new Exception("Quiz not found");
             }
 
-            if(quiz.Lesson.CourseSection.Course.OwnerId != currentUser.Id)
+            if (quiz.Lesson.CourseSection.Course.OwnerId != currentUser.Id)
             {
                 throw new Exception("You are not allowed to create question for this quiz");
             }
 
             var createdQuestion = _mapper.Map<Question>(requestDto);
 
-            await _questionRepository.Insert(createdQuestion, true);
+            _unitOfWork.Questions.Add(createdQuestion);
+            _unitOfWork.SaveChanges();
 
-            var question = await (await _questionRepository.Get())
+            var question = await _unitOfWork.Questions.GetAll()
                 .Include(q => q.Answers)
                 .Where(x => x.Id == createdQuestion.Id)
                 .FirstOrDefaultAsync();
@@ -78,7 +67,7 @@ namespace EducationTech.Business.Master
                 throw new Exception("User not found");
             }
 
-            var questionQuery = await _questionRepository.Get();    
+            var questionQuery = _unitOfWork.Questions.GetAll();
             questionQuery = questionQuery
                 .Include(q => q.Quiz)
                     .ThenInclude(q => q.Lesson)
@@ -99,12 +88,12 @@ namespace EducationTech.Business.Master
                 throw new Exception("You are not allowed to update this question");
             }
 
-            if(requestDto.Content != null)
+            if (requestDto.Content != null)
             {
                 question.Content = requestDto.Content;
             }
 
-            await _questionRepository.Update(question, true);
+            _unitOfWork.SaveChanges();
 
             return _mapper.Map<QuestionDto>(question);
         }

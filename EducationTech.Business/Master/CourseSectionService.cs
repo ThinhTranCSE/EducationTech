@@ -2,28 +2,21 @@
 using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.CourseSections;
 using EducationTech.Business.Shared.Exceptions.Http;
+using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Master;
-using EducationTech.DataAccess.Master.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.Business.Master
 {
     public class CourseSectionService : ICourseSectionService
     {
-        private readonly ICourseRepository _courseRepository;
-        private readonly ICourseSectionRepository _courseSectionRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CourseSectionService(ICourseRepository courseRepository, ICourseSectionRepository courseSectionRepository, IMapper mapper)
+        public CourseSectionService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _courseRepository = courseRepository;
-            _courseSectionRepository = courseSectionRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -34,7 +27,7 @@ namespace EducationTech.Business.Master
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "Please login to create course section");
             }
-            var courseQuery = await _courseRepository.Get();
+            var courseQuery = _unitOfWork.Courses.GetAll();
             courseQuery = courseQuery
                 .Include(c => c.Owner)
                 .Where(x => x.Id == requestDto.CourseId);
@@ -51,7 +44,8 @@ namespace EducationTech.Business.Master
 
             var createdCourseSection = _mapper.Map<CourseSection>(requestDto);
 
-            await _courseSectionRepository.Insert(createdCourseSection, true);
+            _unitOfWork.CourseSections.Add(createdCourseSection);
+            _unitOfWork.SaveChanges();
 
             return _mapper.Map<CourseSectionDto>(createdCourseSection);
         }
@@ -63,7 +57,7 @@ namespace EducationTech.Business.Master
                 throw new HttpException(HttpStatusCode.Unauthorized, "Please login to update course section");
             }
 
-            var courseSectionQuery = await _courseSectionRepository.Get();
+            var courseSectionQuery = _unitOfWork.CourseSections.GetAll();
             courseSectionQuery = courseSectionQuery
                 .Include(c => c.Course)
                 .ThenInclude(c => c.Owner)
@@ -89,7 +83,8 @@ namespace EducationTech.Business.Master
                 courseSection.Order = requestDto.Order.Value;
             }
 
-            await _courseSectionRepository.Update(courseSection, true);
+            _unitOfWork.SaveChanges();
+
             return _mapper.Map<CourseSectionDto>(courseSection);
         }
     }

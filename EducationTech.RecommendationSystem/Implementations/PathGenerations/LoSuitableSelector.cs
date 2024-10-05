@@ -1,5 +1,5 @@
-﻿using EducationTech.DataAccess.Entities.Recommendation;
-using EducationTech.DataAccess.Recommendation.Interfaces;
+﻿using EducationTech.DataAccess.Abstract;
+using EducationTech.DataAccess.Entities.Recommendation;
 using EducationTech.DataAccess.Shared.Enums.LearningObject;
 using EducationTech.RecommendationSystem.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -11,12 +11,12 @@ public class LoSuitableSelector : ILoSuitableSelector
     private const int TOP_N_SEQUENCES = 20;
     private readonly ILoSequenceRecommender _loSequenceRecommender;
 
-    private readonly ILearningObjectRepository _learningObjectRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public LoSuitableSelector(ILoSequenceRecommender loSequenceRecommender, ILearningObjectRepository learningObjectRepository)
+    public LoSuitableSelector(ILoSequenceRecommender loSequenceRecommender, IUnitOfWork unitOfWork)
     {
         _loSequenceRecommender = loSequenceRecommender;
-        _learningObjectRepository = learningObjectRepository;
+        _unitOfWork = unitOfWork;
     }
     public async Task<(LearningObject, LearningObject)> SelectSuitableLoPair(Learner learner, RecommendTopic searchedTopic)
     {
@@ -33,7 +33,7 @@ public class LoSuitableSelector : ILoSuitableSelector
             }
         }
 
-        var learningObjectQuery = await _learningObjectRepository.Get();
+        var learningObjectQuery = _unitOfWork.LearningObjects.GetAll();
         learningObjectQuery = learningObjectQuery.Include(x => x.LearnerLogs).Where(x => learningObjectAppearIds.Contains(x.Id));
 
         var appearLearningObjects = await learningObjectQuery.ToListAsync();

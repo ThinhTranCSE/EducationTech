@@ -10,13 +10,14 @@ namespace EducationTech.Shared.DataStructures
         private Thread _cleanerThread;
         public int MaxChunkSize { get; private set; }
         public long SessionTimeOut { get; private set; }
-        public GlobalReference _globalReference { get; set; } = GlobalReference.Instance;
+        public GlobalReference _globalReference { get; set; }
 
         private Dictionary<Guid, UploadFileSession> _sessions = new Dictionary<Guid, UploadFileSession>();
-        public UploadFileSessionManager(GlobalReference globalUsings, IHostApplicationLifetime lifeTime)
+        public UploadFileSessionManager(IHostApplicationLifetime lifeTime)
         {
-            MaxChunkSize = globalUsings.UploadChunkSize;
-            SessionTimeOut = globalUsings.UploadSessionTimeOut;
+            _globalReference = GlobalReference.Instance;
+            MaxChunkSize = _globalReference.UploadChunkSize;
+            SessionTimeOut = _globalReference.UploadSessionTimeOut;
 
             lifeTime.ApplicationStopping.Register(Dispose);
             _cleanerThread = new Thread(ExpiredSessionCleaner);
