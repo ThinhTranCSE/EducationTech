@@ -2,6 +2,7 @@ using EducationTech.Annotations;
 using EducationTech.Business.Business.Interfaces;
 using EducationTech.DataAccess.Recommendation.Interfaces;
 using EducationTech.RecommendationSystem.Implementations.LearnerCollaborativeFilters;
+using EducationTech.RecommendationSystem.Implementations.LoRecommenders;
 using EducationTech.RecommendationSystem.Interfaces;
 using EducationTech.Shared.Utilities.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -71,27 +72,32 @@ namespace EducationTech.Controllers
             .ToArray();
         }
 
-        //[AllowAnonymous]
-        //[HttpGet("TestTopNSimilarityLearners/{id}")]
-        //public async Task<IActionResult> TestTopNSimilarityLearners(int id)
-        //{
+        [AllowAnonymous]
+        [HttpGet("TestTopNSimilarityLearners/{id}")]
+        public async Task<IActionResult> TestTopNSimilarityLearners(int id)
+        {
 
-        //    var learner = (await _learnerRepository.Get()).Where(x => x.Id == id).FirstOrDefault();
-        //    var similarLearners = await _learnerCollaborativeFilter.TopNSimilarityLearners(learner, 5);
+            var learner = (await _learnerRepository.Get()).Where(x => x.Id == id).Include(x => x.LearningStyle).FirstOrDefault();
+            var interestedLearners = (await _learnerRepository.Get()).Where(x => x.Id != learner.Id).Include(x => x.LearningStyle).Include(x => x.LearnerLogs).ToList();
+            var similarLearners = await _learnerCollaborativeFilter.TopNSimilarityLearners(learner, interestedLearners, 5);
 
-        //    return Ok(similarLearners.AsEnumerable().Select(s => (s.Key.Id, s.Value)));
-        //}
+            return Ok(similarLearners.AsEnumerable().Select(s => (s.Key.Id, s.Value)));
+        }
 
-        //[AllowAnonymous]
-        //[HttpGet("TestRecommendTopNLearningObjects/{learnerId}")]
-        //public async Task<IActionResult> TestRecommendTopNLearningObjects(int learnerId)
-        //{
-        //    var learner = (await _learnerRepository.Get()).Where(x => x.Id == learnerId).Include(x => x.LearningStyle).FirstOrDefault();
-        //    var recommender = new OntologyBasedLoRecommender(_learningObjectRepository);
-        //    var learningObjects = await recommender.RecommendTopNLearningObjects(learner, 5);
+        [AllowAnonymous]
+        [HttpGet("TestRecommendTopNLearningObjects/{learnerId}")]
+        public async Task<IActionResult> TestRecommendTopNLearningObjects(int learnerId)
+        {
+            var learner = (await _learnerRepository.Get()).Where(x => x.Id == learnerId).Include(x => x.LearningStyle).FirstOrDefault();
+            var recommender = new SimilarUserRatingLoRecommender(_learnerCollaborativeFilter);
 
-        //    return Ok(learningObjects);
-        //}
+            var interestedLearners = (await _learnerRepository.Get()).Where(x => x.Id != learnerId).Include(x => x.LearningStyle).Include(x => x.LearnerLogs).ToList();
+            var interestedLearningObjects = (await _learningObjectRepository.Get()).Include(x => x.LearnerLogs).ThenInclude(x => x.Learner).ToList();
+
+            var learningObjects = await recommender.RecommendTopNLearningObjects(learner, interestedLearners, interestedLearningObjects, 5);
+
+            return Ok(learningObjects.Select(l => l.Id));
+        }
 
         //[AllowAnonymous]
         //[HttpGet("TestPrefixSpanSequenceMiner")]
@@ -158,28 +164,28 @@ namespace EducationTech.Controllers
             return Ok(sequences);
         }
 
-        [AllowAnonymous]
-        [HttpGet("TestSelectSuitableLoPair")]
-        public async Task<IActionResult> TestSelectSuitableLoPair(int learnerId, int topicId)
-        {
-            var learner = (await _learnerRepository.Get(x => x.Id == learnerId)).FirstOrDefault();
-            var topic = (await _recommendTopicRepository.Get(x => x.Id == topicId)).Include(x => x.NextTopicConjuctions).ThenInclude(x => x.NextTopic).FirstOrDefault();
-            var (exLo, evLo) = await _loSuitableSelector.SelectSuitableLoPair(learner, topic);
+        //[AllowAnonymous]
+        //[HttpGet("TestSelectSuitableLoPair")]
+        //public async Task<IActionResult> TestSelectSuitableLoPair(int learnerId, int topicId)
+        //{
+        //    var learner = (await _learnerRepository.Get(x => x.Id == learnerId)).FirstOrDefault();
+        //    var topic = (await _recommendTopicRepository.Get(x => x.Id == topicId)).Include(x => x.NextTopicConjuctions).ThenInclude(x => x.NextTopic).FirstOrDefault();
+        //    var (exLo, evLo) = await _loSuitableSelector.SelectSuitableLoPair(learner, topic);
 
-            return Ok(new List<int> { exLo.Id, evLo.Id });
-        }
+        //    return Ok(new List<int> { exLo.Id, evLo.Id });
+        //}
 
-        [AllowAnonymous]
-        [HttpGet("TestSelectAllLoPaths")]
-        public async Task<IActionResult> TestSelectAllLoPaths(int learnerId, int startTopicId, int targetTopicId)
-        {
-            var learner = (await _learnerRepository.Get(x => x.Id == learnerId)).FirstOrDefault();
-            var startTopic = (await _recommendTopicRepository.Get(x => x.Id == startTopicId)).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
-            var targetTopic = (await _recommendTopicRepository.Get(x => x.Id == targetTopicId)).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
-            var paths = await _loPathVisitor.SelectAllLoPaths(learner, startTopic, targetTopic);
+        //[AllowAnonymous]
+        //[HttpGet("TestSelectAllLoPaths")]
+        //public async Task<IActionResult> TestSelectAllLoPaths(int learnerId, int startTopicId, int targetTopicId)
+        //{
+        //    var learner = (await _learnerRepository.Get(x => x.Id == learnerId)).FirstOrDefault();
+        //    var startTopic = (await _recommendTopicRepository.Get(x => x.Id == startTopicId)).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
+        //    var targetTopic = (await _recommendTopicRepository.Get(x => x.Id == targetTopicId)).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
+        //    var paths = await _loPathVisitor.SelectAllLoPaths(learner, startTopic, targetTopic);
 
-            return Ok(paths);
-        }
+        //    return Ok(paths);
+        //}
 
         [AllowAnonymous]
         [HttpGet("TestRecommendLearningPath")]
