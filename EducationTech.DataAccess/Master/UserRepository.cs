@@ -1,5 +1,5 @@
 ﻿using EducationTech.DataAccess.Abstract;
-using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Core.Contexts.Interfaces;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Master.Interfaces;
 using EducationTech.Shared.Utilities.Interfaces;

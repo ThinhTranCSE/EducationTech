@@ -31,5 +31,6 @@ public class LearningObject : Entity
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<LearningObject>(modelBuilder);
+
     }
 }

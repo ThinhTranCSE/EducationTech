@@ -1,4 +1,4 @@
-﻿using EducationTech.DataAccess.Core;
+﻿using EducationTech.DataAccess.Core.Contexts;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.Shared.Enums;
 using System;

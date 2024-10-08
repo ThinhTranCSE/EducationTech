@@ -33,9 +33,25 @@ services:
       - "15672:15672"
     networks:
       - network
-        
+
+  neo4j:
+    image: neo4j:latest
+    restart: always
+    environment:
+      NEO4J_AUTH: neo4j/12345678  # neo4j la username, 12345678 la password
+    ports:
+      - "7474:7474"  # web interface
+      - "7687:7687"  # Bolt protocol (use for client)
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    networks:
+      - network
+
 networks:
-  network: {}        
+  network: {}
 
 volumes:
   mysql_data:
+  neo4j_data:
+  neo4j_logs:

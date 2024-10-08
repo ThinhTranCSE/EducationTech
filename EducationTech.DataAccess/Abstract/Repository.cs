@@ -1,4 +1,4 @@
-﻿using EducationTech.DataAccess.Core;
+﻿using EducationTech.DataAccess.Core.Contexts.Interfaces;
 using EducationTech.DataAccess.Entities.Abstract;
 using System.Linq.Expressions;
 

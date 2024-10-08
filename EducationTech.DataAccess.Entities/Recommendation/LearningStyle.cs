@@ -25,5 +25,6 @@ public class LearningStyle : Entity
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<LearningStyle>(modelBuilder);
+
     }
 }

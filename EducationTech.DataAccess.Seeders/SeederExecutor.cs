@@ -1,4 +1,4 @@
-﻿using EducationTech.DataAccess.Core;
+﻿using EducationTech.DataAccess.Core.Contexts;
 using Microsoft.Extensions.DependencyInjection;
 using Org.BouncyCastle.Tls;
 using Serilog;

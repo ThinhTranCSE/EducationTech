@@ -26,5 +26,6 @@ public class LearnerLog : Entity
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<LearnerLog>(modelBuilder);
+
     }
 }

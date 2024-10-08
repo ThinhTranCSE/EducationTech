@@ -1,7 +1,7 @@
 ﻿using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Shared.DTOs.Business.Auth;
 using EducationTech.Controllers.Abstract;
-using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Core.Contexts;
 using EducationTech.DataAccess.Entities.Master;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

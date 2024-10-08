@@ -30,18 +30,6 @@ public class LearningPath
         Time += nodeTime;
     }
 
-    //public void AddLearningNode(RecommendTopic topic, LearningObject explanatoryLearningObject, LearningObject evaluativeLearningObject)
-    //{
-    //    var explanatoryLearningObjectScore = explanatoryLearningObject.LearnerLogs.Count == 0 ? 0 : explanatoryLearningObject.LearnerLogs.Average(x => x.Score);
-    //    var explanatoryLearningObjectTime = explanatoryLearningObject.LearnerLogs.Count == 0 ? explanatoryLearningObject.MaxLearningTime : explanatoryLearningObject.LearnerLogs.Average(x => x.TimeTaken);
-    //    var evaluativeLearningObjectScore = evaluativeLearningObject.LearnerLogs.Count == 0 ? 0 : evaluativeLearningObject.LearnerLogs.Average(x => x.Score);
-    //    var evaluativeLearningObjectTime = evaluativeLearningObject.LearnerLogs.Count == 0 ? evaluativeLearningObject.MaxLearningTime : evaluativeLearningObject.LearnerLogs.Average(x => x.TimeTaken);
-
-    //    LearningNodes.Add(new LearningNode(topic, explanatoryLearningObject, evaluativeLearningObject));
-    //    Score += explanatoryLearningObjectScore + evaluativeLearningObjectScore;
-    //    Time += explanatoryLearningObjectTime + evaluativeLearningObjectTime;
-    //}
-
     public void AddLearningNode(RecommendTopic topic)
     {
         LearningNodes.Add(new LearningNode { Topic = topic });

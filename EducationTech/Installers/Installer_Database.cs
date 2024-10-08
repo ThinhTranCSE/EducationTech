@@ -1,4 +1,5 @@
-﻿using EducationTech.DataAccess.Core;
+﻿using EducationTech.DataAccess.Core.Contexts;
+using EducationTech.DataAccess.Core.Contexts.Interfaces;
 
 namespace EducationTech.Installers
 {

@@ -1,4 +1,5 @@
-﻿using EducationTech.DataAccess.Core.Extensions;
+﻿using EducationTech.DataAccess.Core.Contexts.Interfaces;
+using EducationTech.DataAccess.Core.Extensions;
 using EducationTech.DataAccess.Core.Interceptors;
 using EducationTech.DataAccess.Entities.Abstract;
 using EducationTech.DataAccess.Entities.Business;
@@ -7,7 +8,7 @@ using EducationTech.DataAccess.Entities.Recommendation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace EducationTech.DataAccess.Core
+namespace EducationTech.DataAccess.Core.Contexts
 {
     public class EducationTechContext : DbContext, IMainDatabaseContext
     {

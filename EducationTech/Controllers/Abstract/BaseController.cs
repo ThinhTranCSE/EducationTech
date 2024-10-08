@@ -1,5 +1,5 @@
 ﻿using EducationTech.Business.Business.Interfaces;
-using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Core.Contexts;
 using EducationTech.DataAccess.Entities.Master;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

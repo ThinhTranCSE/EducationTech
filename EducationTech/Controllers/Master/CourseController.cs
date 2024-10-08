@@ -2,7 +2,7 @@
 using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Courses;
 using EducationTech.Controllers.Abstract;
-using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Core.Contexts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

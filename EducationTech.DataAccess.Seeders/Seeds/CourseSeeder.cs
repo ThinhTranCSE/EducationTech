@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Core.Contexts;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.Shared.Enums;

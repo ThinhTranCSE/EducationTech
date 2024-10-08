@@ -1,4 +1,4 @@
-﻿using EducationTech.DataAccess.Core;
+﻿using EducationTech.DataAccess.Core.Contexts;
 
 namespace EducationTech.DataAccess.Seeders
 {

@@ -16,7 +16,15 @@ namespace EducationTech
 
             builder.InstallServices(builder.Configuration);
 
-            HandleSeederCommand(builder, args);
+            using (var cancellationTokenSource = new CancellationTokenSource())
+            {
+                var cancellationToken = cancellationTokenSource.Token;
+                HandleSeederCommand(builder, args, cancellationTokenSource);
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+            }
 
             var app = builder.Build();
 
@@ -58,30 +66,13 @@ namespace EducationTech
             app.Run();
         }
 
-        private static void HandleSeederCommand(WebApplicationBuilder builder, string[] args)
+        private static void HandleSeederCommand(WebApplicationBuilder builder, string[] args, CancellationTokenSource cancellationTokenSource)
         {
-            using (var cancellationTokenSource = new CancellationTokenSource())
-            {
-
-                CancellationToken cancellationToken = cancellationTokenSource.Token;
-                var providers = builder.Services.BuildServiceProvider();
-                using (var scope = providers.CreateScope())
-                {
-                    ISeederExecutor seederExecutor = scope.ServiceProvider.GetRequiredService<ISeederExecutor>();
-                    seederExecutor.RegisterSeeders(scope);
-
-                    seederExecutor.Execute(cancellationTokenSource, args);
-                    //seederExecutor.Execute(cancellationTokenSource, new string[] { "seeder", "LearnerSeeder" });
-                    //seederExecutor.Execute(cancellationTokenSource, new string[] { "seeder", "RecommendTopicSeeder" });
-                    //seederExecutor.Execute(cancellationTokenSource, new string[] { "seeder", "LearningObjectSeeder" });
-                    //seederExecutor.Execute(cancellationTokenSource, new string[] { "seeder", "LearnerLogSeeder" });
-                    //seederExecutor.Execute(cancellationTokenSource, new string[] { "seeder", "LearnerLogSequenceSeeder" });
-                }
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
-            }
+            var providers = builder.Services.BuildServiceProvider();
+            using var scope = providers.CreateScope();
+            var seederExecutor = scope.ServiceProvider.GetRequiredService<ISeederExecutor>();
+            seederExecutor.RegisterSeeders(scope);
+            seederExecutor.Execute(cancellationTokenSource, args);
         }
     }
 }

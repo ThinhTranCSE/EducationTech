@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Shared.DTOs.Business.Auth;
-using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Core.Contexts;
 
 namespace EducationTech.DataAccess.Seeders.Seeds
 {

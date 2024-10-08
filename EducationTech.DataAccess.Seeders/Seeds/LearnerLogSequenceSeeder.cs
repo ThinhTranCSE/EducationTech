@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Core.Contexts;
 using EducationTech.DataAccess.Entities.Recommendation;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,5 +1,5 @@
 ﻿using EducationTech.DataAccess.Business.Interfaces;
-using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Core.Contexts.Interfaces;
 using EducationTech.DataAccess.Master.Interfaces;
 using EducationTech.DataAccess.Recommendation.Interfaces;
 using Microsoft.EntityFrameworkCore.ChangeTracking;

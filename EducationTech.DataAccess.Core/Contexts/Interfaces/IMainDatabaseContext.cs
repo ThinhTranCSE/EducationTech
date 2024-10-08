@@ -3,7 +3,7 @@ using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Entities.Recommendation;
 using Microsoft.EntityFrameworkCore;
 
-namespace EducationTech.DataAccess.Core;
+namespace EducationTech.DataAccess.Core.Contexts.Interfaces;
 
 public interface IMainDatabaseContext : IDbContext
 {
