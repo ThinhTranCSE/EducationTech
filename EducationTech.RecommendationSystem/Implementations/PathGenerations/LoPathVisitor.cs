@@ -18,59 +18,55 @@ public class LoPathVisitor : ILoPathVisitor
     public async Task<List<LearningPath>> SelectAllLoPaths(Learner learner, RecommendTopic startTopic, RecommendTopic targetTopic)
     {
         //using DFS to find all paths
-        var paths = new List<LearningPath>();
+        var paths = await FindAllPaths(startTopic.Id, targetTopic.Id);
 
-        var initialPath = new LearningPath();
+        //var initialPath = new LearningPath();
+        //var initialVisited = new HashSet<int>();
+        //await DFS(learner, startTopic, targetTopic, initialPath, initialVisited, paths);
 
-        var initialVisited = new HashSet<int>();
-
-        await DFS(learner, startTopic, targetTopic, initialPath, initialVisited, paths);
-
+        var losSelected = new Dictionary<int, (LearningObject, LearningObject)>();
         foreach (var path in paths)
         {
-            await path.AssignSuitableLos(_loSuitableSelector, learner);
+            await path.AssignSuitableLos(_loSuitableSelector, learner, losSelected);
         }
 
         return paths;
 
     }
 
-    private async Task DFS(Learner learner, RecommendTopic currentTopic, RecommendTopic targetUnit, LearningPath currentPath, HashSet<int> currentVisited, List<LearningPath> paths)
+    private async Task<List<LearningPath>> FindAllPaths(int startTopicId, int targetTopicId)
     {
-        //tránh việc lặp vĩnh viễn khi có chu trình (1 node sẽ chỉ xuất hiện 1 lần trong path)
-        if (currentVisited.Contains(currentTopic.Id))
+        var paths = await _unitOfWork.GraphClient.Cypher
+            .Match("(src:Topic {Id: $sourceId }), (target:Topic {Id: $targetId })")
+            .WithParam("sourceId", startTopicId)
+            .WithParam("targetId", targetTopicId)
+            .Call("apoc.path.expand(src, '', '', 0, 20)")
+            .Yield("path")
+            .Where("last(nodes(path)).Id = target.Id")
+            //.Return<PathsResultBolt>("path")
+            .Return<List<int>>("[node IN nodes(path) | node.Id] AS pathNodes")
+            .ResultsAsync;
+
+        var allPaths = paths.ToList();
+
+        var distinctTopicIds = allPaths.SelectMany(x => x).Distinct().ToHashSet();
+
+        var topics = await _unitOfWork.RecommendTopics.GetAll().Where(x => distinctTopicIds.Contains(x.Id)).ToListAsync();
+
+        var topicLookUpTable = topics.ToDictionary(x => x.Id);
+
+        var result = allPaths.Select(x =>
         {
-            return;
-        }
+            var path = new LearningPath();
+            foreach (var topicId in x)
+            {
+                path.AddLearningNode(topicLookUpTable[topicId]);
+            }
 
-        currentVisited = new HashSet<int>(currentVisited);
-        currentVisited.Add(currentTopic.Id);
+            return path;
+        }).ToList();
 
-        var path = new LearningPath(currentPath);
-        //visit current node
-
-        var topicQuery = _unitOfWork.RecommendTopics.GetAll();
-        topicQuery = topicQuery.Where(x => x.Id == currentTopic.Id).Include(x => x.NextTopicConjuctions).ThenInclude(x => x.NextTopic);
-        currentTopic = await topicQuery.FirstOrDefaultAsync();
-
-        //var (explanatoryLearningObject, evaluativeLearningObject) = await _loSuitableSelector.SelectSuitableLoPair(learner, currentTopic);
-        path.AddLearningNode(currentTopic);
-
-        if (currentTopic.Id == targetUnit.Id)
-        {
-            paths.Add(path);
-            return;
-        }
-
-        if (currentTopic.NextTopicConjuctions == null || currentTopic.NextTopicConjuctions.Count == 0)
-        {
-            return;
-        }
-
-        foreach (var nextTopicConjuction in currentTopic.NextTopicConjuctions)
-        {
-            await DFS(learner, nextTopicConjuction.NextTopic, targetUnit, path, currentVisited, paths);
-        }
+        return result;
     }
 
 

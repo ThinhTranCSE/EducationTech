@@ -22,7 +22,7 @@ public class LoSuitableSelector : ILoSuitableSelector
     {
         var frequentSequences = await _loSequenceRecommender.RecommendTopNLearningObjectSequences(learner, searchedTopic);
 
-        var topNSequences = frequentSequences.OrderByDescending(x => 0.2 * x.Support + 0.8 * x.Sequence.Count).Take(TOP_N_SEQUENCES).ToList();
+        var topNSequences = frequentSequences.Where(x => x.Sequence.Count != 0).OrderByDescending(x => 0.2 * x.Support + 0.8 * x.Sequence.Count).Take(TOP_N_SEQUENCES).ToList();
 
         var learningObjectAppearIds = new HashSet<int>();
         foreach (var sequence in topNSequences)
@@ -56,12 +56,9 @@ public class LoSuitableSelector : ILoSuitableSelector
             }
         }
 
-        if (explainatoryLearningObjects.Count == 0 || evaluativeLearningObjects.Count == 0)
-        {
-            return (null, null);
-        }
-
-        return (explainatoryLearningObjects.First().Value, evaluativeLearningObjects.First().Value);
+        var explainatoryLearningObject = explainatoryLearningObjects.Count != 0 ? explainatoryLearningObjects.First().Value : null;
+        var evaluativeLearningObject = evaluativeLearningObjects.Count != 0 ? evaluativeLearningObjects.First().Value : null;
+        return (explainatoryLearningObject, evaluativeLearningObject);
     }
 
     private double CalculateSimilarity(Learner learner, LearningObject learningObject)

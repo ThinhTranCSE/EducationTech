@@ -20,7 +20,6 @@ namespace EducationTech.Business.Shared.DTOs.Abstracts
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public abstract class AbstractDto : IDto
     {
-        //protected static GlobalUsings GlobalUsings = new GlobalUsings();
         public virtual void Configure(IMapperConfigurationExpression cfg) { }
     }
 }

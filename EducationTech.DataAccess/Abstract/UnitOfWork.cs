@@ -4,13 +4,16 @@ using EducationTech.DataAccess.Master.Interfaces;
 using EducationTech.DataAccess.Recommendation.Interfaces;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
+using Neo4jClient;
+using Neo4jClient.DataAnnotations;
 
 namespace EducationTech.DataAccess.Abstract;
 
 public class UnitOfWork : IUnitOfWork
 {
     private readonly IMainDatabaseContext _context;
-
+    private readonly IGraphClient _graphClient;
+    public IGraphClient GraphClient => _graphClient.WithAnnotations();
     #region Business Repositories
     public IAnswerRepository Answers { get; private set; }
     public IAnswerUserRepository AnswerUsers { get; private set; }
@@ -55,6 +58,7 @@ public class UnitOfWork : IUnitOfWork
 
 
     public UnitOfWork(
+        IGraphClient graphClient,
         IMainDatabaseContext context,
         IAnswerRepository answerRepository,
         IAnswerUserRepository answerUserRepository,
@@ -88,6 +92,7 @@ public class UnitOfWork : IUnitOfWork
 
         )
     {
+        _graphClient = graphClient;
         _context = context;
         Answers = answerRepository;
         AnswerUsers = answerUserRepository;

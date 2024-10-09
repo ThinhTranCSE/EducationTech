@@ -1,7 +1,7 @@
 ﻿using EducationTech.Business.Business;
 using EducationTech.Business.Business.Interfaces;
 using EducationTech.DataAccess.Business.Interfaces;
-using EducationTech.DataAccess.Core;
+using EducationTech.DataAccess.Core.Contexts;
 using EducationTech.DataAccess.Master.Interfaces;
 using EducationTech.Shared.Utilities.Interfaces;
 using Microsoft.EntityFrameworkCore;

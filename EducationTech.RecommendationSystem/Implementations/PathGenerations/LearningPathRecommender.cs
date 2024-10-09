@@ -29,8 +29,14 @@ public class LearningPathRecommender : ILearningPathRecommender
 
         foreach (var node in selectedPath.LearningNodes)
         {
-            result.Add(node.ExplanatoryLearningObject);
-            result.Add(node.EvaluativeLearningObject);
+            if (node.ExplanatoryLearningObject != null)
+            {
+                result.Add(node.ExplanatoryLearningObject);
+            }
+            if (node.EvaluativeLearningObject != null)
+            {
+                result.Add(node.EvaluativeLearningObject);
+            }
         }
 
         return result;

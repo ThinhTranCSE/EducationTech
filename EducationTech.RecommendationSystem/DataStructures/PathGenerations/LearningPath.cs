@@ -35,22 +35,44 @@ public class LearningPath
         LearningNodes.Add(new LearningNode { Topic = topic });
     }
 
-    public async Task AssignSuitableLos(ILoSuitableSelector loSuitableSelector, Learner learner)
+    public async Task AssignSuitableLos(ILoSuitableSelector loSuitableSelector, Learner learner, Dictionary<int, (LearningObject, LearningObject)> losSelected)
     {
         foreach (var learningNode in LearningNodes)
         {
-            var (explanatoryLearningObject, evaluativeLearningObject) = await loSuitableSelector.SelectSuitableLoPair(learner, learningNode.Topic);
+            LearningObject explanatoryLearningObject = null;
+            LearningObject evaluativeLearningObject = null;
+            if (losSelected.TryGetValue(learningNode.Topic.Id, out var learningObjects))
+            {
+                (explanatoryLearningObject, evaluativeLearningObject) = learningObjects;
+            }
+            else
+            {
+                (explanatoryLearningObject, evaluativeLearningObject) = await loSuitableSelector.SelectSuitableLoPair(learner, learningNode.Topic);
+                losSelected.Add(learningNode.Topic.Id, (explanatoryLearningObject, evaluativeLearningObject));
+            }
+
             learningNode.ExplanatoryLearningObject = explanatoryLearningObject;
             learningNode.EvaluativeLearningObject = evaluativeLearningObject;
 
-            var explanatoryLearningObjectScore = explanatoryLearningObject.LearnerLogs.Count == 0 ? 0 : explanatoryLearningObject.LearnerLogs.Average(x => x.Score);
-            var explanatoryLearningObjectTime = explanatoryLearningObject.LearnerLogs.Count == 0 ? explanatoryLearningObject.MaxLearningTime : explanatoryLearningObject.LearnerLogs.Average(x => x.TimeTaken);
-            var evaluativeLearningObjectScore = evaluativeLearningObject.LearnerLogs.Count == 0 ? 0 : evaluativeLearningObject.LearnerLogs.Average(x => x.Score);
-            var evaluativeLearningObjectTime = evaluativeLearningObject.LearnerLogs.Count == 0 ? evaluativeLearningObject.MaxLearningTime : evaluativeLearningObject.LearnerLogs.Average(x => x.TimeTaken);
+            var explanatoryLearningObjectScore = 0.0d;
+            var explanatoryLearningObjectTime = 0.0d;
+            if (explanatoryLearningObject != null)
+            {
+                explanatoryLearningObjectScore = explanatoryLearningObject.LearnerLogs.Count == 0 ? 0 : explanatoryLearningObject.LearnerLogs.Average(x => x.Score);
+                explanatoryLearningObjectTime = explanatoryLearningObject.LearnerLogs.Count == 0 ? explanatoryLearningObject.MaxLearningTime : explanatoryLearningObject.LearnerLogs.Average(x => x.TimeTaken);
+            }
+
+            var evaluativeLearningObjectScore = 0.0d;
+            var evaluativeLearningObjectTime = 0.0d;
+            if (evaluativeLearningObject != null)
+            {
+                evaluativeLearningObjectScore = evaluativeLearningObject.LearnerLogs.Count == 0 ? 0 : evaluativeLearningObject.LearnerLogs.Average(x => x.Score);
+                evaluativeLearningObjectTime = evaluativeLearningObject.LearnerLogs.Count == 0 ? evaluativeLearningObject.MaxLearningTime : evaluativeLearningObject.LearnerLogs.Average(x => x.TimeTaken);
+            }
+
 
             Score += explanatoryLearningObjectScore + evaluativeLearningObjectScore;
             Time += explanatoryLearningObjectTime + evaluativeLearningObjectTime;
         }
-
     }
 }

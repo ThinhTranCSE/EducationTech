@@ -24,6 +24,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageReference Include="MySql.Data" Version="8.3.0" />
     <PackageReference Include="MySql.EntityFrameworkCore" Version="6.0.25" />
+    <PackageReference Include="Neo4jClient" Version="5.1.16" />
+    <PackageReference Include="Neo4jClient.DataAnnotations" Version="2.3.0" />
     <PackageReference Include="Serilog" Version="3.1.1" />
   </ItemGroup>	
   <ItemGroup>

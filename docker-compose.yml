@@ -35,10 +35,11 @@ services:
       - network
 
   neo4j:
-    image: neo4j:latest
+    image: neo4j:5.23
     restart: always
     environment:
       NEO4J_AUTH: neo4j/12345678  # neo4j la username, 12345678 la password
+      NEO4J_PLUGINS: '[ "graph-data-science", "apoc" ]'  
     ports:
       - "7474:7474"  # web interface
       - "7687:7687"  # Bolt protocol (use for client)

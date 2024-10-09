@@ -16,10 +16,13 @@ namespace EducationTech.DataAccess.Seeders.Seeds
 
         public override void Seed()
         {
-            var globalReference = GlobalReference.Instance;
-            using (var reader = new StreamReader(Path.Combine(globalReference.StaticFilesPath, "LearnerLogs.csv")))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            using var transaction = _context.Database.BeginTransaction();
+            try
             {
+                var globalReference = GlobalReference.Instance;
+                using var reader = new StreamReader(Path.Combine(globalReference.StaticFilesPath, "LearnerLogs.csv"));
+                using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+
                 csv.Context.RegisterClassMap<LearnerLogRecord>();
                 var records = csv.GetRecords<LearnerLog>();
                 foreach (var record in records)
@@ -40,7 +43,14 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                     _context.LearnerLogs.Add(record);
                 }
                 _context.SaveChanges();
+                transaction.Commit();
             }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+
         }
     }
 

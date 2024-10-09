@@ -12,7 +12,7 @@ namespace EducationTech.RecommendationSystem.Implementations.LoSequenceRecommend
 public class LoSequenceRecommender : ILoSequenceRecommender
 {
     private const int MIN_SUPPORT = 3;
-    private const int NUMBER_OF_SIMILAR_LEARNERS = 50;
+    private const int NUMBER_OF_SIMILAR_LEARNERS = 10;
     private const int NUMBER_OF_RECOMMENDATION_FOR_LOS = 5;
     private const int VISITED_TIME_THRESHOLD = 0;
 
@@ -111,23 +111,6 @@ public class LoSequenceRecommender : ILoSequenceRecommender
             var itemSet = logs.Values.Select(i => new List<int> { i.LearningObjectId }).ToList();
             sequenceDatabase.Add(new Sequence<int>(itemSet));
         }
-        //[[1,2,3],[3,4,5,6]]
-        //var databaseString = "[";
-        //foreach (var sequence in sequenceDatabase)
-        //{
-        //    databaseString += "[";
-        //    foreach (var itemset in sequence.Itemsets)
-        //    {
-        //        foreach (var item in itemset)
-        //        {
-        //            databaseString += item + ",";
-        //        }
-        //    }
-        //    databaseString = databaseString.Remove(databaseString.Length - 1);
-        //    databaseString += "],";
-        //}
-        //databaseString = databaseString.Remove(databaseString.Length - 1);
-
 
         //tìm frequent sequences
         var prefix = new List<List<int>>();

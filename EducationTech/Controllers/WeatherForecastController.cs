@@ -99,59 +99,6 @@ namespace EducationTech.Controllers
             return Ok(learningObjects.Select(l => l.Id));
         }
 
-        //[AllowAnonymous]
-        //[HttpGet("TestPrefixSpanSequenceMiner")]
-        //public async Task<IActionResult> TestPrefixSpanSequenceMiner()
-        //{
-        //    //db = [
-        //    //    [0, 1, 2, 3, 4],
-        //    //    [1, 1, 1, 3, 4],
-        //    //    [2, 1, 2, 2, 0],
-        //    //    [1, 1, 1, 2, 2],
-        //    //]
-
-        //    var database = new List<Sequence<string>>
-        //    {
-        //        new Sequence<string>(new List<List<string>>
-        //        {
-        //            new List<string> { "0" },
-        //            new List<string> { "1" },
-        //            new List<string> { "2" },
-        //            new List<string> { "3" },
-        //            new List<string> { "4" },
-        //        }),
-        //        new Sequence<string>(new List<List<string>>
-        //        {
-        //            new List<string> { "1" },
-        //            new List<string> { "1" },
-        //            new List<string> { "1" },
-        //            new List<string> { "3" },
-        //            new List<string> { "4" },
-        //        }),
-        //        new Sequence<string>(new List<List<string>>
-        //        {
-        //            new List<string> { "2" },
-        //            new List<string> { "1" },
-        //            new List<string> { "2" },
-        //            new List<string> { "2" },
-        //            new List<string> { "0" },
-        //        }),
-        //        new Sequence<string>(new List<List<string>>
-        //        {
-        //            new List<string> { "1" },
-        //            new List<string> { "1" },
-        //            new List<string> { "1" },
-        //            new List<string> { "2" },
-        //            new List<string> { "2" },
-        //        }),
-        //    };
-
-        //    var miner = new PrefixSpanSequenceMiner<string>();
-        //    var result = new List<FrequentSequence<string>>();
-        //    miner.MineSequences(new List<List<string>>(), database, 2, result);
-
-        //    return Ok(result);
-        //}
 
         [AllowAnonymous]
         [HttpGet("TestLoSequenceRecommender")]
@@ -191,13 +138,35 @@ namespace EducationTech.Controllers
         [HttpGet("TestRecommendLearningPath")]
         public async Task<IActionResult> TestRecommendLearningPath(int learnerId, int startTopicId, int targetTopicId)
         {
+            //check time excute 
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             var learner = _learnerRepository.Find(x => x.Id == learnerId).FirstOrDefault();
-            var startTopic = _recommendTopicRepository.Find(x => x.Id == startTopicId).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
-            var targetTopic = _recommendTopicRepository.Find(x => x.Id == targetTopicId).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
+            var startTopic = _recommendTopicRepository
+                .Find(x => x.Id == startTopicId)
+                .Include(t => t.NextTopicConjuctions)
+                .ThenInclude(tc => tc.NextTopic)
+                .FirstOrDefault();
+            var targetTopic = _recommendTopicRepository
+                .Find(x => x.Id == targetTopicId)
+                .Include(t => t.NextTopicConjuctions)
+                .ThenInclude(tc => tc.NextTopic)
+                .FirstOrDefault();
+
             var learningObjects = await _learningPathRecommender.RecommendLearningPath(learner, startTopic, targetTopic);
 
-            var learningObjectIds = learningObjects.Select(lo => lo.Id).ToList();
-            return Ok(learningObjectIds);
+            watch.Stop();
+
+            var result = learningObjects.Select(lo => new
+            {
+
+                Topic = lo.Topic.Name,
+                LO = $"{lo.Title} - {lo.Type}"
+            }).ToList();
+            return Ok(new
+            {
+                ExcutedTime = watch.ElapsedMilliseconds,
+                Result = result
+            });
         }
 
     }

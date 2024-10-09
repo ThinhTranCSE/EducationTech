@@ -1,101 +1,64 @@
-Id,NextTopicIds,Name
-1,[43],Topic1
-2,,Topic2
-3,[16],Topic3
-4,"[25, 79]",Topic4
-5,,Topic5
-6,"[88, 79]",Topic6
-7,,Topic7
-8,,Topic8
-9,"[22, 14]",Topic9
-10,"[86, 31]",Topic10
-11,"[85, 86]",Topic11
-12,"[92, 80]",Topic12
-13,[51],Topic13
-14,,Topic14
-15,"[62, 79]",Topic15
-16,,Topic16
-17,[62],Topic17
-18,"[30, 81]",Topic18
-19,"[38, 92]",Topic19
-20,[80],Topic20
-21,[9],Topic21
-22,[19],Topic22
-23,[80],Topic23
-24,"[14, 18]",Topic24
-25,[27],Topic25
-26,[100],Topic26
-27,"[100, 62]",Topic27
-28,"[78, 26]",Topic28
-29,[63],Topic29
-30,"[68, 46]",Topic30
-31,[5],Topic31
-32,"[3, 16]",Topic32
-33,[43],Topic33
-34,[65],Topic34
-35,,Topic35
-36,[15],Topic36
-37,,Topic37
-38,"[34, 88]",Topic38
-39,,Topic39
-40,"[57, 43]",Topic40
-41,[47],Topic41
-42,[75],Topic42
-43,,Topic43
-44,[95],Topic44
-45,"[97, 30]",Topic45
-46,,Topic46
-47,[61],Topic47
-48,,Topic48
-49,[42],Topic49
-50,[1],Topic50
-51,"[17, 37]",Topic51
-52,[49],Topic52
-53,,Topic53
-54,[47],Topic54
-55,[48],Topic55
-56,"[14, 27]",Topic56
-57,[60],Topic57
-58,[5],Topic58
-59,"[68, 29]",Topic59
-60,,Topic60
-61,"[88, 65]",Topic61
-62,[96],Topic62
-63,,Topic63
-64,[60],Topic64
-65,"[40, 13]",Topic65
-66,"[39, 89]",Topic66
-67,[6],Topic67
-68,,Topic68
-69,"[18, 5]",Topic69
-70,,Topic70
-71,[67],Topic71
-72,"[62, 24]",Topic72
-73,,Topic73
-74,,Topic74
-75,,Topic75
-76,[4],Topic76
-77,[2],Topic77
-78,[17],Topic78
-79,,Topic79
-80,"[65, 87]",Topic80
-81,,Topic81
-82,,Topic82
-83,,Topic83
-84,,Topic84
-85,,Topic85
-86,"[47, 14]",Topic86
-87,[92],Topic87
-88,,Topic88
-89,"[59, 41]",Topic89
-90,"[70, 50]",Topic90
-91,[50],Topic91
-92,"[97, 8]",Topic92
-93,,Topic93
-94,,Topic94
-95,,Topic95
-96,"[57, 58]",Topic96
-97,[57],Topic97
-98,[81],Topic98
-99,"[51, 93]",Topic99
-100,"[22, 45]",Topic100
+Id,CourseId,Name,NextTopicIds
+1,1,Describe basic hardware and software concepts,[2]
+2,1,Use a programming language to develop a simple project,"[3, 8]"
+3,1,Recognize social impacts of a computing solution to organizations and society,[4]
+4,1,"Demonstrate the understanding of professional, ethical, legal, and social issues and responsibilities of computing practices",
+5,2,Understanding of logic and discrete structures,[6]
+6,2,Be able to model and formulate generic problems in real life by the discrete mathematical structures and languages,"[7, 17, 14]"
+7,2,Be able to apply learnt knowledge to compute quantities of discrete structures and probabilities,[12]
+8,3,Express an algorithm for solving problem,"[9, 12]"
+9,3,Implement a given algorithm by a C++ program,"[10, 14]"
+10,3,Basic object-oriented concepts,[11]
+11,3,Problem-solving process,
+12,4,Determine the complexity of simple algorithms (polynomial time - nested loop - no recursive),"[13, 14]"
+13,4,"Manipulate basic data structures such as list, tree and graph.",[14]
+14,4,Implement basic sorting and searching algorithms,
+15,5,Advanced proposition Logic and Advanced predicate Logic and Program Verification,"[16, 6]"
+16,5,Automata,[17]
+17,5,Optimization,"[18, 7]"
+18,5,Dynamical System,
+19,6,Describe on how to apply fundamental knowledge of computing and mathematics in an operating system,[20]
+20,6,"Able to report the tradeoffs between the performance and the resource and technology constraints in a design of an operating
+system",[21]
+21,6,"Describe main operating system concepts and their aspects that are useful to realize concurrent systems and describe the
+benefits of each",
+22,7,Describe and explain the fundamental concepts of computer networks,[23]
+23,7,Explain the operating principles of common applications on the Internet,[24]
+24,7,Explain operating principles of common routing protocols,[25]
+25,7,Explain operating principles of protocols in data link layer,[26]
+26,7,Explain issues related to network security,
+27,8,Understand that software systems need to be developed methodologically and professionally,"[28, 46]"
+28,8,Elicit requirements & perform architectural design,"[29, 52]"
+29,8,"Cary out detailed design, coding, testing",[30]
+30,8,Use the UML language effectively in software development,
+31,9,"Explain basic concepts (data, data model, database, database system, the relational data model, the relational algebra, SQL,
+database design methodology, the entity relationship model, data normalization, database application), describe the architecture of a
+database system and the components of a database system",[32]
+32,9,"Design a database using the entity relationship model, the relational data model and a database design methodology to meet
+data requirements of a particular database application",[33]
+33,9,"Use SQL and manage databases on an existing relational database management system (DBMS) such as MySQL, Oracle, and
+MS SQL Server",[34]
+34,9,"Be able to analyze tradeoffs between usability, performance, security and constraints of resource and technology in order to
+identify an appropriate approach for data design and implementation (file based approach or database approach, relational data
+model or other data models, approaches for database management systems)",
+35,10,"Define lexical and grammar requirements of a simple programming language by writing formal specification (lexical and
+grammatical",[36]
+36,10,Explain the mechanisms of components of a programming language,[37]
+37,10,Implement a simple interpreter/compiler,
+38,11,"Describe concepts related to advanced topics in computer networking; Identify problems related to network design and
+management",[39]
+39,11,"Application of hands-on materials to operate on a number of devices and tools related to advanced topics of computer
+networking",[40]
+40,11,Design computer networks of different sizes and implement corresponding network management and configuration solutions,[41]
+41,11,Organize group work to solve problems,[42]
+42,11,Recognizing the need for continuous professional development,
+43,12,"Explain the role of software testing, the types of software testing and the implementation process",[44]
+44,12,Use techniques to test software,[45]
+45,12,Understand test-driven software development and test automation,
+46,13,Build models that describe the structure and behavior of software products from requirements specifications,[47]
+47,13,Select and apply a predefined coding standard in a small software project,[48]
+48,13,Participate in a group activity to code test a medium length piece of code,[49]
+49,13,Identify the key principles of software evolution and explain its importance in the software development cycle,
+50,14,"Use logic, Bayesian network and fuzzy set to represent and reason knowledge","[51, 6]"
+51,14,Understand basic concepts of machine learning,[52]
+52,14,Implement some simple intelligent systems,
