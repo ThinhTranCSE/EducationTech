@@ -6,29 +6,28 @@ using EducationTech.DataAccess.Core.Contexts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EducationTech.Controllers.Master
+namespace EducationTech.Controllers.Master;
+
+[Authorize]
+public class CourseSectionController : BaseController
 {
-    [Authorize]
-    public class CourseSectionController : BaseController
+    private readonly ICourseSectionService _courseSectionService;
+    public CourseSectionController(EducationTechContext context, IAuthService authService, ICourseSectionService courseSectionService)
     {
-        private readonly ICourseSectionService _courseSectionService;
-        public CourseSectionController(EducationTechContext context, IAuthService authService, ICourseSectionService courseSectionService) : base(context, authService)
-        {
-            _courseSectionService = courseSectionService;
-        }
+        _courseSectionService = courseSectionService;
+    }
 
-        [HttpPost]
-        public async Task<CourseSectionDto> CreateCourseSection([FromBody]CourseSection_CreateRequestDto requestDto)
-        {
-            var courseSection = await _courseSectionService.CreateCourseSection(requestDto, CurrentUser);
-            return courseSection;
-        }
+    [HttpPost]
+    public async Task<CourseSectionDto> CreateCourseSection([FromBody] CourseSection_CreateRequestDto requestDto)
+    {
+        var courseSection = await _courseSectionService.CreateCourseSection(requestDto);
+        return courseSection;
+    }
 
-        [HttpPatch("{id}")]
-        public async Task<CourseSectionDto> UpdateCourseSection(int id, [FromBody]CourseSection_UpdateRequestDto requestDto)
-        {
-            var courseSection = await _courseSectionService.UpdateCourseSection(id, requestDto, CurrentUser);
-            return courseSection;
-        }
+    [HttpPatch("{id}")]
+    public async Task<CourseSectionDto> UpdateCourseSection(int id, [FromBody] CourseSection_UpdateRequestDto requestDto)
+    {
+        var courseSection = await _courseSectionService.UpdateCourseSection(id, requestDto);
+        return courseSection;
     }
 }

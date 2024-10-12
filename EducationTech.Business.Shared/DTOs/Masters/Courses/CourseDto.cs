@@ -1,17 +1,10 @@
 ﻿using AutoMapper;
-using EducationTech.Business.Shared.DTOs.Abstracts;
 using EducationTech.Business.Shared.DTOs.Masters.CourseCategories;
 using EducationTech.Business.Shared.DTOs.Masters.CourseSections;
-using EducationTech.Business.Shared.DTOs.Masters.Quizzes;
 using EducationTech.Business.Shared.DTOs.Masters.Users;
-using EducationTech.Business.Shared.DTOs.Masters.Videos;
-using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EducationTech.Storage;
+using Microsoft.AspNetCore.Http;
 
 namespace EducationTech.Business.Shared.DTOs.Masters.Courses
 {
@@ -33,13 +26,33 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
         public ICollection<CourseCategoryDto> CourseCategories { get; set; }
         public override void Configure(IMapperConfigurationExpression cfg)
         {
-            string hostName = AbstractDto<Course, CourseDto>.GlobalUsings.HostName;
-            string scheme = AbstractDto<Course, CourseDto>.GlobalUsings.HostScheme;
+            string hostName = GlobalReference.Instance.HostName;
+            string scheme = GlobalReference.Instance.HostScheme;
             cfg.CreateMap<Course, CourseDto>()
-                .ForMember(x => x.ImageUrl, opt => opt.MapFrom(x => $"{scheme}://{hostName}/{x.ImageUrl}"))
+                .ForMember(x => x.ImageUrl, opt => opt.MapFrom<ImageUrlResolver>())
                 .ReverseMap();
-
         }
     }
 
+    public class ImageUrlResolver : IValueResolver<Course, CourseDto, string>
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public ImageUrlResolver(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public string Resolve(Course source, CourseDto destination, string destMember, ResolutionContext context)
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext != null)
+            {
+                string scheme = httpContext.Request.Scheme;
+                string hostName = httpContext.Request.Host.Value;
+                return $"{scheme}://{hostName}/{source.ImageUrl}";
+            }
+            return source.ImageUrl; // Return original if HttpContext is null
+        }
+    }
 }

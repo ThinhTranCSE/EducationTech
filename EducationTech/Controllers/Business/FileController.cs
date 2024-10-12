@@ -4,10 +4,8 @@ using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Shared.DTOs.Business.File;
 using EducationTech.Controllers.Abstract;
 using EducationTech.DataAccess.Core.Contexts;
-using EducationTech.DataAccess.Entities.Master;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
 
 namespace EducationTech.Controllers.Business
 {
@@ -16,7 +14,7 @@ namespace EducationTech.Controllers.Business
     {
         private readonly IFileService _fileService;
         private readonly IMapper _mapper;
-        public FileController(EducationTechContext context, IAuthService authService, IFileService fileService, IMapper mapper) : base(context, authService)
+        public FileController(EducationTechContext context, IAuthService authService, IFileService fileService, IMapper mapper)
         {
             _fileService = fileService;
             _mapper = mapper;
@@ -25,14 +23,14 @@ namespace EducationTech.Controllers.Business
         [HttpGet("Info")]
         public async Task<IEnumerable<UploadedFileDto>> GetFileInformation([FromQuery] File_GetFileInformationRequestDto requestDto)
         {
-            var result =  await _fileService.GetFileInformation(requestDto, CurrentUser);
+            var result = await _fileService.GetFileInformation(requestDto);
             return result;
         }
 
         [HttpPost("Session")]
         public async Task<File_PrepareResponseDto> Prepare(File_PrepareRequestBodyDto requestBody)
         {
-            return await _fileService.StartLargeFileUploadSession(requestBody.FileName, requestBody.FileSize, CurrentUser!.Id);
+            return await _fileService.StartLargeFileUploadSession(requestBody.FileName, requestBody.FileSize);
         }
 
         [HttpPost("Session/Chunk")]
@@ -44,7 +42,7 @@ namespace EducationTech.Controllers.Business
         [HttpPost("Upload")]
         public async Task<UploadedFileDto> Upload([FromForm] IFormFile file)
         {
-            var result =  await _fileService.UploadFile(file, CurrentUser!.Id);
+            var result = await _fileService.UploadFile(file);
             return result;
         }
 

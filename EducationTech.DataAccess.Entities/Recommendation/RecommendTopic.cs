@@ -1,4 +1,5 @@
 ﻿using EducationTech.DataAccess.Entities.Abstract;
+using EducationTech.DataAccess.Entities.Master;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,7 +12,8 @@ public class RecommendTopic : Entity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public string Name { get; set; }
-
+    public int CourseId { get; set; }
+    public virtual Course Course { get; set; }
     public virtual ICollection<TopicConjunction> NextTopicConjuctions { get; set; }
     public virtual ICollection<LearningObject> LearningObjects { get; set; }
 

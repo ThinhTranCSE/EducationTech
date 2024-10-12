@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EducationTech.Business.Abstract;
+using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Courses;
 using EducationTech.Business.Shared.Exceptions.Http;
@@ -16,17 +17,22 @@ namespace EducationTech.Business.Master
     public class CourseService : ICourseService, IPagination<Course_GetRequestDto, Course_GetResponseDto>
     {
         IUnitOfWork _unitOfWork;
+        ISessionService _sessionService;
         private readonly IMapper _mapper;
         public CourseService(
             IUnitOfWork unitOfWork,
-            IMapper mapper)
+            IMapper mapper,
+            ISessionService sessionService
+            )
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _sessionService = sessionService;
         }
 
-        public async Task<CourseDto> CreateCourse(Course_CreateRequestDto requestDto, User? currentUser)
+        public async Task<CourseDto> CreateCourse(Course_CreateRequestDto requestDto)
         {
+            var currentUser = _sessionService.CurrentUser;
             if (currentUser == null)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "Please login to create course");
@@ -69,8 +75,9 @@ namespace EducationTech.Business.Master
                 throw;
             }
         }
-        public async Task<CourseDto> UpdateCourse(Course_UpdateRequestDto requestDto, int id, User? currentUser)
+        public async Task<CourseDto> UpdateCourse(Course_UpdateRequestDto requestDto, int id)
         {
+            var currentUser = _sessionService.CurrentUser;
             if (currentUser == null)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "Please login to update course");
@@ -101,10 +108,10 @@ namespace EducationTech.Business.Master
                 {
                     course.Title = requestDto.Title;
                 }
-                if (requestDto.Price != null)
-                {
-                    course.Price = requestDto.Price.Value;
-                }
+                //if (requestDto.Price != null)
+                //{
+                //    course.Price = requestDto.Price.Value;
+                //}
                 if (requestDto.ImageUrl != null)
                 {
                     course.ImageUrl = requestDto.ImageUrl;
@@ -185,8 +192,9 @@ namespace EducationTech.Business.Master
                 throw;
             }
         }
-        public async Task<CourseDto> GetCourseById(Course_GetByIdRequestDto requestDto, int id, User? currentUser)
+        public async Task<CourseDto> GetCourseById(Course_GetByIdRequestDto requestDto, int id)
         {
+            var currentUser = _sessionService.CurrentUser;
             var query = _unitOfWork.Courses.GetAll();
             if (requestDto.BelongToCurrentUser)
             {
@@ -263,8 +271,9 @@ namespace EducationTech.Business.Master
 
             return courseDto;
         }
-        public async Task<Course_GetResponseDto> GetPaginatedData(Course_GetRequestDto requestDto, int? offset, int? limit, string? cursor, User? currentUser)
+        public async Task<Course_GetResponseDto> GetPaginatedData(Course_GetRequestDto requestDto, int? offset, int? limit, string? cursor)
         {
+            var currentUser = _sessionService.CurrentUser;
             var query = _unitOfWork.Courses.GetAll();
 
             switch (requestDto.OrderBy)
@@ -365,8 +374,9 @@ namespace EducationTech.Business.Master
             return await courses.CountAsync();
         }
 
-        public async Task<CourseDto> BuyCourse(Course_BuyRequestDto requestDto, int id, User? currentUser)
+        public async Task<CourseDto> BuyCourse(Course_BuyRequestDto requestDto, int id)
         {
+            var currentUser = _sessionService.CurrentUser;
             if (currentUser == null)
             {
                 throw new HttpException(HttpStatusCode.Unauthorized, "Please login to buy course");

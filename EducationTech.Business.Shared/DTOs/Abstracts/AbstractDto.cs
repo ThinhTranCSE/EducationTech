@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using EducationTech.Storage;
 using Newtonsoft.Json;
 
 namespace EducationTech.Business.Shared.DTOs.Abstracts
@@ -9,8 +8,6 @@ namespace EducationTech.Business.Shared.DTOs.Abstracts
         where TDto : class
         where TEntity : class
     {
-        protected static GlobalReference GlobalUsings = GlobalReference.Instance;
-
         public virtual void Configure(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<TEntity, TDto>().ReverseMap();

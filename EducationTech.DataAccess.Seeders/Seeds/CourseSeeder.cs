@@ -3,11 +3,6 @@ using EducationTech.DataAccess.Core.Contexts;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.Shared.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.DataAccess.Seeders.Seeds
 {
@@ -27,12 +22,12 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                 .Take(maxUserCount)
                 .ToList();
             var userCount = users.Count;
-            if(userCount == 0)
+            if (userCount == 0)
             {
                 throw new Exception("No user found in the database. Please seed the user first.");
             }
             var sampleImage = _context.Images.FirstOrDefault();
-            if(sampleImage == null)
+            if (sampleImage == null)
             {
                 throw new Exception("No image found, please use api upload at least 1 image first");
             }
@@ -45,7 +40,7 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             var courses = coursesGenerator
                 .RuleFor(x => x.Title, f => f.Lorem.Sentence())
                 .RuleFor(x => x.Description, f => f.Lorem.Paragraph())
-                .RuleFor(x => x.Price, f => f.Random.Double(100000, 3000000))
+                //.RuleFor(x => x.Price, f => f.Random.Double(100000, 3000000))
                 .RuleFor(x => x.OwnerId, f => users.Skip(random.Next(0, userCount - 1)).FirstOrDefault()?.Id)
                 .RuleFor(x => x.IsArchived, f => false)
                 .RuleFor(x => x.IsPublished, f => true)
@@ -97,9 +92,9 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             IEnumerable<Video> videos = new List<Video>();
             IEnumerable<Quiz> quizzes = new List<Quiz>();
 
-            foreach(var lesson in lessons)
+            foreach (var lesson in lessons)
             {
-                if(lesson.Type == LessonType.Video)
+                if (lesson.Type == LessonType.Video)
                 {
                     var video = new Video
                     {
@@ -109,12 +104,12 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                     };
                     videos = videos.Append(video);
                 }
-                else if(lesson.Type == LessonType.Quiz)
+                else if (lesson.Type == LessonType.Quiz)
                 {
                     var quiz = new Quiz
                     {
                         LessonId = lesson.Id,
-                        TimeLimit = random.Next(60, 60*60)
+                        TimeLimit = random.Next(60, 60 * 60)
                     };
                     quizzes = quizzes.Append(quiz);
                 }
