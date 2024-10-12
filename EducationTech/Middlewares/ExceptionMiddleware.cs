@@ -1,53 +1,48 @@
 ﻿using EducationTech.Controllers.Abstract;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.Features;
 using Newtonsoft.Json;
-using System;
-using System.IO.Pipelines;
-using System.Net;
 using System.Text;
 
-namespace EducationTech.Middlewares
+namespace EducationTech.Middlewares;
+
+public class ExceptionMiddleware
 {
-    internal class ExceptionMiddleware
+    private readonly RequestDelegate _next;
+    private readonly Serilog.ILogger _logger;
+    public ExceptionMiddleware(RequestDelegate next, Serilog.ILogger logger)
     {
-        private readonly RequestDelegate _next;
-        private readonly Serilog.ILogger _logger;
-        public ExceptionMiddleware(RequestDelegate next, Serilog.ILogger logger)
+        _next = next;
+        _logger = logger;
+    }
+
+    public async Task Invoke(HttpContext context)
+    {
+        try
         {
-            _next = next;
-            _logger = logger;
+            await _next.Invoke(context);
         }
-
-        public async Task Invoke(HttpContext context)
+        catch (Exception exception)
         {
-            try
+            _logger.Error(exception, exception.Message);
+            var responseFeature = context.Features.Get<IHttpResponseFeature>();
+            responseFeature.ReasonPhrase = exception.Message;
+
+            var response = context.Response;
+
+            var responseStructure = new ResponseMessage
             {
-                await _next.Invoke(context);
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(exception, exception.Message);
-                var responseFeature = context.Features.Get<IHttpResponseFeature>();
-                responseFeature.ReasonPhrase = exception.Message;
+                Status = 500,
+                Message = exception.Message,
+                Errors = exception.StackTrace
+            };
+            var json = JsonConvert.SerializeObject(responseStructure);
+            var buffer = Encoding.UTF8.GetBytes(json);
 
-                var response = context.Response;
+            response.StatusCode = 500;
+            response.ContentType = "application/json";
+            response.ContentLength = buffer.Length;
 
-                var responseStructure = new ResponseMessage
-                {
-                    Status = 500,
-                    Message = exception.Message,
-                    Errors = exception.StackTrace
-                };
-                var json = JsonConvert.SerializeObject(responseStructure);
-                var buffer = Encoding.UTF8.GetBytes(json);
-
-                response.StatusCode = 500;
-                response.ContentType = "application/json";
-                response.ContentLength = buffer.Length;
-
-                await response.WriteAsync(json);
-            }
+            await response.WriteAsync(json);
         }
     }
 }

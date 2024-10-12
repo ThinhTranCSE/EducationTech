@@ -48,6 +48,8 @@ namespace EducationTech
                     .AllowAnyMethod();
             });
 
+            app.UseMiddleware<GetSchemeAndHostBeforeRequestExecutedMiddleware>();
+
             app.UseMiddleware<RequestLogContextMiddleware>();
             app.UseSerilogRequestLogging();
 

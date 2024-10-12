@@ -19,8 +19,8 @@ namespace EducationTech.Storage
         }
 
         #region Host Information
-        public string HostName => "localhost:5013";
-        public string HostScheme => "http";
+        public string HostName { get; set; }
+        public string HostScheme { get; set; }
         #endregion
 
         #region Paths

@@ -35,6 +35,7 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                     }
                     var createdTopic = new RecommendTopic
                     {
+                        CourseId = int.Parse(record.CourseId),
                         Name = record.Name
                     };
 
@@ -106,6 +107,7 @@ namespace EducationTech.DataAccess.Seeders.Seeds
 
     public class TopicRecord
     {
+        public string CourseId { get; set; }
         public string Name { get; set; }
         public string NextTopicIds { get; set; }
     }

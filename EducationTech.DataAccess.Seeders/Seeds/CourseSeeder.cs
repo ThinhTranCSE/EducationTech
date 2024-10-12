@@ -1,8 +1,11 @@
 ﻿using Bogus;
+using CsvHelper;
 using EducationTech.DataAccess.Core.Contexts;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.Shared.Enums;
+using EducationTech.Storage;
+using System.Globalization;
 
 namespace EducationTech.DataAccess.Seeders.Seeds
 {
@@ -13,146 +16,186 @@ namespace EducationTech.DataAccess.Seeders.Seeds
         {
         }
 
-        public override void Seed()
+        public override async void Seed()
         {
-            var coursesGenerator = new Faker<Course>();
-            Random random = new Random();
-            int maxUserCount = 10;
-            var users = _context.Users.AsQueryable()
-                .Take(maxUserCount)
-                .ToList();
-            var userCount = users.Count;
-            if (userCount == 0)
+            using var transaction = _context.Database.BeginTransaction();
+            try
             {
-                throw new Exception("No user found in the database. Please seed the user first.");
-            }
-            var sampleImage = _context.Images.FirstOrDefault();
-            if (sampleImage == null)
-            {
-                throw new Exception("No image found, please use api upload at least 1 image first");
-            }
-            var sampleVideo = _context.Videos.FirstOrDefault();
-            if (sampleVideo == null)
-            {
-                throw new Exception("No video found, please use api upload at least 1 video first");
-            }
+                var globalUsings = GlobalReference.Instance;
+                using var reader = new StreamReader(Path.Combine(globalUsings.StaticFilesPath, "Courses.csv"));
+                using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+                var records = csv.GetRecords<CourseRecord>();
 
-            var courses = coursesGenerator
-                .RuleFor(x => x.Title, f => f.Lorem.Sentence())
-                .RuleFor(x => x.Description, f => f.Lorem.Paragraph())
-                //.RuleFor(x => x.Price, f => f.Random.Double(100000, 3000000))
-                .RuleFor(x => x.OwnerId, f => users.Skip(random.Next(0, userCount - 1)).FirstOrDefault()?.Id)
-                .RuleFor(x => x.IsArchived, f => false)
-                .RuleFor(x => x.IsPublished, f => true)
-                .RuleFor(x => x.PublishedAt, f => f.Date.Past())
-                .RuleFor(x => x.ImageUrl, $"{sampleImage?.Url}")
-                .Generate(50);
 
-            _context.Courses.AddRange(courses);
-            _context.SaveChanges();
-            var courseSectionsGenerator = new Faker<CourseSection>()
-                .RuleFor(x => x.Title, f => f.Lorem.Sentence());
-            IEnumerable<CourseSection> courseSections = courses.Select(course =>
-            {
-                var sectionCount = random.Next(1, 10);
-                var courseSections = courseSectionsGenerator.Generate(sectionCount);
-                for (int i = 0; i < sectionCount; i++)
+                var coursesGenerator = new Faker<Course>();
+                Random random = new Random();
+                int maxUserCount = 10;
+                var users = _context.Users.AsQueryable()
+                    .Take(maxUserCount)
+                    .ToList();
+                var userCount = users.Count;
+                if (userCount == 0)
                 {
-                    courseSections[i].CourseId = course.Id;
-                    courseSections[i].Order = i;
+                    throw new Exception("No user found in the database. Please seed the user first.");
                 }
-                return courseSections.AsEnumerable();
-            })
-            .Aggregate((acc, x) => acc.Concat(x));
-
-            _context.CourseSections.AddRange(courseSections);
-            _context.SaveChanges();
-
-            var lessonGenerator = new Faker<Lesson>()
-                .RuleFor(x => x.Title, f => f.Lorem.Sentence())
-                .RuleFor(x => x.Type, f => f.PickRandom<LessonType>());
-
-
-            IEnumerable<Lesson> lessons = courseSections.Select(section =>
-            {
-                var lessonCount = random.Next(1, 5);
-                var lessons = lessonGenerator.Generate(lessonCount);
-                for (int i = 0; i < lessonCount; i++)
+                var sampleImage = _context.Images.FirstOrDefault();
+                if (sampleImage == null)
                 {
-                    lessons[i].CourseSectionId = section.Id;
-                    lessons[i].Order = i;
+                    throw new Exception("No image found, please use api upload at least 1 image first");
                 }
-                return lessons.AsEnumerable();
-            })
-            .Aggregate((acc, x) => acc.Concat(x));
-
-            _context.Lessons.AddRange(lessons);
-            _context.SaveChanges();
-
-            IEnumerable<Video> videos = new List<Video>();
-            IEnumerable<Quiz> quizzes = new List<Quiz>();
-
-            foreach (var lesson in lessons)
-            {
-                if (lesson.Type == LessonType.Video)
+                var sampleVideo = _context.Videos.FirstOrDefault();
+                if (sampleVideo == null)
                 {
-                    var video = new Video
+                    throw new Exception("No video found, please use api upload at least 1 video first");
+                }
+
+                coursesGenerator = coursesGenerator
+                    .RuleFor(x => x.Description, f => f.Lorem.Paragraph())
+                    //.RuleFor(x => x.Price, f => f.Random.Double(100000, 3000000))
+                    .RuleFor(x => x.OwnerId, f => users.Skip(random.Next(0, userCount - 1)).FirstOrDefault()?.Id)
+                    .RuleFor(x => x.IsArchived, f => false)
+                    .RuleFor(x => x.IsPublished, f => true)
+                    .RuleFor(x => x.PublishedAt, f => f.Date.Past())
+                    .RuleFor(x => x.ImageUrl, $"{sampleImage?.Url}");
+
+                var computerSiecne = _context.Categories.FirstOrDefault(x => x.Name == "Computer Science");
+
+                var courses = new List<Course>();
+
+                foreach (var record in records)
+                {
+                    var course = coursesGenerator.Generate();
+                    course.Title = record.Name;
+                    course.CourseCategories = new List<CourseCategory>
                     {
-                        LessonId = lesson.Id,
-                        FileId = sampleVideo.FileId,
-                        Url = sampleVideo.Url
+                        new CourseCategory
+                        {
+                            CategoryId = computerSiecne!.Id
+                        }
                     };
-                    videos = videos.Append(video);
+                    courses.Add(course);
                 }
-                else if (lesson.Type == LessonType.Quiz)
+
+                _context.Courses.AddRange(courses);
+                _context.SaveChanges();
+
+
+
+                var courseSectionsGenerator = new Faker<CourseSection>()
+                    .RuleFor(x => x.Title, f => f.Lorem.Sentence());
+                IEnumerable<CourseSection> courseSections = courses.Select(course =>
                 {
-                    var quiz = new Quiz
+                    var sectionCount = random.Next(1, 10);
+                    var courseSections = courseSectionsGenerator.Generate(sectionCount);
+                    for (int i = 0; i < sectionCount; i++)
                     {
-                        LessonId = lesson.Id,
-                        TimeLimit = random.Next(60, 60 * 60)
-                    };
-                    quizzes = quizzes.Append(quiz);
+                        courseSections[i].CourseId = course.Id;
+                        courseSections[i].Order = i;
+                    }
+                    return courseSections.AsEnumerable();
+                })
+                .Aggregate((acc, x) => acc.Concat(x));
+
+                _context.CourseSections.AddRange(courseSections);
+                _context.SaveChanges();
+
+                var lessonGenerator = new Faker<Lesson>()
+                    .RuleFor(x => x.Title, f => f.Lorem.Sentence())
+                    .RuleFor(x => x.Type, f => f.PickRandom<LessonType>());
+
+
+                IEnumerable<Lesson> lessons = courseSections.Select(section =>
+                {
+                    var lessonCount = random.Next(1, 5);
+                    var lessons = lessonGenerator.Generate(lessonCount);
+                    for (int i = 0; i < lessonCount; i++)
+                    {
+                        lessons[i].CourseSectionId = section.Id;
+                        lessons[i].Order = i;
+                    }
+                    return lessons.AsEnumerable();
+                })
+                .Aggregate((acc, x) => acc.Concat(x));
+
+                _context.Lessons.AddRange(lessons);
+                _context.SaveChanges();
+
+                IEnumerable<Video> videos = new List<Video>();
+                IEnumerable<Quiz> quizzes = new List<Quiz>();
+
+                foreach (var lesson in lessons)
+                {
+                    if (lesson.Type == LessonType.Video)
+                    {
+                        var video = new Video
+                        {
+                            LessonId = lesson.Id,
+                            FileId = sampleVideo.FileId,
+                            Url = sampleVideo.Url
+                        };
+                        videos = videos.Append(video);
+                    }
+                    else if (lesson.Type == LessonType.Quiz)
+                    {
+                        var quiz = new Quiz
+                        {
+                            LessonId = lesson.Id,
+                            TimeLimit = random.Next(60, 60 * 60)
+                        };
+                        quizzes = quizzes.Append(quiz);
+                    }
                 }
+
+                _context.Videos.AddRange(videos);
+                _context.Quizzes.AddRange(quizzes);
+                _context.SaveChanges();
+
+                var questionsGenerator = new Faker<Question>()
+                    .RuleFor(x => x.Content, f => f.Lorem.Sentence());
+                IEnumerable<Question> questions = quizzes.Select(quiz =>
+                {
+                    var questionCount = random.Next(5, 10);
+                    var questions = questionsGenerator.Generate(questionCount);
+                    for (int i = 0; i < questionCount; i++)
+                    {
+                        questions[i].QuizId = quiz.Id;
+                    }
+                    return questions.AsEnumerable();
+                })
+                .Aggregate((acc, x) => acc.Concat(x));
+
+                _context.Questions.AddRange(questions);
+                _context.SaveChanges();
+
+                var answersGenerator = new Faker<Answer>()
+                    .RuleFor(x => x.Content, f => f.Lorem.Sentence())
+                    .RuleFor(x => x.IsCorrect, f => f.Random.Bool());
+
+                IEnumerable<Answer> answers = questions.Select(question =>
+                {
+                    var answerCount = random.Next(4, 6);
+                    var answers = answersGenerator.Generate(answerCount);
+                    for (int i = 0; i < answerCount; i++)
+                    {
+                        answers[i].QuestionId = question.Id;
+                    }
+                    return answers.AsEnumerable();
+                })
+                .Aggregate((acc, x) => acc.Concat(x));
+                _context.Answers.AddRange(answers);
+                _context.SaveChanges();
+                transaction.Commit();
             }
-
-            _context.Videos.AddRange(videos);
-            _context.Quizzes.AddRange(quizzes);
-            _context.SaveChanges();
-
-            var questionsGenerator = new Faker<Question>()
-                .RuleFor(x => x.Content, f => f.Lorem.Sentence());
-            IEnumerable<Question> questions = quizzes.Select(quiz =>
+            catch
             {
-                var questionCount = random.Next(5, 10);
-                var questions = questionsGenerator.Generate(questionCount);
-                for (int i = 0; i < questionCount; i++)
-                {
-                    questions[i].QuizId = quiz.Id;
-                }
-                return questions.AsEnumerable();
-            })
-            .Aggregate((acc, x) => acc.Concat(x));
-
-            _context.Questions.AddRange(questions);
-            _context.SaveChanges();
-
-            var answersGenerator = new Faker<Answer>()
-                .RuleFor(x => x.Content, f => f.Lorem.Sentence())
-                .RuleFor(x => x.IsCorrect, f => f.Random.Bool());
-
-            IEnumerable<Answer> answers = questions.Select(question =>
-            {
-                var answerCount = random.Next(4, 6);
-                var answers = answersGenerator.Generate(answerCount);
-                for (int i = 0; i < answerCount; i++)
-                {
-                    answers[i].QuestionId = question.Id;
-                }
-                return answers.AsEnumerable();
-            })
-            .Aggregate((acc, x) => acc.Concat(x));
-            _context.Answers.AddRange(answers);
-            _context.SaveChanges();
+                transaction.Rollback();
+                throw;
+            }
         }
+    }
+
+    public class CourseRecord
+    {
+        public string Name { get; set; }
     }
 }

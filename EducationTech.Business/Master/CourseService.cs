@@ -248,7 +248,9 @@ namespace EducationTech.Business.Master
                 .Where(x => x.Id == id)
                 .Include(x => x.Owner)
                 .Include(x => x.CourseCategories)
-                    .ThenInclude(x => x.Category);
+                    .ThenInclude(x => x.Category)
+                .Include(x => x.Topics);
+
 
 
             var course = await query.FirstOrDefaultAsync();
@@ -304,15 +306,15 @@ namespace EducationTech.Business.Master
                     .Where(x => x.LearnerCourses.Any(y => y.LearnerId == currentUser.Id));
             }
 
-            if (requestDto.IsExcludeBought)
-            {
-                if (currentUser != null)
-                {
-                    query = query
-                        .Include(x => x.LearnerCourses)
-                        .Where(x => x.LearnerCourses.All(y => y.LearnerId != currentUser.Id));
-                }
-            }
+            //if (requestDto.IsExcludeBought)
+            //{
+            //    if (currentUser != null)
+            //    {
+            //        query = query
+            //            .Include(x => x.LearnerCourses)
+            //            .Where(x => x.LearnerCourses.All(y => y.LearnerId != currentUser.Id));
+            //    }
+            //}
 
             if (!requestDto.IsIncludeArchived)
             {
@@ -341,6 +343,13 @@ namespace EducationTech.Business.Master
                 }
                 query = query.Where(x => x.OwnerId == currentUser.Id)
                     .Where(x => !x.IsArchived);
+            }
+
+            if (requestDto.Categories.Count > 0)
+            {
+                query = query
+                    .Include(x => x.CourseCategories)
+                    .Where(x => x.CourseCategories.Any(y => requestDto.Categories.Contains(y.Category.Name)));
             }
 
             if (offset.HasValue && limit.HasValue)
