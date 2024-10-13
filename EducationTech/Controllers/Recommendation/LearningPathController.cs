@@ -15,9 +15,9 @@ public class LearningPathController : BaseController
     }
 
     [HttpPost("Recommend")]
-    public async Task<LearningPathDto> RecommendLearningPath(int learnerId, int startUnitId, int targetUnitId)
+    public async Task<LearningPathDto> RecommendLearningPath([FromBody] LearningPath_RequestDto request)
     {
-        var learningPath = await _learningPathService.RecommendLearningPath(learnerId, startUnitId, targetUnitId);
+        var learningPath = await _learningPathService.RecommendLearningPath(request.LearnerId, request.StartUnitId, request.TargetUnitId);
         return learningPath;
     }
 }
