@@ -317,7 +317,6 @@ public class FileService : IFileService
 
         fileEntity.FileType = fileType ?? FileType.Unknown;
 
-        _unitOfWork.UploadedFiles.Add(fileEntity);
         _unitOfWork.SaveChanges();
 
         if (fileType != null)
