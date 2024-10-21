@@ -3,8 +3,10 @@ using CsvHelper;
 using EducationTech.DataAccess.Core.Contexts;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
+using EducationTech.DataAccess.Entities.Recommendation;
 using EducationTech.Shared.Enums;
 using EducationTech.Storage;
+using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
 namespace EducationTech.DataAccess.Seeders.Seeds
@@ -21,6 +23,7 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             using var transaction = _context.Database.BeginTransaction();
             try
             {
+                _context.Database.ExecuteSqlRaw("SET FOREIGN_KEY_CHECKS=0;");
                 var globalUsings = GlobalReference.Instance;
                 using var reader = new StreamReader(Path.Combine(globalUsings.StaticFilesPath, "Courses.csv"));
                 using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -66,6 +69,26 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                 {
                     var course = coursesGenerator.Generate();
                     course.Title = record.Name;
+                    course.CourseCode = record.CourseId;
+                    course.Credits = int.Parse(record.Credits);
+                    course.CourseGroupId = !string.IsNullOrEmpty(record.CourseGroupId) ? int.Parse(record.CourseGroupId) : null;
+                    course.RecommendedSemester = int.Parse(record.RecommendedSemester);
+                    course.BranchId = int.Parse(record.BranchIds);
+
+                    var prerequisites = !string.IsNullOrEmpty(record.Prerequisites) ? record.Prerequisites.Split(", ") : Array.Empty<string>();
+
+                    course.Prerequisites = prerequisites.Select(x => new PrerequisiteCourse
+                    {
+                        PrerequisiteCourseId = int.Parse(x)
+                    }).ToList();
+
+                    var specialityIds = !string.IsNullOrEmpty(record.SpecialityIds) ? record.SpecialityIds.Split(", ") : Array.Empty<string>();
+
+                    course.Specialities = specialityIds.Select(x => new CourseSpeciality
+                    {
+                        SpecialityId = int.Parse(x)
+                    }).ToList();
+
                     course.CourseCategories = new List<CourseCategory>
                     {
                         new CourseCategory
@@ -185,6 +208,7 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                 _context.Answers.AddRange(answers);
                 _context.SaveChanges();
                 transaction.Commit();
+                _context.Database.ExecuteSqlRaw("SET FOREIGN_KEY_CHECKS=1;");
             }
             catch
             {
@@ -197,5 +221,12 @@ namespace EducationTech.DataAccess.Seeders.Seeds
     public class CourseRecord
     {
         public string Name { get; set; }
+        public string CourseId { get; set; }
+        public string Credits { get; set; }
+        public string? CourseGroupId { get; set; }
+        public string? Prerequisites { get; set; }
+        public string RecommendedSemester { get; set; }
+        public string? SpecialityIds { get; set; }
+        public string BranchIds { get; set; }
     }
 }

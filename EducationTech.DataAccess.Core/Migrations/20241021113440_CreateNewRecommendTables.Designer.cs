@@ -3,6 +3,7 @@ using System;
 using EducationTech.DataAccess.Core.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EducationTech.Migrations
 {
     [DbContext(typeof(EducationTechContext))]
-    partial class MainDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241021113440_CreateNewRecommendTables")]
+    partial class CreateNewRecommendTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,7 +41,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answers", (string)null);
+                    b.ToTable("Answers");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.AnswerUser", b =>
@@ -60,7 +62,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AnswerUsers", (string)null);
+                    b.ToTable("AnswerUsers");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Comment", b =>
@@ -96,7 +98,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Comunity", b =>
@@ -112,7 +114,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Comunities", (string)null);
+                    b.ToTable("Comunities");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.CourseCategory", b =>
@@ -133,7 +135,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("CourseCategories", (string)null);
+                    b.ToTable("CourseCategories");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Image", b =>
@@ -154,7 +156,7 @@ namespace EducationTech.Migrations
                     b.HasIndex("FileId")
                         .IsUnique();
 
-                    b.ToTable("Images", (string)null);
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.InstructorApproved", b =>
@@ -175,7 +177,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("InstructorId");
 
-                    b.ToTable("InstructorApproveds", (string)null);
+                    b.ToTable("InstructorApproveds");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.LearnerCourse", b =>
@@ -199,7 +201,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("LearnerId");
 
-                    b.ToTable("LearnerCourses", (string)null);
+                    b.ToTable("LearnerCourses");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Question", b =>
@@ -219,7 +221,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("QuizId");
 
-                    b.ToTable("Questions", (string)null);
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Quiz", b =>
@@ -239,7 +241,7 @@ namespace EducationTech.Migrations
                     b.HasIndex("LessonId")
                         .IsUnique();
 
-                    b.ToTable("Quizzes", (string)null);
+                    b.ToTable("Quizzes");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Topic", b =>
@@ -268,7 +270,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Topics", (string)null);
+                    b.ToTable("Topics");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.UserKey", b =>
@@ -289,7 +291,7 @@ namespace EducationTech.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserKeys", (string)null);
+                    b.ToTable("UserKeys");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Video", b =>
@@ -316,7 +318,7 @@ namespace EducationTech.Migrations
                     b.HasIndex("LessonId")
                         .IsUnique();
 
-                    b.ToTable("Videos", (string)null);
+                    b.ToTable("Videos");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Category", b =>
@@ -337,7 +339,7 @@ namespace EducationTech.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Course", b =>
@@ -403,7 +405,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Courses", (string)null);
+                    b.ToTable("Courses");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.CourseSection", b =>
@@ -426,7 +428,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("CourseSections", (string)null);
+                    b.ToTable("CourseSections");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Lesson", b =>
@@ -452,7 +454,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("CourseSectionId");
 
-                    b.ToTable("Lessons", (string)null);
+                    b.ToTable("Lessons");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Permission", b =>
@@ -467,7 +469,7 @@ namespace EducationTech.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permissions", (string)null);
+                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Role", b =>
@@ -482,7 +484,7 @@ namespace EducationTech.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.RolePermission", b =>
@@ -503,7 +505,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RolePermissions", (string)null);
+                    b.ToTable("RolePermissions");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.UploadedFile", b =>
@@ -543,7 +545,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UploadedFiles", (string)null);
+                    b.ToTable("UploadedFiles");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.User", b =>
@@ -584,7 +586,7 @@ namespace EducationTech.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.UserRole", b =>
@@ -620,7 +622,7 @@ namespace EducationTech.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Branches", (string)null);
+                    b.ToTable("Branches");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.CourseGroup", b =>
@@ -638,7 +640,7 @@ namespace EducationTech.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CourseGroups", (string)null);
+                    b.ToTable("CourseGroups");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.CourseSpeciality", b =>
@@ -659,7 +661,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("SpecialityId");
 
-                    b.ToTable("CourseSpecialities", (string)null);
+                    b.ToTable("CourseSpecialities");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.Learner", b =>
@@ -690,7 +692,7 @@ namespace EducationTech.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Learners", (string)null);
+                    b.ToTable("Learners");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.LearnerLog", b =>
@@ -729,7 +731,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("LearningObjectId");
 
-                    b.ToTable("LearnerLogs", (string)null);
+                    b.ToTable("LearnerLogs");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.LearningObject", b =>
@@ -782,7 +784,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("TopicId");
 
-                    b.ToTable("LearningObjects", (string)null);
+                    b.ToTable("LearningObjects");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.LearningStyle", b =>
@@ -823,7 +825,7 @@ namespace EducationTech.Migrations
                     b.HasIndex("LearnerId")
                         .IsUnique();
 
-                    b.ToTable("LearningStyles", (string)null);
+                    b.ToTable("LearningStyles");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.PrerequisiteCourse", b =>
@@ -844,7 +846,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("PrerequisiteCourseId");
 
-                    b.ToTable("PrerequisiteCourses", (string)null);
+                    b.ToTable("PrerequisiteCourses");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.RecommendTopic", b =>
@@ -864,7 +866,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("RecommendTopics", (string)null);
+                    b.ToTable("RecommendTopics");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.Speciality", b =>
@@ -884,7 +886,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("BranchId");
 
-                    b.ToTable("Specialities", (string)null);
+                    b.ToTable("Specialities");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.TopicConjunction", b =>
@@ -905,7 +907,7 @@ namespace EducationTech.Migrations
 
                     b.HasIndex("TopicId");
 
-                    b.ToTable("TopicConjunctions", (string)null);
+                    b.ToTable("TopicConjunctions");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Answer", b =>

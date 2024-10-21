@@ -48,8 +48,8 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                     }
                     _context.LearningObjects.Add(record);
                 }
-
                 _context.SaveChanges();
+
                 transaction.Commit();
             }
             catch

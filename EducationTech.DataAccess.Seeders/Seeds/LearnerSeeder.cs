@@ -29,7 +29,7 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                         Age = Convert.ToInt32(record.Age),
                         BackgroundKnowledge = (BackgroundKnowledge)Enum.Parse(typeof(BackgroundKnowledge), record.BackgroundKnowledge),
                         Qualification = (Qualification)Enum.Parse(typeof(Qualification), record.Qualification),
-                        Branch = record.Branch
+                        Branch = ""
                     };
                     if (_context.Learners.Any(x =>
                         x.Name == learner.Name &&

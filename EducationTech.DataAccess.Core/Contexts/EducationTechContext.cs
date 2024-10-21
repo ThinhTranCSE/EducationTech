@@ -50,6 +50,13 @@ namespace EducationTech.DataAccess.Core.Contexts
         public DbSet<RecommendTopic> RecommendTopics { get; set; }
         public DbSet<TopicConjunction> TopicConjunctions { get; set; }
 
+
+        public DbSet<CourseGroup> CourseGroups { get; set; }
+        public DbSet<Branch> Branches { get; set; }
+        public DbSet<Speciality> Specialities { get; set; }
+        public DbSet<PrerequisiteCourse> PrerequisiteCourses { get; set; }
+        public DbSet<CourseSpeciality> CourseSpecialities { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
