@@ -1,15 +1,83 @@
-Id,Name
-1,Nhập môn Điện toán
-2,Cấu trúc rời rạc cho Khoa học máy tính
-3,Kỹ thuật lập trình
-4,Cấu trúc dữ liệu và Giải thuật
-5,Mô hình hoá toán học
-6,Hệ điều hành
-7,Mạng máy tính
-8,Công nghệ phần mềm
-9,Hệ cơ sở dữ liệu
-10,Nguyên lý ngôn ngữ lập trình
-11,Mạng máy tính nâng cao
-12,Kiểm tra phần mềm
-13,Công nghệ phần mềm nâng cao
-14,Nhập môn trí tuệ nhân tạo
+Id,CourseId,Name,Credits,CourseGroupId,Prerequisites,RecommendedSemester,SpecialityIds,BranchIds
+1,MT1003,Giải tích 1,4,,,1,"1, 2, 3, 4, 5",1
+2,MT1005,Giải tích 2,4,,1,2,"1, 2, 3, 4, 5",1
+3,MT1007,Đại số tuyến tính,3,,,2,"1, 2, 3, 4, 5",1
+4,MT2013,Xác suất và thống kê,4,,"1, 3",4,"1, 2, 3, 4, 5",1
+5,CH1003,Hóa đại cương,3,,,5,"1, 2, 3, 4, 5",1
+6,PH1003,Vật lý 1,4,,,1,"1, 2, 3, 4, 5",1
+7,PH1007,Thí nghiệm vật lý,1,,,2,"1, 2, 3, 4, 5",1
+8,CO1007,Cấu trúc rời rạc cho khoa học máy tính,4,,,2,"1, 2, 3, 4, 5",1
+9,CO2011,Mô hình hóa toán học,3,,8,3,"1, 2, 3, 4, 5",1
+10,SP1007,Pháp luật Việt Nam đại cương,2,,,8,"1, 2, 3, 4, 5",1
+11,SP1031,Triết học Mác - Lênin,3,,,3,"1, 2, 3, 4, 5",1
+12,SP1033,Kinh tế chính trị Mác - Lênin,2,,11,4,"1, 2, 3, 4, 5",1
+13,SP1035,Chủ nghĩa xã hội khoa học,2,,12,5,"1, 2, 3, 4, 5",1
+14,SP1037,Tư tưởng Hồ Chí Minh,2,,15,7,"1, 2, 3, 4, 5",1
+15,SP1039,Lịch sử Đảng Cộng sản Việt Nam,2,,13,6,"1, 2, 3, 4, 5",1
+16,CO1005,Nhập môn điện toán,3,,,1,"1, 2, 3, 4, 5",1
+17,IM1013,Kinh tế học đại cương,3,1,,7,"1, 2, 3, 4, 5",1
+18,IM1023,Quản lý sản xuất cho kỹ sư,3,1,,7,"1, 2, 3, 4, 5",1
+19,IM1025,Quản lý dự án cho kỹ sư,3,1,,7,"1, 2, 3, 4, 5",1
+20,IM1027,Kinh tế kỹ thuật,3,1,,7,"1, 2, 3, 4, 5",1
+21,IM3001,Quản trị kinh doanh cho kỹ sư,3,1,,7,"1, 2, 3, 4, 5",1
+22,CO2001,Kỹ năng chuyên nghiệp cho kỹ sư,3,,16,6,"1, 2, 3, 4, 5",1
+23,LA1003,Anh văn 1,2,,,1,"1, 2, 3, 4, 5",1
+24,LA1005,Anh văn 2,2,,23,2,"1, 2, 3, 4, 5",1
+25,LA1007,Anh văn 3,2,,24,3,"1, 2, 3, 4, 5",1
+26,LA1009,Anh văn 4,3,,25,4,"1, 2, 3, 4, 5",1
+27,CO1023,Hệ thống số,3,,,1,"1, 2, 3, 4, 5",1
+28,CO1027,Kỹ thuật lập trình,3,,,2,"1, 2, 3, 4, 5",1
+29,CO2003,Cấu trúc dữ liệu và giải thuật,4,,"8, 28",3,"1, 2, 3, 4, 5",1
+30,CO2007,Kiến trúc máy tính,4,,"16, 27",3,"1, 2, 3, 4, 5",1
+31,CO2013,Hệ cơ sở dữ liệu,4,,,5,"1, 2, 3, 4, 5",1
+32,CO2039,Lập trình nâng cao,3,,,4,"1, 2, 3, 4, 5",1
+33,CO2017,Hệ điều hành,3,,,4,"1, 2, 3, 4, 5",1
+34,CO3001,Công nghệ phần mềm,3,,28,5,"1, 2, 3, 4, 5",1
+35,CO3005,Nguyên lý ngôn ngữ lập trình,4,,28,6,"1, 2, 3, 4, 5",1
+36,CO3093,Mạng máy tính,3,,,5,"1, 2, 3, 4, 5",1
+37,CO3101,Đồ án tổng hợp - hướng trí tuệ nhân tạo,1,2,,5,4,1
+38,CO3103,Đồ án tổng hợp - hướng công nghệ phần mềm,1,2,,5,2,1
+39,CO3105,Đồ án tổng hợp - hướng hệ thống thông tin,1,2,,5,1,1
+40,CO3127,Đồ án tổng hợp - hướng kỹ thuật dữ liệu,1,2,,5,"5, 3",1
+41,CO3107,Thực tập đồ án môn học đa ngành - hướng trí tuệ nhân tạo,1,3,,6,"4, 5",1
+42,CO3109,Thực tập đồ án môn học đa ngành - hướng công nghệ phần mềm,1,3,,6,"2, 3",1
+43,CO3111,Thực tập đồ án môn học đa ngành - hướng hệ thống thông tin,1,3,,6,1,1
+44,CO3011,Quản lý dự án phần mềm,3,4,,7,"2, 3",1
+45,CO3013,Xây dựng chương trình dịch,3,4,,7,2,1
+46,CO3015,Kiểm tra phần mềm,3,4,"28, 34",7,2,1
+47,CO3017,Kiến trúc phần mềm,3,4,,7,2,1
+48,CO3021,Hệ quản trị cơ sở dữ liệu,3,4,31,7,1,1
+49,CO3023,Cơ sở dữ liệu phân tán và hướng đối tượng,3,4,,7,1,1
+50,CO3027,Thương mại điện tử,3,4,,7,1,1
+51,CO3029,Khai phá dữ liệu,3,4,,7,"1, 4",1
+52,CO3031,Phân tích và thiết kế giải thuật,3,4,29,7,,1
+53,CO3033,Bảo mật hệ thống thông tin,3,4,31,7,1,1
+54,CO3035,Hệ thời gian thực,3,4,,7,4,1
+55,CO3037,Phát triển ứng dụng internet of things,3,4,,7,4,1
+56,CO3041,Hệ thống thông minh,3,4,,7,4,1
+57,CO3043,Phát triển ứng dụng trên thiết bị di động,3,4,,7,"4, 5",1
+58,CO3045,Lập trình game,3,4,,7,"4, 5",1
+59,CO3047,Mạng máy tính nâng cao,3,4,,7,3,1
+60,CO3049,Lập trình web,3,4,,7,"3, 4, 5",1
+61,CO3051,Hệ thống thiết bị di động,3,4,,7,"3, 4, 5",1
+62,CO3057,Xử lý ảnh số và thị giác máy tính,3,4,,7,5,1
+63,CO3059,Đồ họa máy tính,3,4,,7,5,1
+64,CO3061,Nhập môn trí tuệ nhân tạo,3,4,,7,4,1
+65,CO3065,Công nghệ phần mềm nâng cao,3,4,,7,2,1
+66,CO3067,Tính toán song song,3,4,,7,,1
+67,CO3069,Mật mã và an ninh mạng,3,4,,7,3,1
+68,CO3071,Hệ phân bố,3,4,,7,,1
+69,CO3083,Mật mã học và mã hóa thông tin,3,4,,7,3,1
+70,CO3085,Xử lý ngôn ngữ tự nhiên,3,4,,7,4,1
+71,CO3089,Những chủ đề nâng cao trong khoa học máy tính,3,4,,7,"2, 3, 4",1
+72,CO3115,Phân tích và thiết kế hệ thống,3,4,,7,"1, 2",1
+73,CO3117,Học máy,3,4,,7,"4, 5",1
+74,CO4025,Mạng xã hội và thông tin,3,4,,7,4,1
+75,CO4031,Kho dữ liệu và hệ hỗ trợ quyết định,3,4,31,7,1,1
+76,CO4033,Phân tích dữ liệu lớn và trí tuệ kinh doanh,3,4,,7,1,1
+77,CO4035,Hệ hoạch định tài nguyên tổ chức,3,4,31,7,1,1
+78,CO4037,Hệ thống thông tin quản lý,3,4,,7,1,1
+79,CO4039,Bảo mật sinh trắc,3,4,,7,1,1
+80,CO3335,Thực tập ngoài trường,2,,,6,"1, 2, 3, 4, 5",1
+81,CO4029,Đồ án chuyên ngành,2,,80,7,"1, 2, 3, 4, 5",1
+82,CO4337,Đồ án tốt nghiệp (Khoa học Máy tính),4,,"80, 81",8,"1, 2, 3, 4, 5",1

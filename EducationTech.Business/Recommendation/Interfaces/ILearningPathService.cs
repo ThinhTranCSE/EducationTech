@@ -5,5 +5,6 @@ namespace EducationTech.Business.Recommendation.Interfaces;
 
 public interface ILearningPathService : IService
 {
-    Task<LearningPathDto> RecommendLearningPath(int learnerId, int startUnitId, int targetUnitId);
+    Task<OldLearningPathDto> RecommendLearningPath(int learnerId, int startUnitId, int targetUnitId);
+    Task<LearningPathDto> RecomendLearningPathSemester(int learnerId, int specialityId);
 }

@@ -53,5 +53,7 @@ public interface IUnitOfWork : IDisposable
     IRecommendTopicRepository RecommendTopics { get; }
     ITopicConjunctionRepository TopicConjunctions { get; }
 
+    ISpecialityRepository Specialities { get; }
+    ICourseGroupRepository CourseGroups { get; }
     #endregion
 }

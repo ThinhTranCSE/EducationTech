@@ -1,4 +1,5 @@
 ﻿using EducationTech.DataAccess.Entities.Abstract;
+using EducationTech.DataAccess.Entities.Master;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,6 +13,8 @@ public class CourseGroup : Entity
     public int Id { get; set; }
     public string Name { get; set; }
     public int MinCredits { get; set; }
+
+    public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<CourseGroup>(modelBuilder);

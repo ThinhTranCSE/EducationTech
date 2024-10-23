@@ -8,5 +8,6 @@ public class Course_MinimalDto : AbstractDto<Course, Course_MinimalDto>
 {
     public int Id { get; set; }
     public string Title { get; set; }
+    public int Credits { get; set; }
     public virtual ICollection<RecommendTopicDto> Topics { get; set; } = new List<RecommendTopicDto>();
 }
