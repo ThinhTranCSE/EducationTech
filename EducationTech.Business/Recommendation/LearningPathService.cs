@@ -125,7 +125,7 @@ public class LearningPathService : ILearningPathService
         foreach (var course in courseGroups.SelectMany(cg => cg.Courses))
         {
             var score = CalculateCourseScore(learner, course, additionalLearnerLogInfomationLookUp);
-            sortedCourseOfCourseGroups.Add(-score, course);
+            sortedCourseOfCourseGroups.Add(score, course);
         }
 
         var minCreditsOfCourseGroups = new Dictionary<int, int>();
