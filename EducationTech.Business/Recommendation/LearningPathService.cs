@@ -196,7 +196,7 @@ public class LearningPathService : ILearningPathService
         foreach (var course in courses)
         {
             var score = CalculateCourseScore(learner, course, additionalLearnerLogInfomationLookUp);
-            sortedCourses.Add(-score, course);
+            sortedCourses.Add(score, course);
         }
 
 
@@ -290,7 +290,7 @@ public class LearningPathService : ILearningPathService
 
 
     // utility methods
-    private const double SCORE_WHEN_NO_LEARNING_OBJECT = double.MinValue;
+    private const double SCORE_WHEN_NO_LEARNING_OBJECT = double.MaxValue;
     private double CalculateCourseScore(Learner learner, Course course, Dictionary<int, LearnerLogInformations>? additionalLearnerLogInfomationLookUp = null)
     {
         double score = 0;
