@@ -25,7 +25,6 @@ namespace EducationTech.DataAccess.Entities.Master
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
         public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
         public virtual UserKey UserKey { get; set; } = null!;
-
         public virtual Learner? Learner { get; set; } = null!;
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {

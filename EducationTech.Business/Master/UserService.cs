@@ -22,11 +22,25 @@ public class UserService : IUserService
         _sessionService = sessionService;
     }
 
+    public async Task<List<UserDto>> GetAll()
+    {
+        var users = _unitOfWork.Users.GetAll()
+            .Include(u => u.Roles)
+            .Include(u => u.Learner)
+            .ThenInclude(l => l.Speciality)
+            .ThenInclude(s => s.Branch)
+            .ToList();
+
+        return _mapper.Map<List<UserDto>>(users);
+    }
 
     public async Task<UserDto?> GetUserById(Guid id)
     {
         var user = _unitOfWork.Users.Find(u => u.Id == id)
             .Include(u => u.Roles)
+            .Include(u => u.Learner)
+            .ThenInclude(l => l.Speciality)
+            .ThenInclude(s => s.Branch)
             .FirstOrDefault();
 
         return _mapper.Map<UserDto>(user);

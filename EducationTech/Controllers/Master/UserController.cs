@@ -14,11 +14,16 @@ public class UserController : BaseController
 {
     private readonly IUserService _userService;
     private readonly ISessionService _sessionService;
-    private readonly ILogger<UserController> _logger;
     public UserController(IUserService userService, EducationTechContext context, IAuthService authService, ISessionService sessionService)
     {
         _userService = userService;
         _sessionService = sessionService;
+    }
+
+    [HttpGet]
+    public async Task<List<UserDto>> GetAll()
+    {
+        return await _userService.GetAll();
     }
 
     [HttpGet("{id}")]

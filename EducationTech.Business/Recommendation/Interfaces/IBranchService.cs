@@ -7,4 +7,5 @@ public interface IBranchService : IService
 {
     Task<List<BranchDto>> GetAll();
     Task<BranchDto> CreateBranch(CreateBranchRequest request);
+    Task<bool> DeleteBranch(int id);
 }

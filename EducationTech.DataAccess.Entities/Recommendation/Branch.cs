@@ -12,7 +12,7 @@ public class Branch : Entity
     public int Id { get; set; }
     public string Name { get; set; }
 
-    public ICollection<Speciality> Specialities { get; set; } = new List<Speciality>();
+    public virtual ICollection<Speciality> Specialities { get; set; } = new List<Speciality>();
 
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -13,6 +13,8 @@ public class Speciality : Entity
     public string Name { get; set; }
     public int BranchId { get; set; }
     public virtual Branch Branch { get; set; }
+    public virtual ICollection<Learner> Learners { get; set; } = new List<Learner>();
+
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<Speciality>(modelBuilder);
