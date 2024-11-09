@@ -19,13 +19,10 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             dataGenerator
                 .RuleFor(x => x.Username, f => f.Person.UserName)
                 .RuleFor(x => x.Password, "12345678")
-                .RuleFor(x => x.DateOfBirth, f => f.Date.Past(20))
-                .RuleFor(x => x.Email, f => f.Person.Email)
-                .RuleFor(x => x.PhoneNumber, f => f.Person.Phone);
+                .RuleFor(x => x.Email, f => f.Person.Email);
 
             var users = dataGenerator.Generate(5);
             users.ForEach(u => _authService.Register(u).GetAwaiter().GetResult());
         }
     }
 }
-    

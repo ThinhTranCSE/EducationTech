@@ -55,6 +55,7 @@ public class UnitOfWork : IUnitOfWork
     public IRecommendTopicRepository RecommendTopics { get; private set; }
     public ITopicConjunctionRepository TopicConjunctions { get; private set; }
 
+    public IBranchRepository Branches { get; private set; }
     public ISpecialityRepository Specialities { get; private set; }
     public ICourseGroupRepository CourseGroups { get; private set; }
     #endregion
@@ -93,7 +94,8 @@ public class UnitOfWork : IUnitOfWork
         IRecommendTopicRepository recommendTopicRepository,
         ITopicConjunctionRepository topicConjunctionRepository,
         ISpecialityRepository specialityRepository,
-        ICourseGroupRepository courseGroups
+        ICourseGroupRepository courseGroups,
+        IBranchRepository branchRepository
 
         )
     {
@@ -130,6 +132,7 @@ public class UnitOfWork : IUnitOfWork
         TopicConjunctions = topicConjunctionRepository;
         Specialities = specialityRepository;
         CourseGroups = courseGroups;
+        Branches = branchRepository;
     }
 
 

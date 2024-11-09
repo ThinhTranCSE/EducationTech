@@ -14,12 +14,12 @@ public class LearningPathController : BaseController
         _learningPathService = learningPathService;
     }
 
-    [HttpPost("OldRecommend")]
-    public async Task<OldLearningPathDto> RecommendLearningPath([FromBody] LearningPath_OldRequestDto request)
-    {
-        var learningPath = await _learningPathService.RecommendLearningPath(request.LearnerId, request.StartUnitId, request.TargetUnitId);
-        return learningPath;
-    }
+    //[HttpPost("OldRecommend")]
+    //public async Task<OldLearningPathDto> RecommendLearningPath([FromBody] LearningPath_OldRequestDto request)
+    //{
+    //    var learningPath = await _learningPathService.RecommendLearningPath(request.LearnerId, request.StartUnitId, request.TargetUnitId);
+    //    return learningPath;
+    //}
 
     [HttpPost("Recommend")]
     public async Task<LearningPathDto> RecommendLearningPath([FromBody] LearningPath_RequestDto request)

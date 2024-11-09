@@ -12,13 +12,10 @@ namespace EducationTech.Business.Shared.DTOs.Business.Auth
         [MinLength(8)]
         public string Password { get; set; }
 
-        [Phone]
-        public string? PhoneNumber { get; set; }
-
         [EmailAddress]
         public string? Email { get; set; }
 
-        [DataType(DataType.Date)]
-        public DateTime? DateOfBirth { get; set; }
+        public int RoleId { get; set; }
+        public int? SpecialityId { get; set; }
     }
 }

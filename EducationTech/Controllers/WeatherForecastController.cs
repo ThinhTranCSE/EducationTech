@@ -1,8 +1,6 @@
 using EducationTech.Annotations;
 using EducationTech.Business.Business.Interfaces;
 using EducationTech.DataAccess.Recommendation.Interfaces;
-using EducationTech.RecommendationSystem.Implementations.LearnerCollaborativeFilters;
-using EducationTech.RecommendationSystem.Implementations.LoRecommenders;
 using EducationTech.RecommendationSystem.Interfaces;
 using EducationTech.Shared.Utilities.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -37,9 +35,6 @@ namespace EducationTech.Controllers
             ILearnerRepository learnerRepository,
             ILearningObjectRepository learningObjectRepository,
             IRecommendTopicRepository recommendTopicRepository,
-            ILoSequenceRecommender loSequenceRecommender,
-            ILoSuitableSelector loSuitableSelector,
-            ILoPathVisitor loPathVisitor,
             ILearningPathRecommender learningPathRecommender
 
             )
@@ -47,12 +42,8 @@ namespace EducationTech.Controllers
             _fileService = fileService;
             _fileUtils = fileUtils;
             _learnerRepository = learnerRepository;
-            _learnerCollaborativeFilter = new CosineSimilarityLearnerFilter();
             _learningObjectRepository = learningObjectRepository;
             _recommendTopicRepository = recommendTopicRepository;
-            _loSequenceRecommender = loSequenceRecommender;
-            _loSuitableSelector = loSuitableSelector;
-            _loPathVisitor = loPathVisitor;
             _learningPathRecommender = learningPathRecommender;
 
         }
@@ -72,67 +63,6 @@ namespace EducationTech.Controllers
             .ToArray();
         }
 
-        [AllowAnonymous]
-        [HttpGet("TestTopNSimilarityLearners/{id}")]
-        public async Task<IActionResult> TestTopNSimilarityLearners(int id)
-        {
-
-            var learner = (_learnerRepository.GetAll()).Where(x => x.Id == id).Include(x => x.LearningStyle).FirstOrDefault();
-            var interestedLearners = _learnerRepository.GetAll().Where(x => x.Id != learner.Id).Include(x => x.LearningStyle).Include(x => x.LearnerLogs).ToList();
-            var similarLearners = await _learnerCollaborativeFilter.TopNSimilarityLearners(learner, interestedLearners, 5);
-
-            return Ok(similarLearners.AsEnumerable().Select(s => (s.Key.Id, s.Value)));
-        }
-
-        [AllowAnonymous]
-        [HttpGet("TestRecommendTopNLearningObjects/{learnerId}")]
-        public async Task<IActionResult> TestRecommendTopNLearningObjects(int learnerId)
-        {
-            var learner = (_learnerRepository.GetAll()).Where(x => x.Id == learnerId).Include(x => x.LearningStyle).FirstOrDefault();
-            var recommender = new SimilarUserRatingLoRecommender(_learnerCollaborativeFilter);
-
-            var interestedLearners = (_learnerRepository.GetAll()).Where(x => x.Id != learnerId).Include(x => x.LearningStyle).Include(x => x.LearnerLogs).ToList();
-            var interestedLearningObjects = (_learningObjectRepository.GetAll()).Include(x => x.LearnerLogs).ThenInclude(x => x.Learner).ToList();
-
-            var learningObjects = await recommender.RecommendTopNLearningObjects(learner, interestedLearners, interestedLearningObjects, 5);
-
-            return Ok(learningObjects.Select(l => l.Id));
-        }
-
-
-        [AllowAnonymous]
-        [HttpGet("TestLoSequenceRecommender")]
-        public async Task<IActionResult> TestLoSequenceRecommender(int learnerId, int topicId)
-        {
-            var learner = _learnerRepository.Find(x => x.Id == learnerId).FirstOrDefault();
-            var topic = _recommendTopicRepository.Find(x => x.Id == topicId).FirstOrDefault();
-            var sequences = await _loSequenceRecommender.RecommendTopNLearningObjectSequences(learner, topic);
-
-            return Ok(sequences);
-        }
-
-        //[AllowAnonymous]
-        //[HttpGet("TestSelectSuitableLoPair")]
-        //public async Task<IActionResult> TestSelectSuitableLoPair(int learnerId, int topicId)
-        //{
-        //    var learner = (await _learnerRepository.Get(x => x.Id == learnerId)).FirstOrDefault();
-        //    var topic = (await _recommendTopicRepository.Get(x => x.Id == topicId)).Include(x => x.NextTopicConjuctions).ThenInclude(x => x.NextTopic).FirstOrDefault();
-        //    var (exLo, evLo) = await _loSuitableSelector.SelectSuitableLoPair(learner, topic);
-
-        //    return Ok(new List<int> { exLo.Id, evLo.Id });
-        //}
-
-        //[AllowAnonymous]
-        //[HttpGet("TestSelectAllLoPaths")]
-        //public async Task<IActionResult> TestSelectAllLoPaths(int learnerId, int startTopicId, int targetTopicId)
-        //{
-        //    var learner = (await _learnerRepository.Get(x => x.Id == learnerId)).FirstOrDefault();
-        //    var startTopic = (await _recommendTopicRepository.Get(x => x.Id == startTopicId)).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
-        //    var targetTopic = (await _recommendTopicRepository.Get(x => x.Id == targetTopicId)).Include(t => t.NextTopicConjuctions).ThenInclude(tc => tc.NextTopic).FirstOrDefault();
-        //    var paths = await _loPathVisitor.SelectAllLoPaths(learner, startTopic, targetTopic);
-
-        //    return Ok(paths);
-        //}
 
         [AllowAnonymous]
         [HttpGet("TestRecommendLearningPath")]

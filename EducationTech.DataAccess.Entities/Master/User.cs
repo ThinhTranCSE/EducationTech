@@ -1,10 +1,10 @@
 ﻿using EducationTech.DataAccess.Entities.Abstract;
 using EducationTech.DataAccess.Entities.Business;
+using EducationTech.DataAccess.Entities.Recommendation;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
 
 namespace EducationTech.DataAccess.Entities.Master
 {
@@ -16,27 +16,17 @@ namespace EducationTech.DataAccess.Entities.Master
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public string Username { get; set; } = "";
-
         [JsonIgnore]
         public string Password { get; set; } = "";
-
-        public string? PhoneNumber { get; set; }
-
         public string? Email { get; set; }
-
-        public DateTime? DateOfBirth { get; set; }
-
         [JsonIgnore]
         public byte[] Salt { get; set; }
 
-        [IgnoreDataMember]
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
-
         public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
-
-        [IgnoreDataMember]
         public virtual UserKey UserKey { get; set; } = null!;
 
+        public virtual Learner? Learner { get; set; } = null!;
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<User>(modelBuilder);

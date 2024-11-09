@@ -4,6 +4,7 @@ using EducationTech.Business.Shared.Exceptions.Http;
 using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
+using EducationTech.DataAccess.Entities.Recommendation;
 using EducationTech.Shared.Utilities.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -239,6 +240,7 @@ namespace EducationTech.Business.Business
             {
                 throw new HttpException(HttpStatusCode.Conflict, "Username already exists");
             }
+            using var transaction = _unitOfWork.BeginTransaction();
             try
             {
                 string hashedPassword = _encryptionUtils.HashPassword(registerDto.Password, out var salt);
@@ -248,9 +250,7 @@ namespace EducationTech.Business.Business
                     Username = registerDto.Username,
                     Password = hashedPassword,
 
-                    PhoneNumber = registerDto.PhoneNumber,
                     Email = registerDto.Email,
-                    DateOfBirth = registerDto.DateOfBirth,
 
                     Salt = salt
 
@@ -259,18 +259,50 @@ namespace EducationTech.Business.Business
                 _unitOfWork.Users.Add(createdUser);
                 _unitOfWork.SaveChanges();
 
+                var role = _unitOfWork.Roles.Find(r => r.Id == registerDto.RoleId).FirstOrDefault();
+                if (role == null)
+                {
+                    throw new HttpException(HttpStatusCode.NotFound, "Role not found");
+                }
+
                 var createdUserRole = new UserRole()
                 {
                     UserId = createdUser.Id,
-                    RoleId = _unitOfWork.Roles.Find(r => r.Name == "Learner").FirstOrDefault()!.Id
+                    RoleId = role.Id
                 };
+
                 _unitOfWork.UserRoles.Add(createdUserRole);
                 _unitOfWork.SaveChanges();
 
+                if (role.Name == "Learner")
+                {
+                    if (registerDto.SpecialityId == null)
+                    {
+                        throw new HttpException(HttpStatusCode.BadRequest, "SpecialityId is required with learner role");
+                    }
+                    var speciality = _unitOfWork.Specialities.Find(s => s.Id == registerDto.SpecialityId).FirstOrDefault();
+                    if (speciality == null)
+                    {
+                        throw new HttpException(HttpStatusCode.NotFound, "Speciality not found");
+                    }
+
+                    var learner = new Learner()
+                    {
+                        UserId = createdUser.Id,
+                        SpecialityId = speciality.Id
+                    };
+
+                    _unitOfWork.Learners.Add(learner);
+                    _unitOfWork.SaveChanges();
+                }
+
+
+                transaction.Commit();
                 return createdUser;
             }
             catch (Exception e)
             {
+                transaction.Rollback();
                 throw;
             }
 
