@@ -259,22 +259,21 @@ namespace EducationTech.Business.Business
                 _unitOfWork.Users.Add(createdUser);
                 _unitOfWork.SaveChanges();
 
-                var role = _unitOfWork.Roles.Find(r => r.Id == registerDto.RoleId).FirstOrDefault();
-                if (role == null)
-                {
-                    throw new HttpException(HttpStatusCode.NotFound, "Role not found");
-                }
+                var roles = _unitOfWork.Roles.Find(r => registerDto.RoleIds.Contains(r.Id)).ToList();
 
-                var createdUserRole = new UserRole()
+                var createdUserRoles = roles.Select(r =>
                 {
-                    UserId = createdUser.Id,
-                    RoleId = role.Id
-                };
+                    return new UserRole()
+                    {
+                        UserId = createdUser.Id,
+                        RoleId = r.Id
+                    };
+                });
 
-                _unitOfWork.UserRoles.Add(createdUserRole);
+                _unitOfWork.UserRoles.AddRange(createdUserRoles);
                 _unitOfWork.SaveChanges();
 
-                if (role.Name == "Learner")
+                if (roles.Any(r => r.Name == "Learner"))
                 {
                     if (registerDto.SpecialityId == null)
                     {

@@ -15,7 +15,7 @@ namespace EducationTech.Business.Shared.DTOs.Business.Auth
         [EmailAddress]
         public string? Email { get; set; }
 
-        public int RoleId { get; set; }
+        public ICollection<int> RoleIds { get; set; } = new List<int>();
         public int? SpecialityId { get; set; }
     }
 }
