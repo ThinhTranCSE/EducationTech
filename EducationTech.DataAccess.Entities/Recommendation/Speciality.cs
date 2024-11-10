@@ -14,7 +14,7 @@ public class Speciality : Entity
     public int BranchId { get; set; }
     public virtual Branch Branch { get; set; }
     public virtual ICollection<Learner> Learners { get; set; } = new List<Learner>();
-
+    public virtual ICollection<CourseSpeciality> Courses { get; set; } = new List<CourseSpeciality>();
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<Speciality>(modelBuilder);

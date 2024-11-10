@@ -3,6 +3,7 @@ using EducationTech.Business.Recommendation.Interfaces;
 using EducationTech.Business.Shared.DTOs.Recommendation.Specialities;
 using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Recommendation;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Business.Recommendation;
 
@@ -32,5 +33,32 @@ public class SpecialityService : ISpecialityService
         _unitOfWork.SaveChanges();
 
         return _mapper.Map<SpecialityDto>(speciality);
+    }
+
+    public async Task<bool> DeleteSpeciality(int id)
+    {
+        var speciality = await _unitOfWork.Specialities.GetAll()
+            .Include(x => x.Courses)
+            .Include(x => x.Learners)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (speciality == null)
+            throw new Exception("Speciality not found");
+
+        if (speciality.Courses.Any())
+        {
+            throw new Exception("Speciality has courses");
+        }
+
+        if (speciality.Learners.Any())
+        {
+            throw new Exception("Speciality has learners");
+        }
+
+        _unitOfWork.Specialities.Remove(speciality);
+
+        _unitOfWork.SaveChanges();
+
+        return true;
     }
 }

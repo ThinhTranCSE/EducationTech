@@ -25,5 +25,11 @@ namespace EducationTech.Controllers.Recommendation
         {
             return await _branchService.CreateBranch(branch);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<bool> DeleteBranch(int id)
+        {
+            return await _branchService.DeleteBranch(id);
+        }
     }
 }

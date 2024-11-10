@@ -20,4 +20,11 @@ public class SpecialityController : BaseController
         var speciality = await _specialityService.CreateSpeciality(request);
         return speciality;
     }
+
+    [HttpDelete("{id}")]
+    public async Task<bool> DeleteSpeciality(int id)
+    {
+        var result = await _specialityService.DeleteSpeciality(id);
+        return result;
+    }
 }

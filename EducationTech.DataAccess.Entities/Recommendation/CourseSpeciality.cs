@@ -15,7 +15,6 @@ public class CourseSpeciality : Entity
     public int SpecialityId { get; set; }
     public virtual Course Course { get; set; }
     public virtual Speciality Speciality { get; set; }
-
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<CourseSpeciality>(modelBuilder);

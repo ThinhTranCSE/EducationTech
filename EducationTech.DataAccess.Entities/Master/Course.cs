@@ -28,7 +28,6 @@ public class Course : Entity
     public int Credits { get; set; }
     public int RecommendedSemester { get; set; }
     public int? CourseGroupId { get; set; }
-    public int BranchId { get; set; }
 
     public virtual User Owner { get; set; }
     public virtual ICollection<LearnerCourse> LearnerCourses { get; set; } = new List<LearnerCourse>();
@@ -37,7 +36,6 @@ public class Course : Entity
     public virtual ICollection<RecommendTopic> Topics { get; set; } = new List<RecommendTopic>();
     public virtual ICollection<PrerequisiteCourse> Prerequisites { get; set; } = new List<PrerequisiteCourse>();
     public virtual CourseGroup? CourseGroup { get; set; }
-    public virtual Branch Branch { get; set; }
     public virtual ICollection<CourseSpeciality> Specialities { get; set; } = new List<CourseSpeciality>();
 
     public override void OnModelCreating(ModelBuilder modelBuilder)

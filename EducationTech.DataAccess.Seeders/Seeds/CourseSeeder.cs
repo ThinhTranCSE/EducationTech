@@ -73,7 +73,6 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                     course.Credits = int.Parse(record.Credits);
                     course.CourseGroupId = !string.IsNullOrEmpty(record.CourseGroupId) ? int.Parse(record.CourseGroupId) : null;
                     course.RecommendedSemester = int.Parse(record.RecommendedSemester);
-                    course.BranchId = int.Parse(record.BranchIds);
 
                     var prerequisites = !string.IsNullOrEmpty(record.Prerequisites) ? record.Prerequisites.Split(", ") : Array.Empty<string>();
 
