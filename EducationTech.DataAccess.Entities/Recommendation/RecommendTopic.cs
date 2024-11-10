@@ -11,6 +11,7 @@ public class RecommendTopic : Entity
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
+    public int Order { get; set; }
     public string Name { get; set; }
     public int CourseId { get; set; }
     public virtual Course Course { get; set; }

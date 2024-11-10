@@ -3,6 +3,7 @@ using System;
 using EducationTech.DataAccess.Core.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EducationTech.Migrations
 {
     [DbContext(typeof(EducationTechContext))]
-    partial class MainDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241110135914_UpdateNewFieldsForCourseTable")]
+    partial class UpdateNewFieldsForCourseTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,7 +164,7 @@ namespace EducationTech.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("LearningObjectId")
+                    b.Property<int>("LessonId")
                         .HasColumnType("int");
 
                     b.Property<int>("TimeLimit")
@@ -170,7 +172,8 @@ namespace EducationTech.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LearningObjectId");
+                    b.HasIndex("LessonId")
+                        .IsUnique();
 
                     b.ToTable("Quizzes");
                 });
@@ -234,7 +237,7 @@ namespace EducationTech.Migrations
                     b.Property<Guid>("FileId")
                         .HasColumnType("char(36)");
 
-                    b.Property<int?>("LearningObjectId")
+                    b.Property<int?>("LessonId")
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
@@ -246,7 +249,8 @@ namespace EducationTech.Migrations
                     b.HasIndex("FileId")
                         .IsUnique();
 
-                    b.HasIndex("LearningObjectId");
+                    b.HasIndex("LessonId")
+                        .IsUnique();
 
                     b.ToTable("Videos");
                 });
@@ -307,6 +311,55 @@ namespace EducationTech.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.CourseSection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("CourseSections");
+                });
+
+            modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Lesson", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("CourseSectionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseSectionId");
+
+                    b.ToTable("Lessons");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Permission", b =>
@@ -799,13 +852,13 @@ namespace EducationTech.Migrations
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Quiz", b =>
                 {
-                    b.HasOne("EducationTech.DataAccess.Entities.Recommendation.LearningObject", "LearningObject")
-                        .WithMany()
-                        .HasForeignKey("LearningObjectId")
+                    b.HasOne("EducationTech.DataAccess.Entities.Master.Lesson", "Lesson")
+                        .WithOne("Quiz")
+                        .HasForeignKey("EducationTech.DataAccess.Entities.Business.Quiz", "LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("LearningObject");
+                    b.Navigation("Lesson");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Topic", b =>
@@ -846,13 +899,13 @@ namespace EducationTech.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EducationTech.DataAccess.Entities.Recommendation.LearningObject", "LearningObject")
-                        .WithMany()
-                        .HasForeignKey("LearningObjectId");
+                    b.HasOne("EducationTech.DataAccess.Entities.Master.Lesson", "Lesson")
+                        .WithOne("Video")
+                        .HasForeignKey("EducationTech.DataAccess.Entities.Business.Video", "LessonId");
 
                     b.Navigation("File");
 
-                    b.Navigation("LearningObject");
+                    b.Navigation("Lesson");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Course", b =>
@@ -870,6 +923,28 @@ namespace EducationTech.Migrations
                     b.Navigation("CourseGroup");
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.CourseSection", b =>
+                {
+                    b.HasOne("EducationTech.DataAccess.Entities.Master.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Lesson", b =>
+                {
+                    b.HasOne("EducationTech.DataAccess.Entities.Master.CourseSection", "CourseSection")
+                        .WithMany("Lessons")
+                        .HasForeignKey("CourseSectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CourseSection");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.RolePermission", b =>
@@ -1066,6 +1141,20 @@ namespace EducationTech.Migrations
                     b.Navigation("Specialities");
 
                     b.Navigation("Topics");
+                });
+
+            modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.CourseSection", b =>
+                {
+                    b.Navigation("Lessons");
+                });
+
+            modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Lesson", b =>
+                {
+                    b.Navigation("Quiz")
+                        .IsRequired();
+
+                    b.Navigation("Video")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Master.Role", b =>

@@ -32,8 +32,6 @@ public interface IUnitOfWork : IDisposable
 
     #region Master Repositories
     ICourseRepository Courses { get; }
-    ICourseSectionRepository CourseSections { get; }
-    ILessonRepository Lessons { get; }
     IPermissionRepository Permissions { get; }
     IRolePermissionRepository RolePermissions { get; }
     IRoleRepository Roles { get; }

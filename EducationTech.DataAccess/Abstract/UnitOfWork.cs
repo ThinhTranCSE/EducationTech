@@ -32,8 +32,6 @@ public class UnitOfWork : IUnitOfWork
 
     #region Master Repositories
     public ICourseRepository Courses { get; private set; }
-    public ICourseSectionRepository CourseSections { get; private set; }
-    public ILessonRepository Lessons { get; private set; }
     public IPermissionRepository Permissions { get; private set; }
     public IRolePermissionRepository RolePermissions { get; private set; }
     public IRoleRepository Roles { get; private set; }
@@ -71,8 +69,6 @@ public class UnitOfWork : IUnitOfWork
         IUserKeyRepository userKeyRepository,
         IVideoRepository videoRepository,
         ICourseRepository courseRepository,
-        ICourseSectionRepository courseSectionRepository,
-        ILessonRepository lessonRepository,
         IPermissionRepository permissionRepository,
         IRolePermissionRepository rolePermissionRepository,
         IRoleRepository roleRepository,
@@ -103,8 +99,6 @@ public class UnitOfWork : IUnitOfWork
         UserKeys = userKeyRepository;
         Videos = videoRepository;
         Courses = courseRepository;
-        CourseSections = courseSectionRepository;
-        Lessons = lessonRepository;
         Permissions = permissionRepository;
         RolePermissions = rolePermissionRepository;
         Roles = roleRepository;
