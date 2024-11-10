@@ -22,7 +22,6 @@ public interface IUnitOfWork : IDisposable
     IComunityRepository Comunities { get; }
     ICourseCategoryRepository CourseCategories { get; }
     IImageRepository Images { get; }
-    IInstructorApprovedRepository InstructorApproveds { get; }
     IQuestionRepository Questions { get; }
     IQuizRepository Quizzes { get; }
     ITopicRepository Topics { get; }

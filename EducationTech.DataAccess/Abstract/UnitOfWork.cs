@@ -21,7 +21,6 @@ public class UnitOfWork : IUnitOfWork
     public IComunityRepository Comunities { get; private set; }
     public ICourseCategoryRepository CourseCategories { get; private set; }
     public IImageRepository Images { get; private set; }
-    public IInstructorApprovedRepository InstructorApproveds { get; private set; }
     public IQuestionRepository Questions { get; private set; }
     public IQuizRepository Quizzes { get; private set; }
     public ITopicRepository Topics { get; private set; }
@@ -68,7 +67,6 @@ public class UnitOfWork : IUnitOfWork
         IComunityRepository comunityRepository,
         ICourseCategoryRepository courseCategoryRepository,
         IImageRepository imageRepository,
-        IInstructorApprovedRepository instructorApprovedRepository,
         IQuestionRepository questionRepository,
         IQuizRepository quizRepository,
         ITopicRepository topicRepository,
@@ -103,7 +101,6 @@ public class UnitOfWork : IUnitOfWork
         Comunities = comunityRepository;
         CourseCategories = courseCategoryRepository;
         Images = imageRepository;
-        InstructorApproveds = instructorApprovedRepository;
         Questions = questionRepository;
         Quizzes = quizRepository;
         Topics = topicRepository;

@@ -25,7 +25,6 @@ namespace EducationTech.DataAccess.Core.Contexts
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<Course> Courses { get; set; }
-        public DbSet<InstructorApproved> InstructorApproveds { get; set; }
         public DbSet<CourseSection> CourseSections { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Comment> Comments { get; set; }
