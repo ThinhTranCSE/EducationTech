@@ -45,7 +45,6 @@ namespace EducationTech.DataAccess.Core.Contexts
         public DbSet<Learner> Learners { get; set; }
         public DbSet<LearnerLog> LearnerLogs { get; set; }
         public DbSet<LearningObject> LearningObjects { get; set; }
-        public DbSet<LearningStyle> LearningStyles { get; set; }
         public DbSet<RecommendTopic> RecommendTopics { get; set; }
         public DbSet<TopicConjunction> TopicConjunctions { get; set; }
 

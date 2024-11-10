@@ -18,7 +18,6 @@
   <ItemGroup>
     <ProjectReference Include="..\EducationTech.DataAccess\EducationTech.DataAccess.csproj" />
     <ProjectReference Include="..\EducationTech.MessageQueue\EducationTech.MessageQueue.csproj" />
-    <ProjectReference Include="..\EducationTech.RecommendationSystem\EducationTech.RecommendationSystem.csproj" />
     <ProjectReference Include="..\EducationTech.Shared\EducationTech.Shared.csproj" />
     <ProjectReference Include="..\EducationTech.Storage\EducationTech.Storage.csproj" />
   </ItemGroup>

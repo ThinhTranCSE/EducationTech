@@ -48,7 +48,6 @@ public interface IUnitOfWork : IDisposable
     ILearnerLogRepository LearnerLogs { get; }
     ILearnerRepository Learners { get; }
     ILearningObjectRepository LearningObjects { get; }
-    ILearningStyleRepository LearningStyles { get; }
     IRecommendTopicRepository RecommendTopics { get; }
     ITopicConjunctionRepository TopicConjunctions { get; }
 

@@ -50,7 +50,6 @@ public class UnitOfWork : IUnitOfWork
     public ILearnerLogRepository LearnerLogs { get; private set; }
     public ILearnerRepository Learners { get; private set; }
     public ILearningObjectRepository LearningObjects { get; private set; }
-    public ILearningStyleRepository LearningStyles { get; private set; }
     public IRecommendTopicRepository RecommendTopics { get; private set; }
     public ITopicConjunctionRepository TopicConjunctions { get; private set; }
 
@@ -88,7 +87,6 @@ public class UnitOfWork : IUnitOfWork
         ILearnerLogRepository learnerLogRepository,
         ILearnerRepository learnerRepository,
         ILearningObjectRepository learningObjectRepository,
-        ILearningStyleRepository learningStyleRepository,
         IRecommendTopicRepository recommendTopicRepository,
         ITopicConjunctionRepository topicConjunctionRepository,
         ISpecialityRepository specialityRepository,
@@ -124,7 +122,6 @@ public class UnitOfWork : IUnitOfWork
         LearnerLogs = learnerLogRepository;
         Learners = learnerRepository;
         LearningObjects = learningObjectRepository;
-        LearningStyles = learningStyleRepository;
         RecommendTopics = recommendTopicRepository;
         TopicConjunctions = topicConjunctionRepository;
         Specialities = specialityRepository;
