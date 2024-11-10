@@ -26,8 +26,7 @@ public interface IMainDatabaseContext : IDbContext
     public DbSet<Video> Videos { get; set; }
     public DbSet<UploadedFile> UploadedFiles { get; set; }
     public DbSet<Image> Images { get; set; }
-    public DbSet<Category> Categories { get; set; }
-    public DbSet<CourseCategory> CourseCategories { get; set; }
+
 
     //recommendation
     public DbSet<Learner> Learners { get; set; }

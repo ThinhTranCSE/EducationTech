@@ -61,7 +61,7 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                     .RuleFor(x => x.PublishedAt, f => f.Date.Past())
                     .RuleFor(x => x.ImageUrl, $"{sampleImage?.Url}");
 
-                var computerSiecne = _context.Categories.FirstOrDefault(x => x.Name == "Computer Science");
+                //var computerSiecne = _context.Categories.FirstOrDefault(x => x.Name == "Computer Science");
 
                 var courses = new List<Course>();
 
@@ -88,13 +88,13 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                         SpecialityId = int.Parse(x)
                     }).ToList();
 
-                    course.CourseCategories = new List<CourseCategory>
-                    {
-                        new CourseCategory
-                        {
-                            CategoryId = computerSiecne!.Id
-                        }
-                    };
+                    //course.CourseCategories = new List<CourseCategory>
+                    //{
+                    //    new CourseCategory
+                    //    {
+                    //        CategoryId = computerSiecne!.Id
+                    //    }
+                    //};
                     courses.Add(course);
                 }
 

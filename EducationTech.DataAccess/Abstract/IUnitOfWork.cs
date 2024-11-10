@@ -20,7 +20,6 @@ public interface IUnitOfWork : IDisposable
     IAnswerUserRepository AnswerUsers { get; }
     ICommentRepository Comments { get; }
     IComunityRepository Comunities { get; }
-    ICourseCategoryRepository CourseCategories { get; }
     IImageRepository Images { get; }
     IQuestionRepository Questions { get; }
     IQuizRepository Quizzes { get; }
@@ -32,7 +31,6 @@ public interface IUnitOfWork : IDisposable
     #endregion
 
     #region Master Repositories
-    ICategoryRepository Categories { get; }
     ICourseRepository Courses { get; }
     ICourseSectionRepository CourseSections { get; }
     ILessonRepository Lessons { get; }

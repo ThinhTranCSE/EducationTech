@@ -1,23 +1,12 @@
 ﻿using EducationTech.DataAccess.Core.Contexts;
-using EducationTech.DataAccess.Entities.Master;
-using EducationTech.DataAccess.Master;
-using EducationTech.DataAccess.Master.Interfaces;
-using EducationTech.DataAccess.Shared.NestedSet;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.DataAccess.Seeders.Seeds
 {
     public class CategorySeeder : Seeder
     {
-        private readonly ICategoryRepository _categoryRepository;
-        public CategorySeeder(EducationTechContext context, ICategoryRepository categoryRepository) : base(context)
+        public CategorySeeder(EducationTechContext context) : base(context)
         {
-            _categoryRepository = categoryRepository;
         }
 
         public override void Seed()
@@ -114,29 +103,29 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             ]";
             List<Node> nodes = JsonConvert.DeserializeObject<List<Node>>(jsonSeedData)!;
             int leftBound = 0;
-            foreach (var node in nodes)
-            {
-                leftBound = InsertCategory(leftBound, node);
-            }
+            //foreach (var node in nodes)
+            //{
+            //    leftBound = InsertCategory(leftBound, node);
+            //}
 
         }
 
-        private int InsertCategory(int? leftBound, Node node)
-        {
-            var exitedCategory = _context.Categories.Where(c => c.Name == node.Name).FirstOrDefault();
-            if (exitedCategory != null)
-            {
-                return exitedCategory.Right;
-            }
-            var category = _categoryRepository.AddNode(leftBound, new Category { Name = node.Name });
-            int left = category.Left;
-            foreach (var child in node.Children)
-            {
-                left = InsertCategory(left, child);
-            }
-            _context.Entry(category).Reload();
-            return category.Right;
-        }
+        //private int InsertCategory(int? leftBound, Node node)
+        //{
+        //    var exitedCategory = _context.Categories.Where(c => c.Name == node.Name).FirstOrDefault();
+        //    if (exitedCategory != null)
+        //    {
+        //        return exitedCategory.Right;
+        //    }
+        //    var category = _categoryRepository.AddNode(leftBound, new Category { Name = node.Name });
+        //    int left = category.Left;
+        //    foreach (var child in node.Children)
+        //    {
+        //        left = InsertCategory(left, child);
+        //    }
+        //    _context.Entry(category).Reload();
+        //    return category.Right;
+        //}
     }
 
     internal class Node

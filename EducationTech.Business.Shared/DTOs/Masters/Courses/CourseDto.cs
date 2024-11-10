@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using EducationTech.Business.Shared.DTOs.Masters.CourseCategories;
 using EducationTech.Business.Shared.DTOs.Masters.CourseSections;
 using EducationTech.Business.Shared.DTOs.Masters.Users;
 using EducationTech.Business.Shared.DTOs.Recommendation.RecommendTopics;
@@ -22,7 +21,6 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
         public UserDto Owner { get; set; }
         public double? Rate { get; set; } = null;
         public ICollection<CourseSectionDto> CourseSections { get; set; }
-        public ICollection<CourseCategoryDto> CourseCategories { get; set; }
         public ICollection<RecommendTopicDto> Topics { get; set; }
         public override void Configure(IMapperConfigurationExpression cfg)
         {

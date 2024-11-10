@@ -19,7 +19,6 @@ public class UnitOfWork : IUnitOfWork
     public IAnswerUserRepository AnswerUsers { get; private set; }
     public ICommentRepository Comments { get; private set; }
     public IComunityRepository Comunities { get; private set; }
-    public ICourseCategoryRepository CourseCategories { get; private set; }
     public IImageRepository Images { get; private set; }
     public IQuestionRepository Questions { get; private set; }
     public IQuizRepository Quizzes { get; private set; }
@@ -32,7 +31,6 @@ public class UnitOfWork : IUnitOfWork
 
 
     #region Master Repositories
-    public ICategoryRepository Categories { get; private set; }
     public ICourseRepository Courses { get; private set; }
     public ICourseSectionRepository CourseSections { get; private set; }
     public ILessonRepository Lessons { get; private set; }
@@ -65,7 +63,6 @@ public class UnitOfWork : IUnitOfWork
         IAnswerUserRepository answerUserRepository,
         ICommentRepository commentRepository,
         IComunityRepository comunityRepository,
-        ICourseCategoryRepository courseCategoryRepository,
         IImageRepository imageRepository,
         IQuestionRepository questionRepository,
         IQuizRepository quizRepository,
@@ -73,7 +70,6 @@ public class UnitOfWork : IUnitOfWork
         IUploadedFileRepository uploadedFileRepository,
         IUserKeyRepository userKeyRepository,
         IVideoRepository videoRepository,
-        ICategoryRepository categoryRepository,
         ICourseRepository courseRepository,
         ICourseSectionRepository courseSectionRepository,
         ILessonRepository lessonRepository,
@@ -99,7 +95,6 @@ public class UnitOfWork : IUnitOfWork
         AnswerUsers = answerUserRepository;
         Comments = commentRepository;
         Comunities = comunityRepository;
-        CourseCategories = courseCategoryRepository;
         Images = imageRepository;
         Questions = questionRepository;
         Quizzes = quizRepository;
@@ -107,7 +102,6 @@ public class UnitOfWork : IUnitOfWork
         UploadedFiles = uploadedFileRepository;
         UserKeys = userKeyRepository;
         Videos = videoRepository;
-        Categories = categoryRepository;
         Courses = courseRepository;
         CourseSections = courseSectionRepository;
         Lessons = lessonRepository;

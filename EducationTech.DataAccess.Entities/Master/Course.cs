@@ -1,5 +1,4 @@
 ﻿using EducationTech.DataAccess.Entities.Abstract;
-using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Recommendation;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -31,7 +30,6 @@ public class Course : Entity
 
     public virtual User Owner { get; set; }
     public virtual ICollection<CourseSection> CourseSections { get; set; } = new List<CourseSection>();
-    public virtual ICollection<CourseCategory> CourseCategories { get; set; } = new List<CourseCategory>();
     public virtual ICollection<RecommendTopic> Topics { get; set; } = new List<RecommendTopic>();
     public virtual ICollection<PrerequisiteCourse> Prerequisites { get; set; } = new List<PrerequisiteCourse>();
     public virtual CourseGroup? CourseGroup { get; set; }

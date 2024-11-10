@@ -12,7 +12,6 @@ namespace EducationTech.Controllers.Business
     {
         private readonly IAuthService _authService;
         private readonly ISessionService _sessionService;
-        private readonly ILogger<AuthController> _logger;
         public AuthController(IAuthService authService, ISessionService sessionService)
         {
             _authService = authService;
