@@ -23,7 +23,6 @@ public interface IUnitOfWork : IDisposable
     ICourseCategoryRepository CourseCategories { get; }
     IImageRepository Images { get; }
     IInstructorApprovedRepository InstructorApproveds { get; }
-    ILearnerCourseRepository LearnerCourses { get; }
     IQuestionRepository Questions { get; }
     IQuizRepository Quizzes { get; }
     ITopicRepository Topics { get; }

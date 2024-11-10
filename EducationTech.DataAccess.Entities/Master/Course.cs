@@ -30,7 +30,6 @@ public class Course : Entity
     public int? CourseGroupId { get; set; }
 
     public virtual User Owner { get; set; }
-    public virtual ICollection<LearnerCourse> LearnerCourses { get; set; } = new List<LearnerCourse>();
     public virtual ICollection<CourseSection> CourseSections { get; set; } = new List<CourseSection>();
     public virtual ICollection<CourseCategory> CourseCategories { get; set; } = new List<CourseCategory>();
     public virtual ICollection<RecommendTopic> Topics { get; set; } = new List<RecommendTopic>();

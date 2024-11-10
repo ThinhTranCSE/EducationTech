@@ -152,17 +152,13 @@ public class LessonService : ILessonService
                 .ThenInclude(x => x.Questions)
                     .ThenInclude(x => x.Answers)
             .Include(x => x.CourseSection)
-                .ThenInclude(x => x.Course)
-                    .ThenInclude(x => x.LearnerCourses);
+                .ThenInclude(x => x.Course);
         var lesson = await query.FirstOrDefaultAsync();
         if (lesson == null)
         {
             throw new HttpException(HttpStatusCode.NotFound, "Lesson not found");
         }
-        if (lesson.CourseSection.Course.LearnerCourses.All(x => x.LearnerId != currentUser.Id) && lesson.CourseSection.Course.OwnerId != currentUser.Id)
-        {
-            throw new HttpException(HttpStatusCode.Unauthorized, "You dont have permission to view this lesson detail");
-        }
+
 
         var lessonDto = _mapper.Map<LessonDto>(lesson);
         if (lessonDto.Type == LessonType.Quiz && lesson.CourseSection.Course.OwnerId != currentUser.Id)
@@ -196,9 +192,7 @@ public class LessonService : ILessonService
                 .Include(q => q.Lesson)
                     .ThenInclude(q => q.CourseSection)
                             .ThenInclude(q => q.Course)
-                                .ThenInclude(q => q.LearnerCourses)
-                .Where(q => q.Id == requestDto.QuizId)
-                .Where(q => q.Lesson.CourseSection.Course.LearnerCourses.Any(x => x.LearnerId == currentUser.Id));
+                .Where(q => q.Id == requestDto.QuizId);
 
             var quiz = await quizQuery.FirstOrDefaultAsync();
             if (quiz == null)
