@@ -39,7 +39,6 @@ namespace EducationTech.Controllers.Business
 
         }
 
-        [Authorize(Policy = "AdminOnly")]
         [HttpPost("Register")]
         public async Task<User?> Register(RegisterDto registerDto)
         {
