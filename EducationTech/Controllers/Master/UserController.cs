@@ -39,6 +39,7 @@ public class UserController : BaseController
         return await _userService.GetUserById(_sessionService.CurrentUser!.Id);
     }
 
+
     [HttpPatch("{id}")]
     public async Task<User?> UpdateUser(Guid id, [FromBody] User_UpdateDto updateDto)
     {

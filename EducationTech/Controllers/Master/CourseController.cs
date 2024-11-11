@@ -31,15 +31,15 @@ public class CourseController : BaseController
     }
 
     [HttpPost]
-    [Authorize(Policy = "UploadCourse")]
+    [Authorize(Policy = "InstructorOnly")]
     public async Task<CourseDto> CreateCourse([FromBody] Course_CreateRequestDto requestDto)
     {
         var course = await _courseService.CreateCourse(requestDto);
         return course;
     }
 
-    [HttpPatch("{id}")]
-    [Authorize(Policy = "UpdateCourse")]
+    [HttpPut("{id}")]
+    [Authorize(Policy = "InstructorOnly")]
     public async Task<CourseDto> UpdateCourse(int id, [FromBody] Course_UpdateRequestDto requestDto)
     {
         var course = await _courseService.UpdateCourse(requestDto, id);

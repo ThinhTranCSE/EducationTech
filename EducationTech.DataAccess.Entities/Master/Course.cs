@@ -18,8 +18,8 @@ public class Course : Entity
     public string Description { get; set; }
     public string Title { get; set; }
     public bool IsPublished { get; set; }
-    public DateTime PublishedAt { get; set; }
     public string ImageUrl { get; set; }
+    public DateTime PublishedAt { get; set; }
 
     // new properties
     public string CourseCode { get; set; }

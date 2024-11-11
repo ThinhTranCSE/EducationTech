@@ -12,13 +12,11 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
         public Guid OwnerId { get; set; }
         public string Description { get; set; }
         public string Title { get; set; }
-        public bool IsArchived { get; set; }
         public bool IsPublished { get; set; }
         public DateTime PublishedAt { get; set; }
         public string ImageUrl { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public UserDto Owner { get; set; }
-        public double? Rate { get; set; } = null;
         public ICollection<RecommendTopicDto> Topics { get; set; }
         public override void Configure(IMapperConfigurationExpression cfg)
         {

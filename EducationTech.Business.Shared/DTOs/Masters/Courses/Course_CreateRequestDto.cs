@@ -1,10 +1,5 @@
 ﻿using EducationTech.Business.Shared.DTOs.Abstracts;
 using EducationTech.DataAccess.Entities.Master;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.Business.Shared.DTOs.Masters.Courses
 {
@@ -12,8 +7,12 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
     {
         public string Title { get; set; }
         public string Description { get; set; }
-        public double Price { get; set; }
+        public bool IsPublished { get; set; }
         public string ImageUrl { get; set; }
-        public IEnumerable<int> CategoryIds { get; set; } = new List<int>();
+        public string CourseCode { get; set; }
+        public int Credits { get; set; }
+        public int RecommendedSemester { get; set; }
+        public int? CourseGroupId { get; set; }
+        public ICollection<int> SpecialityIds { get; set; } = new List<int>();
     }
 }
