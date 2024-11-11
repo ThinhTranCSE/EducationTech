@@ -3,6 +3,7 @@ using EducationTech.Business.Recommendation.Interfaces;
 using EducationTech.Business.Shared.DTOs.Recommendation.CourseGroups;
 using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Recommendation;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Business.Recommendation;
 
@@ -39,11 +40,18 @@ public class CourseGroupService : ICourseGroupService
 
     public async Task<bool> DeleteCourseGroup(int id)
     {
-        var courseGroup = _unitOfWork.CourseGroups.GetAll().FirstOrDefault(x => x.Id == id);
+        var courseGroup = _unitOfWork.CourseGroups.GetAll()
+            .Include(x => x.Courses)
+            .FirstOrDefault(x => x.Id == id);
 
         if (courseGroup == null)
         {
             throw new Exception("Course group not found");
+        }
+
+        if (courseGroup.Courses.Any())
+        {
+            throw new Exception("Course group has courses, cannot be deleted");
         }
 
         using var transaction = _unitOfWork.BeginTransaction();

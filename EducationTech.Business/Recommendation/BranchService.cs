@@ -30,6 +30,11 @@ public class BranchService : IBranchService
 
     public async Task<BranchDto> CreateBranch(CreateBranchRequest request)
     {
+        if (_unitOfWork.Branches.GetAll().Any(b => b.Name == request.Name))
+        {
+            throw new Exception("Branch name already exists");
+        }
+
         var branch = new Branch
         {
             Name = request.Name
