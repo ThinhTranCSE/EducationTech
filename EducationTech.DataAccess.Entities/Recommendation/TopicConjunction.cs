@@ -22,14 +22,14 @@ public class TopicConjunction : Entity
     {
         ConfigureSideEffects<TopicConjunction>(modelBuilder);
 
-        modelBuilder.Entity<TopicConjunction>()
-            .HasOne(x => x.Topic)
-            .WithMany(x => x.NextTopicConjuctions)
-            .HasForeignKey(x => x.TopicId);
+        //modelBuilder.Entity<TopicConjunction>()
+        //    .HasOne(x => x.Topic)
+        //    .WithMany(x => x.NextTopicConjuctions)
+        //    .HasForeignKey(x => x.TopicId);
 
-        modelBuilder.Entity<TopicConjunction>()
-            .HasOne(x => x.NextTopic)
-            .WithMany()
-            .HasForeignKey(x => x.NextTopicId);
+        //modelBuilder.Entity<TopicConjunction>()
+        //    .HasOne(x => x.NextTopic)
+        //    .WithMany()
+        //    .HasForeignKey(x => x.NextTopicId);
     }
 }

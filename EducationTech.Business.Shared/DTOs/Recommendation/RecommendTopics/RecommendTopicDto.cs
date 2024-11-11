@@ -7,6 +7,7 @@ namespace EducationTech.Business.Shared.DTOs.Recommendation.RecommendTopics;
 public class RecommendTopicDto : AbstractDto<RecommendTopic, RecommendTopicDto>
 {
     public int Id { get; set; }
+    public int Order { get; set; }
     public string Name { get; set; }
     public int CourseId { get; set; }
     public virtual ICollection<LearningObjectDto> LearningObjects { get; set; }

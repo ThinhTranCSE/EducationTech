@@ -15,7 +15,6 @@ public class RecommendTopic : Entity
     public string Name { get; set; }
     public int CourseId { get; set; }
     public virtual Course Course { get; set; }
-    public virtual ICollection<TopicConjunction> NextTopicConjuctions { get; set; }
     public virtual ICollection<LearningObject> LearningObjects { get; set; }
 
     public override void OnModelCreating(ModelBuilder modelBuilder)
