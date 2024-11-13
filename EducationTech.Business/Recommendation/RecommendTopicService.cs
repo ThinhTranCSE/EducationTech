@@ -36,10 +36,9 @@ public class RecommendTopicService : IRecomendTopicService
             transaction.Rollback();
             throw;
         }
-
     }
 
-    public Task<bool> DeleteTopic(int id)
+    public async Task<bool> DeleteTopic(int id)
     {
         var recommendTopic = _unitOfWork.RecommendTopics.GetAll()
             .Include(t => t.LearningObjects)
@@ -48,6 +47,9 @@ public class RecommendTopicService : IRecomendTopicService
                 .ThenInclude(lo => lo.Video)
             .Include(t => t.LearningObjects)
                 .ThenInclude(lo => lo.Quiz)
+                    .ThenInclude(q => q.Questions)
+                        .ThenInclude(q => q.Answers)
+
             .FirstOrDefault(x => x.Id == id);
 
         if (recommendTopic == null)
@@ -58,6 +60,23 @@ public class RecommendTopicService : IRecomendTopicService
         using var transaction = _unitOfWork.BeginTransaction();
         try
         {
+            foreach (var learningObject in recommendTopic.LearningObjects)
+            {
+                if (learningObject.Video != null)
+                {
+                    learningObject.Video.LearningObjectId = null;
+                }
+
+                if (learningObject.Quiz != null)
+                {
+                    foreach (var question in learningObject.Quiz.Questions)
+                    {
+                        _unitOfWork.Answers.RemoveRange(question.Answers);
+                    }
+                    _unitOfWork.Questions.RemoveRange(learningObject.Quiz.Questions);
+                    _unitOfWork.Quizzes.Remove(learningObject.Quiz);
+                }
+            }
             _unitOfWork.LearnerLogs.RemoveRange(recommendTopic.LearningObjects.SelectMany(x => x.LearnerLogs));
             _unitOfWork.LearningObjects.RemoveRange(recommendTopic.LearningObjects);
 
@@ -65,7 +84,7 @@ public class RecommendTopicService : IRecomendTopicService
             _unitOfWork.SaveChanges();
             transaction.Commit();
 
-            return Task.FromResult(true);
+            return true;
         }
         catch (Exception ex)
         {

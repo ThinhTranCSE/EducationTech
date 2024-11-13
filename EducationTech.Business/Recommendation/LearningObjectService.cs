@@ -4,6 +4,7 @@ using EducationTech.Business.Shared.DTOs.Recommendation.LearningObjects;
 using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Recommendation;
 using EducationTech.DataAccess.Shared.Enums.LearningObject;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Business.Recommendation;
 
@@ -85,9 +86,51 @@ public class LearningObjectService : ILearningObjectService
         }
     }
 
-    public Task<bool> DeleteLearningObject(int id)
+    public async Task<bool> DeleteLearningObject(int id)
     {
-        throw new NotImplementedException();
+        var learningObject = _unitOfWork.LearningObjects.GetAll()
+            .Include(lo => lo.Quiz)
+                .ThenInclude(q => q.Questions)
+                    .ThenInclude(q => q.Answers)
+            .Include(lo => lo.Video)
+            .FirstOrDefault(x => x.Id == id);
+
+        if (learningObject == null)
+        {
+            throw new Exception("Learning object not found");
+        }
+
+        using var transaction = _unitOfWork.BeginTransaction();
+        try
+        {
+            if (learningObject.Video != null)
+            {
+                learningObject.Video.LearningObjectId = null;
+            }
+
+            if (learningObject.Quiz != null)
+            {
+                foreach (var question in learningObject.Quiz.Questions)
+                {
+                    _unitOfWork.Answers.RemoveRange(question.Answers);
+                }
+                _unitOfWork.Questions.RemoveRange(learningObject.Quiz.Questions);
+                _unitOfWork.Quizzes.Remove(learningObject.Quiz);
+            }
+
+            _unitOfWork.LearningObjects.Remove(learningObject);
+
+            _unitOfWork.SaveChanges();
+
+            transaction.Commit();
+
+            return true;
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
     }
 
 }
