@@ -23,6 +23,8 @@ public interface IUnitOfWork : IDisposable
     IImageRepository Images { get; }
     IQuestionRepository Questions { get; }
     IQuizRepository Quizzes { get; }
+
+    IQuizResultRepository QuizResults { get; }
     ITopicRepository Topics { get; }
     IUploadedFileRepository UploadedFiles { get; }
     IUserKeyRepository UserKeys { get; }

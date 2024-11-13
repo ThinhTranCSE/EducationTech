@@ -22,6 +22,8 @@ public class UnitOfWork : IUnitOfWork
     public IImageRepository Images { get; private set; }
     public IQuestionRepository Questions { get; private set; }
     public IQuizRepository Quizzes { get; private set; }
+
+    public IQuizResultRepository QuizResults { get; private set; }
     public ITopicRepository Topics { get; private set; }
     public IUploadedFileRepository UploadedFiles { get; private set; }
     public IUserKeyRepository UserKeys { get; private set; }
@@ -64,6 +66,7 @@ public class UnitOfWork : IUnitOfWork
         IImageRepository imageRepository,
         IQuestionRepository questionRepository,
         IQuizRepository quizRepository,
+        IQuizResultRepository quizResultRepository,
         ITopicRepository topicRepository,
         IUploadedFileRepository uploadedFileRepository,
         IUserKeyRepository userKeyRepository,
@@ -94,6 +97,7 @@ public class UnitOfWork : IUnitOfWork
         Images = imageRepository;
         Questions = questionRepository;
         Quizzes = quizRepository;
+        QuizResults = quizResultRepository;
         Topics = topicRepository;
         UploadedFiles = uploadedFileRepository;
         UserKeys = userKeyRepository;

@@ -3,6 +3,7 @@ using System;
 using EducationTech.DataAccess.Core.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EducationTech.Migrations
 {
     [DbContext(typeof(EducationTechContext))]
-    partial class MainDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241113182424_CreateQuizResultTable")]
+    partial class CreateQuizResultTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,17 +56,12 @@ namespace EducationTech.Migrations
                     b.Property<int>("AnswerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("QuizResultId")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AnswerId");
-
-                    b.HasIndex("QuizResultId");
 
                     b.HasIndex("UserId");
 
@@ -753,12 +750,6 @@ namespace EducationTech.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EducationTech.DataAccess.Entities.Business.QuizResult", "QuizResult")
-                        .WithMany()
-                        .HasForeignKey("QuizResultId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("EducationTech.DataAccess.Entities.Master.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -766,8 +757,6 @@ namespace EducationTech.Migrations
                         .IsRequired();
 
                     b.Navigation("Answer");
-
-                    b.Navigation("QuizResult");
 
                     b.Navigation("User");
                 });

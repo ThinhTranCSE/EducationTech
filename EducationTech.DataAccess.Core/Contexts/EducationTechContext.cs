@@ -28,6 +28,7 @@ namespace EducationTech.DataAccess.Core.Contexts
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Comunity> Comunities { get; set; }
         public DbSet<Quiz> Quizzes { get; set; }
+        public DbSet<QuizResult> QuizResults { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<AnswerUser> AnswerUsers { get; set; }

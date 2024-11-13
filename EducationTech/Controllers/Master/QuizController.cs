@@ -1,4 +1,5 @@
 ﻿using EducationTech.Business.Master.Interfaces;
+using EducationTech.Business.Shared.DTOs.Masters.QuizResults;
 using EducationTech.Business.Shared.DTOs.Masters.Quizzes;
 using EducationTech.Controllers.Abstract;
 using Microsoft.AspNetCore.Mvc;
@@ -38,5 +39,19 @@ public class QuizController : BaseController
     public async Task<bool> DeleteQuiz(int id)
     {
         return await _quizService.DeleteQuiz(id);
+    }
+
+    [HttpPost("{id}/start")]
+    public async Task<QuizResultDto> StartQuiz(int id)
+    {
+        var quizResult = await _quizService.StartQuiz(id);
+        return quizResult;
+    }
+
+    [HttpPost("submit")]
+    public async Task<QuizResultDto> SubmitQuiz([FromBody] Quiz_SubmitQuizRequest request)
+    {
+        var quizResult = await _quizService.SubmitQuiz(request);
+        return quizResult;
     }
 }
