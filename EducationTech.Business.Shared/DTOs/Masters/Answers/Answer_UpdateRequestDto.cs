@@ -1,16 +1,12 @@
 ﻿using EducationTech.Business.Shared.DTOs.Abstracts;
 using EducationTech.DataAccess.Entities.Business;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.Business.Shared.DTOs.Masters.Answers
 {
     public class Answer_UpdateRequestDto : AbstractDto<Answer, Answer_UpdateRequestDto>
     {
         public string? Content { get; set; }
+        public int? Score { get; set; }
         public bool? IsCorrect { get; set; }
     }
 }

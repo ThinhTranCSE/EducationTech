@@ -28,4 +28,11 @@ public class QuestionController : BaseController
         var question = await _questionService.UpdateQuestion(requestDto, id);
         return question;
     }
+
+    [HttpDelete("{id}")]
+    public async Task<bool> DeleteQuestion(int id)
+    {
+        var result = await _questionService.DeleteQuestion(id);
+        return result;
+    }
 }

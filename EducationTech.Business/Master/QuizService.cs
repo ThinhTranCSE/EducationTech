@@ -33,6 +33,36 @@ class QuizService : IQuizService
         }
     }
 
+    public async Task<bool> DeleteQuiz(int id)
+    {
+        var quiz = _unitOfWork.Quizzes.GetAll().FirstOrDefault(x => x.Id == id);
+
+        if (quiz == null)
+        {
+            throw new Exception("Quiz not found");
+        }
+
+        using var transaction = _unitOfWork.BeginTransaction();
+        try
+        {
+            foreach (var question in quiz.Questions)
+            {
+                _unitOfWork.Answers.RemoveRange(question.Answers);
+                _unitOfWork.Questions.Remove(question);
+            }
+            _unitOfWork.Quizzes.Remove(quiz);
+            _unitOfWork.SaveChanges();
+            transaction.Commit();
+            return true;
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
+
+    }
+
     public async Task<QuizDto> UpdateQuiz(Quiz_UpdateRequest requestDto, int id)
     {
         var quiz = _unitOfWork.Quizzes.GetAll().FirstOrDefault(x => x.Id == id);

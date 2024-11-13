@@ -34,10 +34,9 @@ public class QuizController : BaseController
         return quiz;
     }
 
-    //[HttpDelete("{id}")]
-    //[Authorize(Policy = "DeleteCourse")]
-    //public async Task DeleteQuiz(int id)
-    //{
-    //    await _quizService.DeleteQuiz(id, CurrentUser);
-    //}
+    [HttpDelete("{id}")]
+    public async Task<bool> DeleteQuiz(int id)
+    {
+        return await _quizService.DeleteQuiz(id);
+    }
 }

@@ -12,6 +12,7 @@ namespace EducationTech.DataAccess.Entities.Business
         public int Id { get; set; }
         public int QuestionId { get; set; }
         public string Content { get; set; }
+        public int Score { get; set; }
         public bool IsCorrect { get; set; }
         public virtual Question Question { get; set; }
 

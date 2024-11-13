@@ -7,5 +7,7 @@ namespace EducationTech.Business.Master.Interfaces
     {
         Task<AnswerDto> CreateAnswer(Answer_CreateRequestDto request);
         Task<AnswerDto> UpdateAnswer(int id, Answer_UpdateRequestDto request);
+
+        Task<bool> DeleteAnswer(int id);
     }
 }

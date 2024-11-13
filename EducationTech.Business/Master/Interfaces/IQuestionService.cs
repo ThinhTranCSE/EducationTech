@@ -7,4 +7,5 @@ public interface IQuestionService : IService
 {
     Task<QuestionDto> CreateQuestion(Question_CreateRequestDto request);
     Task<QuestionDto> UpdateQuestion(Question_UpdateRequestDto request, int id);
+    Task<bool> DeleteQuestion(int id);
 }

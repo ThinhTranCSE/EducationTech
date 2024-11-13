@@ -28,4 +28,11 @@ public class AnswerController : BaseController
         var answer = await _answerService.UpdateAnswer(id, requestDto);
         return answer;
     }
+
+    [HttpDelete("{id}")]
+    public async Task<bool> DeleteAnswer(int id)
+    {
+        var result = await _answerService.DeleteAnswer(id);
+        return result;
+    }
 }

@@ -36,6 +36,31 @@ class AnswerService : IAnswerService
         }
     }
 
+    public async Task<bool> DeleteAnswer(int id)
+    {
+        var answer = _unitOfWork.Answers.GetAll().FirstOrDefault(x => x.Id == id);
+
+        if (answer != null)
+        {
+            throw new Exception("Answer not found");
+        }
+
+        using var transaction = _unitOfWork.BeginTransaction();
+        try
+        {
+            _unitOfWork.Answers.Remove(answer);
+            _unitOfWork.SaveChanges();
+            transaction.Commit();
+
+            return true;
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
+
     public async Task<AnswerDto> UpdateAnswer(int id, Answer_UpdateRequestDto requestDto)
     {
         var answer = _unitOfWork.Answers.GetAll().FirstOrDefault(x => x.Id == id);

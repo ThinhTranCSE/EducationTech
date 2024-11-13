@@ -8,5 +8,5 @@ public interface IQuizService : IService
     Task<QuizDto> CreateQuiz(Quiz_CreateRequest request);
     Task<QuizDto> UpdateQuiz(Quiz_UpdateRequest request, int id);
 
-    //Task<bool> DeleteQuiz(int id, User? currentUser);
+    Task<bool> DeleteQuiz(int id);
 }

@@ -4,6 +4,7 @@ using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Questions;
 using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Business;
+using Microsoft.EntityFrameworkCore;
 
 class QuestionService : IQuestionService
 {
@@ -28,6 +29,34 @@ class QuestionService : IQuestionService
             transaction.Commit();
 
             return _mapper.Map<QuestionDto>(question);
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
+
+    public async Task<bool> DeleteQuestion(int id)
+    {
+        var question = _unitOfWork.Questions.GetAll()
+            .Include(x => x.Answers)
+            .FirstOrDefault(x => x.Id == id);
+
+        if (question == null)
+        {
+            throw new Exception("Question not found");
+        }
+
+        using var transaction = _unitOfWork.BeginTransaction();
+        try
+        {
+            _unitOfWork.Answers.RemoveRange(question.Answers);
+            _unitOfWork.Questions.Remove(question);
+            _unitOfWork.SaveChanges();
+            transaction.Commit();
+
+            return true;
         }
         catch
         {
