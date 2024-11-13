@@ -3,6 +3,7 @@ using System;
 using EducationTech.DataAccess.Core.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EducationTech.Migrations
 {
     [DbContext(typeof(EducationTechContext))]
-    partial class MainDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241113111109_AddOrderFieldToLOTable")]
+    partial class AddOrderFieldToLOTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,8 +172,7 @@ namespace EducationTech.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LearningObjectId")
-                        .IsUnique();
+                    b.HasIndex("LearningObjectId");
 
                     b.ToTable("Quizzes");
                 });
@@ -247,8 +248,7 @@ namespace EducationTech.Migrations
                     b.HasIndex("FileId")
                         .IsUnique();
 
-                    b.HasIndex("LearningObjectId")
-                        .IsUnique();
+                    b.HasIndex("LearningObjectId");
 
                     b.ToTable("Videos");
                 });
@@ -784,8 +784,8 @@ namespace EducationTech.Migrations
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Quiz", b =>
                 {
                     b.HasOne("EducationTech.DataAccess.Entities.Recommendation.LearningObject", "LearningObject")
-                        .WithOne("Quiz")
-                        .HasForeignKey("EducationTech.DataAccess.Entities.Business.Quiz", "LearningObjectId")
+                        .WithMany()
+                        .HasForeignKey("LearningObjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -831,8 +831,8 @@ namespace EducationTech.Migrations
                         .IsRequired();
 
                     b.HasOne("EducationTech.DataAccess.Entities.Recommendation.LearningObject", "LearningObject")
-                        .WithOne("Video")
-                        .HasForeignKey("EducationTech.DataAccess.Entities.Business.Video", "LearningObjectId");
+                        .WithMany()
+                        .HasForeignKey("LearningObjectId");
 
                     b.Navigation("File");
 
@@ -1094,10 +1094,6 @@ namespace EducationTech.Migrations
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.LearningObject", b =>
                 {
                     b.Navigation("LearnerLogs");
-
-                    b.Navigation("Quiz");
-
-                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Recommendation.RecommendTopic", b =>

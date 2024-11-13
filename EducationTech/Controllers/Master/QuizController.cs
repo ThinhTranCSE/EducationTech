@@ -1,9 +1,6 @@
-﻿using EducationTech.Business.Business.Interfaces;
-using EducationTech.Business.Master.Interfaces;
+﻿using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Quizzes;
 using EducationTech.Controllers.Abstract;
-using EducationTech.DataAccess.Core.Contexts;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationTech.Controllers.Master;
@@ -11,7 +8,7 @@ namespace EducationTech.Controllers.Master;
 public class QuizController : BaseController
 {
     private readonly IQuizService _quizService;
-    public QuizController(EducationTechContext context, IAuthService authService, IQuizService quizService)
+    public QuizController(IQuizService quizService)
     {
         _quizService = quizService;
     }
@@ -24,18 +21,16 @@ public class QuizController : BaseController
     //}
 
     [HttpPost]
-    [Authorize(Policy = "UploadCourse")]
-    public async Task<QuizDto> CreateQuiz([FromBody] Quiz_CreateRequestDto requestDto)
+    public async Task<QuizDto> CreateQuiz([FromBody] Quiz_CreateRequest request)
     {
-        var quiz = await _quizService.CreateQuiz(requestDto);
+        var quiz = await _quizService.CreateQuiz(request);
         return quiz;
     }
 
     [HttpPatch("{id}")]
-    [Authorize(Policy = "UpdateCourse")]
-    public async Task<QuizDto> UpdateQuiz(int id, [FromBody] Quiz_UpdateRequestDto requestDto)
+    public async Task<QuizDto> UpdateQuiz(int id, [FromBody] Quiz_UpdateRequest request)
     {
-        var quiz = await _quizService.UpdateQuiz(id, requestDto);
+        var quiz = await _quizService.UpdateQuiz(request, id);
         return quiz;
     }
 

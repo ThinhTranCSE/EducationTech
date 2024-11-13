@@ -13,7 +13,6 @@ namespace EducationTech.DataAccess.Entities.Business
         public int Id { get; set; }
         public int LearningObjectId { get; set; }
         public int TimeLimit { get; set; }
-
         public virtual LearningObject LearningObject { get; set; } = null!;
         public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
 

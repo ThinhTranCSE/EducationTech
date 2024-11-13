@@ -1,11 +1,10 @@
 ﻿using EducationTech.Business.Abstract;
 using EducationTech.Business.Shared.DTOs.Masters.Questions;
 
-namespace EducationTech.Business.Master.Interfaces
+namespace EducationTech.Business.Master.Interfaces;
+
+public interface IQuestionService : IService
 {
-    public interface IQuestionService : IService
-    {
-        Task<QuestionDto> CreateQuestion(Question_CreateRequestDto requestDto);
-        Task<QuestionDto> UpdateQuestion(int id, Question_UpdateRequestDto requestDto);
-    }
+    Task<QuestionDto> CreateQuestion(Question_CreateRequestDto request);
+    Task<QuestionDto> UpdateQuestion(Question_UpdateRequestDto request, int id);
 }

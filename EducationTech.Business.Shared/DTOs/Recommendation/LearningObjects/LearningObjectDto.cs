@@ -9,14 +9,12 @@ public class LearningObjectDto : AbstractDto<LearningObject, LearningObjectDto>
     public int Id { get; set; }
     public int TopicId { get; set; }
     public string Title { get; set; }
+    public int Order { get; set; }
     public LOType Type { get; set; }
-
     public int Difficulty { get; set; }
     public int MaxScore { get; set; }
     public int MaxLearningTime { get; set; }
-
     public LearnerLogInformations LearnerLogInformations { get; set; }
-
 }
 
 public class LearnerLogInformations

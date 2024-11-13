@@ -1,16 +1,16 @@
-﻿using EducationTech.Business.Shared.DTOs.Abstracts;
-using EducationTech.Business.Shared.DTOs.Masters.Answers;
+﻿using AutoMapper;
+using EducationTech.Business.Shared.DTOs.Abstracts;
 using EducationTech.DataAccess.Entities.Business;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace EducationTech.Business.Shared.DTOs.Masters.Questions
+namespace EducationTech.Business.Shared.DTOs.Masters.Questions;
+
+public class Question_UpdateRequestDto : AbstractDto<Question, Question_UpdateRequestDto>
 {
-    public class Question_UpdateRequestDto : AbstractDto<Question, Question_UpdateRequestDto>
+    public string? Content { get; set; }
+
+    public override void Configure(IMapperConfigurationExpression cfg)
     {
-        public string? Content { get; set; }
+        cfg.CreateMap<Question_UpdateRequestDto, Question>()
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
     }
 }

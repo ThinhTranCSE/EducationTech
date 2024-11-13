@@ -43,7 +43,11 @@ public class RecommendTopicService : IRecomendTopicService
     {
         var recommendTopic = _unitOfWork.RecommendTopics.GetAll()
             .Include(t => t.LearningObjects)
-            .ThenInclude(lo => lo.LearnerLogs)
+                .ThenInclude(lo => lo.LearnerLogs)
+            .Include(t => t.LearningObjects)
+                .ThenInclude(lo => lo.Video)
+            .Include(t => t.LearningObjects)
+                .ThenInclude(lo => lo.Quiz)
             .FirstOrDefault(x => x.Id == id);
 
         if (recommendTopic == null)

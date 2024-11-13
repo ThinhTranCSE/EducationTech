@@ -3,7 +3,6 @@ using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Answers;
 using EducationTech.Controllers.Abstract;
 using EducationTech.DataAccess.Core.Contexts;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationTech.Controllers.Master;
@@ -17,7 +16,6 @@ public class AnswerController : BaseController
     }
 
     [HttpPost]
-    [Authorize(Policy = "UploadCourse")]
     public async Task<AnswerDto> CreateAnswer([FromBody] Answer_CreateRequestDto requestDto)
     {
         var answer = await _answerService.CreateAnswer(requestDto);
@@ -25,7 +23,6 @@ public class AnswerController : BaseController
     }
 
     [HttpPatch("{id}")]
-    [Authorize(Policy = "UpdateCourse")]
     public async Task<AnswerDto> UpdateAnswer(int id, [FromBody] Answer_UpdateRequestDto requestDto)
     {
         var answer = await _answerService.UpdateAnswer(id, requestDto);

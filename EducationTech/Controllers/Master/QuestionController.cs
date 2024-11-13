@@ -25,7 +25,7 @@ public class QuestionController : BaseController
     [HttpPatch("{id}")]
     public async Task<QuestionDto> UpdateQuestion(int id, [FromBody] Question_UpdateRequestDto requestDto)
     {
-        var question = await _questionService.UpdateQuestion(id, requestDto);
+        var question = await _questionService.UpdateQuestion(requestDto, id);
         return question;
     }
 }
