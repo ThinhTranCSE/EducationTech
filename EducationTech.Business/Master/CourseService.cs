@@ -92,6 +92,7 @@ namespace EducationTech.Business.Master
         public async Task<CourseDto> GetCourseById(Course_GetByIdRequestDto requestDto, int id)
         {
             var course = await _unitOfWork.Courses.GetAll()
+                .Include(c => c.Owner)
                 .Include(c => c.Topics)
                         .ThenInclude(t => t.LearningObjects)
                             .ThenInclude(lo => lo.Video)
@@ -115,7 +116,10 @@ namespace EducationTech.Business.Master
         {
             var query = _unitOfWork.Courses.GetAll();
 
-            query = query.Include(x => x.Specialities).Where(x => x.IsPublished);
+            query = query
+                .Include(x => x.Specialities)
+                .Include(c => c.Owner)
+                .Where(x => x.IsPublished);
 
             if (requestDto.SpecialityIds.Count > 0)
             {
