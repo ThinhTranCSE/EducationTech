@@ -68,7 +68,7 @@ namespace EducationTech.Business.Master
             if (requestDto.SpecialityIds != null)
             {
                 // Remove all existing specialities
-                course.Specialities.Clear();
+                _unitOfWork.CourseSpecialities.RemoveRange(course.Specialities);
                 // Add new specialities
                 course.Specialities = requestDto.SpecialityIds.Select(x => new CourseSpeciality { SpecialityId = x }).ToList();
             }
@@ -91,11 +91,55 @@ namespace EducationTech.Business.Master
         }
         public async Task<CourseDto> GetCourseById(Course_GetByIdRequestDto requestDto, int id)
         {
-            throw new NotImplementedException();
+            var course = await _unitOfWork.Courses.GetAll()
+                .Include(c => c.Topics)
+                        .ThenInclude(t => t.LearningObjects)
+                            .ThenInclude(lo => lo.Video)
+               .Include(c => c.Topics)
+                        .ThenInclude(t => t.LearningObjects)
+                            .ThenInclude(lo => lo.Quiz)
+                                .ThenInclude(q => q.Questions)
+                                    .ThenInclude(q => q.Answers)
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
+
+            if (course == null)
+            {
+                throw new Exception("Course not found");
+            }
+
+            return _mapper.Map<CourseDto>(course);
+
         }
         public async Task<Course_GetResponseDto> GetPaginatedData(Course_GetRequestDto requestDto, int? offset, int? limit, string? cursor)
         {
-            throw new NotImplementedException();
+            var query = _unitOfWork.Courses.GetAll();
+
+            query = query.Include(x => x.Specialities).Where(x => x.IsPublished);
+
+            if (requestDto.SpecialityIds.Count > 0)
+            {
+                query = query.Where(x => x.Specialities.Any(s => requestDto.SpecialityIds.Contains(s.SpecialityId)));
+            }
+
+            if (offset != null)
+            {
+                query = query.Skip(offset.Value);
+            }
+
+            if (limit != null)
+            {
+                query = query.Take(limit.Value);
+            }
+
+            var courses = await query.ToListAsync();
+
+            var courseDtos = _mapper.Map<List<CourseDto>>(courses);
+
+            return new Course_GetResponseDto
+            {
+                Courses = courseDtos
+            };
         }
         public async Task<int> GetTotalCount()
         {

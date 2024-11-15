@@ -51,5 +51,6 @@ public interface IUnitOfWork : IDisposable
     IBranchRepository Branches { get; }
     ISpecialityRepository Specialities { get; }
     ICourseGroupRepository CourseGroups { get; }
+    ICourseSpecialityRepository CourseSpecialities { get; }
     #endregion
 }

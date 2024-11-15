@@ -1,4 +1,6 @@
 ﻿using EducationTech.Business.Shared.DTOs.Abstracts;
+using EducationTech.Business.Shared.DTOs.Masters.Quizzes;
+using EducationTech.Business.Shared.DTOs.Masters.Videos;
 using EducationTech.DataAccess.Entities.Recommendation;
 using EducationTech.DataAccess.Shared.Enums.LearningObject;
 
@@ -14,6 +16,8 @@ public class LearningObjectDto : AbstractDto<LearningObject, LearningObjectDto>
     public int Difficulty { get; set; }
     public int MaxScore { get; set; }
     public int MaxLearningTime { get; set; }
+    public virtual VideoDto? Video { get; set; }
+    public virtual QuizDto? Quiz { get; set; }
     public LearnerLogInformations LearnerLogInformations { get; set; }
 }
 

@@ -3,7 +3,6 @@ using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Courses;
 using EducationTech.Controllers.Abstract;
 using EducationTech.DataAccess.Core.Contexts;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationTech.Controllers.Master;
@@ -31,7 +30,6 @@ public class CourseController : BaseController
     }
 
     [HttpPost]
-    [Authorize(Policy = "InstructorOnly")]
     public async Task<CourseDto> CreateCourse([FromBody] Course_CreateRequestDto requestDto)
     {
         var course = await _courseService.CreateCourse(requestDto);
@@ -39,7 +37,6 @@ public class CourseController : BaseController
     }
 
     [HttpPut("{id}")]
-    [Authorize(Policy = "InstructorOnly")]
     public async Task<CourseDto> UpdateCourse(int id, [FromBody] Course_UpdateRequestDto requestDto)
     {
         var course = await _courseService.UpdateCourse(requestDto, id);
