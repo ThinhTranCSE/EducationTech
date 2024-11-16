@@ -48,7 +48,7 @@ namespace EducationTech.Business.Business
                     .ThenInclude(ur => ur.Role)
                         .ThenInclude(r => r.RolePermissions)
                             .ThenInclude(rp => rp.Permission)
-                .Include(u => u.Learner);
+                            ;
             User? user = await userQuery.FirstOrDefaultAsync();
 
 
@@ -362,7 +362,9 @@ namespace EducationTech.Business.Business
             }
             Guid? userId = GetUserIdFromToken(token.Split(" ")[1]);
             return _unitOfWork.Users.GetAll()
-                .Where(u => u.Id == userId).FirstOrDefault();
+                .Where(u => u.Id == userId)
+                .Include(u => u.Learner)
+                .FirstOrDefault();
         }
     }
 }
