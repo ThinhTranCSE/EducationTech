@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Recommendation.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Courses;
 using EducationTech.Business.Shared.DTOs.Recommendation.LearningObjects;
@@ -15,12 +16,14 @@ public class LearningPathService : ILearningPathService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly ISessionService _sessionService;
     //private readonly ILearningPathRecommender _learningPathRecommender;
 
-    public LearningPathService(IUnitOfWork unitOfWork, IMapper mapper)
+    public LearningPathService(IUnitOfWork unitOfWork, IMapper mapper, ISessionService sessionService)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _sessionService = sessionService;
         //_learningPathRecommender = learningPathRecommender;
     }
 
@@ -93,7 +96,84 @@ public class LearningPathService : ILearningPathService
     //    return learningPathDto;
     //}
 
+    public async Task<bool> SaveLearningPath(LearningPath_SaveRequest request)
+    {
+        var learnerId = _sessionService.CurrentUser?.Learner?.Id;
 
+        if (learnerId == null)
+        {
+            throw new Exception("You are not Learner");
+        }
+
+        using var transaction = _unitOfWork.BeginTransaction();
+        try
+        {
+            var courseSaves = await _unitOfWork.CourseLearningPathOrders.GetAll()
+                .Where(cs => cs.LearnerId == learnerId)
+                .ToListAsync();
+
+            var topicSaves = await _unitOfWork.TopicLearningPathOrders.GetAll()
+                .Where(ts => ts.LearnerId == learnerId)
+                .ToListAsync();
+
+            var learningObjectSaves = await _unitOfWork.LearningObjectLearningPathOrders.GetAll()
+                .Where(ls => ls.LearnerId == learnerId)
+                .ToListAsync();
+
+            _unitOfWork.CourseLearningPathOrders.RemoveRange(courseSaves);
+            _unitOfWork.TopicLearningPathOrders.RemoveRange(topicSaves);
+            _unitOfWork.LearningObjectLearningPathOrders.RemoveRange(learningObjectSaves);
+
+            _unitOfWork.SaveChanges();
+
+            foreach (var semester in request.LearningPath)
+            {
+                foreach (var course in semester.Courses)
+                {
+                    var courseSave = new CourseLearningPathOrder
+                    {
+                        LearnerId = learnerId.Value,
+                        CourseId = course.Id,
+                        Semester = semester.Semester
+                    };
+                    courseSaves.Add(courseSave);
+
+                    foreach (var topic in course.Topics)
+                    {
+                        var topicSave = new TopicLearningPathOrder
+                        {
+                            LearnerId = learnerId.Value,
+                            TopicId = topic.Id,
+                        };
+                        topicSaves.Add(topicSave);
+
+                        foreach (var learningObject in topic.LearningObjects)
+                        {
+                            var learningObjectSave = new LearningObjectLearningPathOrder
+                            {
+                                LearnerId = learnerId.Value,
+                                LearningObjectId = learningObject.Id,
+                            };
+                            learningObjectSaves.Add(learningObjectSave);
+                        }
+                    }
+
+                }
+            }
+
+
+
+
+
+
+            return true;
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
 
     public async Task<LearningPathDto> RecomendLearningPathSemester(int learnerId, int specialityId)
     {
@@ -452,6 +532,8 @@ public class LearningPathService : ILearningPathService
 
         return delta * learningObject.Difficulty + zeta * (1 - (meanScore / maximumScore)) + theta * (meanTime / minimumTime);
     }
+
+
 }
 
 public static class LearningPathServiceExtensions
@@ -459,6 +541,7 @@ public static class LearningPathServiceExtensions
     public static IQueryable<Course> IncludeFullCourseInformations(this IQueryable<Course> query)
     {
         query = query
+            .Where(c => c.IsPublished)
             .Include(c => c.Prerequisites)
             .Include(c => c.Specialities)
             .Include(c => c.Topics)

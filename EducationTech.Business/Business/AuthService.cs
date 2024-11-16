@@ -47,7 +47,8 @@ namespace EducationTech.Business.Business
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
                         .ThenInclude(r => r.RolePermissions)
-                            .ThenInclude(rp => rp.Permission);
+                            .ThenInclude(rp => rp.Permission)
+                .Include(u => u.Learner);
             User? user = await userQuery.FirstOrDefaultAsync();
 
 
