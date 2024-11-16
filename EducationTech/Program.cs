@@ -53,6 +53,8 @@ namespace EducationTech
             app.UseMiddleware<RequestLogContextMiddleware>();
             app.UseSerilogRequestLogging();
 
+            app.UseMiddleware<QueryStringMiddleware>();
+
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseMiddleware<HttpExceptionMiddleware>();
 
