@@ -2,6 +2,6 @@
 
 public class LearningPath_RequestDto
 {
-    public int LearnerId { get; set; }
-    public int SpecialityId { get; set; }
+    //public int LearnerId { get; set; }
+    //public int SpecialityId { get; set; }
 }

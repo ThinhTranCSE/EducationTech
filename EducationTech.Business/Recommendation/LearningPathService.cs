@@ -128,43 +128,49 @@ public class LearningPathService : ILearningPathService
 
             foreach (var semester in request.LearningPath)
             {
+                var courseOrder = 1;
                 foreach (var course in semester.Courses)
                 {
                     var courseSave = new CourseLearningPathOrder
                     {
                         LearnerId = learnerId.Value,
                         CourseId = course.Id,
-                        Semester = semester.Semester
+                        Semester = semester.Semester,
+                        Order = courseOrder
                     };
-                    courseSaves.Add(courseSave);
+                    _unitOfWork.CourseLearningPathOrders.Add(courseSave);
+                    courseOrder++;
 
+                    var topicOrder = 1;
                     foreach (var topic in course.Topics)
                     {
                         var topicSave = new TopicLearningPathOrder
                         {
                             LearnerId = learnerId.Value,
                             TopicId = topic.Id,
+                            Order = topicOrder
                         };
-                        topicSaves.Add(topicSave);
+                        _unitOfWork.TopicLearningPathOrders.Add(topicSave);
+                        topicOrder++;
 
+                        var learningObjectOrder = 1;
                         foreach (var learningObject in topic.LearningObjects)
                         {
                             var learningObjectSave = new LearningObjectLearningPathOrder
                             {
                                 LearnerId = learnerId.Value,
                                 LearningObjectId = learningObject.Id,
+                                Order = learningObjectOrder
                             };
-                            learningObjectSaves.Add(learningObjectSave);
+                            _unitOfWork.LearningObjectLearningPathOrders.Add(learningObjectSave);
+                            learningObjectOrder++;
                         }
                     }
-
                 }
             }
 
-
-
-
-
+            _unitOfWork.SaveChanges();
+            transaction.Commit();
 
             return true;
         }

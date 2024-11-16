@@ -1,4 +1,5 @@
-﻿using EducationTech.Business.Recommendation.Interfaces;
+﻿using EducationTech.Business.Business.Interfaces;
+using EducationTech.Business.Recommendation.Interfaces;
 using EducationTech.Business.Shared.DTOs.Recommendation.LearningPaths;
 using EducationTech.Controllers.Abstract;
 using Microsoft.AspNetCore.Mvc;
@@ -8,10 +9,12 @@ namespace EducationTech.Controllers.Recommendation;
 public class LearningPathController : BaseController
 {
     private readonly ILearningPathService _learningPathService;
+    private readonly ISessionService _sessionService;
 
-    public LearningPathController(ILearningPathService learningPathService)
+    public LearningPathController(ILearningPathService learningPathService, ISessionService sessionService)
     {
         _learningPathService = learningPathService;
+        _sessionService = sessionService;
     }
 
     //[HttpPost("OldRecommend")]
@@ -21,12 +24,18 @@ public class LearningPathController : BaseController
     //    return learningPath;
     //}
 
-    [HttpPost("Recommend")]
+    [HttpGet("Recommend")]
     public async Task<LearningPathDto> RecommendLearningPath([FromBody] LearningPath_RequestDto request)
     {
+        var learnerId = _sessionService.CurrentUser?.Learner?.Id;
+        if (learnerId == null)
+        {
+            throw new Exception("You are not Learner");
+        }
 
+        var specialityId = _sessionService.CurrentUser?.Learner?.SpecialityId;
 
-        var learningPath = await _learningPathService.RecomendLearningPathSemester(request.LearnerId, request.SpecialityId);
+        var learningPath = await _learningPathService.RecomendLearningPathSemester(learnerId.Value, specialityId.Value);
 
         return learningPath;
     }
