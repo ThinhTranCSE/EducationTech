@@ -130,12 +130,14 @@ namespace EducationTech.Business.Master
 
             query = query
                 .Include(x => x.Specialities)
-                .Include(c => c.Owner)
-                .Where(x => x.IsPublished);
+                .Include(c => c.Owner);
 
             if (requestDto.SpecialityIds.Count > 0)
             {
-                query = query.Where(x => x.Specialities.Any(s => requestDto.SpecialityIds.Contains(s.SpecialityId)));
+                query = query
+                    .Where(x => x.Specialities.Any(s => requestDto.SpecialityIds.Contains(s.SpecialityId)))
+                    .Where(x => x.IsPublished);
+
             }
 
             if (offset != null)
