@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EducationTech.Business.Shared.DTOs.Masters.Users;
 using EducationTech.Business.Shared.DTOs.Recommendation.CourseGroups;
+using EducationTech.Business.Shared.DTOs.Recommendation.CourseSpecialities;
 using EducationTech.Business.Shared.DTOs.Recommendation.RecommendTopics;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.Storage;
@@ -18,10 +19,13 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
         public string ImageUrl { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public int? CourseGroupId { get; set; }
-
+        public string CourseCode { get; set; }
+        public int Credits { get; set; }
+        public int RecommendedSemester { get; set; }
         public CourseGroupDto? CourseGroup { get; set; }
         public UserDto Owner { get; set; }
-        public ICollection<RecommendTopicDto> Topics { get; set; }
+        public ICollection<RecommendTopicDto> Topics { get; set; } = new List<RecommendTopicDto>();
+        public ICollection<CourseSpecialityDto> Specialities { get; set; } = new List<CourseSpecialityDto>();
         public override void Configure(IMapperConfigurationExpression cfg)
         {
             string hostName = GlobalReference.Instance.HostName;

@@ -133,4 +133,21 @@ public class LearningObjectService : ILearningObjectService
         }
     }
 
+    public async Task<LearningObjectDto> GetLearningObjectById(int id)
+    {
+        var learningObject = _unitOfWork.LearningObjects.GetAll()
+            .Include(lo => lo.Quiz)
+                .ThenInclude(q => q.Questions)
+                    .ThenInclude(q => q.Answers)
+            .Include(lo => lo.Video)
+            .FirstOrDefault(x => x.Id == id);
+
+        if (learningObject == null)
+        {
+            throw new Exception("Learning object not found");
+        }
+
+        return _mapper.Map<LearningObjectDto>(learningObject);
+
+    }
 }

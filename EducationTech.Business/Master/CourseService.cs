@@ -89,27 +89,39 @@ namespace EducationTech.Business.Master
                 throw;
             }
         }
-        public async Task<CourseDto> GetCourseById(Course_GetByIdRequestDto requestDto, int id)
+        public async Task<CourseDto> GetCourseById(Course_GetByIdRequestDto request, int id)
         {
-            var course = await _unitOfWork.Courses.GetAll()
+            var query = _unitOfWork.Courses.GetAll()
                 .Include(c => c.Owner)
+                .Include(c => c.Specialities)
+                    .ThenInclude(cs => cs.Speciality)
+                .Include(c => c.CourseGroup)
                 .Include(c => c.Topics)
+                    .ThenInclude(t => t.LearningObjects)
+                .Where(x => x.Id == id);
+
+            if (request.IsGetFullDetail)
+            {
+                query = query
+                    .Include(c => c.Topics)
                         .ThenInclude(t => t.LearningObjects)
                             .ThenInclude(lo => lo.Video)
-               .Include(c => c.Topics)
-                        .ThenInclude(t => t.LearningObjects)
-                            .ThenInclude(lo => lo.Quiz)
-                                .ThenInclude(q => q.Questions)
-                                    .ThenInclude(q => q.Answers)
-                .Where(x => x.Id == id)
-                .FirstOrDefaultAsync();
+                   .Include(c => c.Topics)
+                            .ThenInclude(t => t.LearningObjects)
+                                .ThenInclude(lo => lo.Quiz)
+                                    .ThenInclude(q => q.Questions)
+                                        .ThenInclude(q => q.Answers);
+            }
+
+            var course = await query.FirstOrDefaultAsync();
 
             if (course == null)
             {
                 throw new Exception("Course not found");
             }
 
-            return _mapper.Map<CourseDto>(course);
+            var result = _mapper.Map<CourseDto>(course);
+            return result;
 
         }
         public async Task<Course_GetResponseDto> GetPaginatedData(Course_GetRequestDto requestDto, int? offset, int? limit, string? cursor)

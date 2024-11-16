@@ -14,6 +14,14 @@ public class LearningObjectController : BaseController
         _learningObjectService = learningObjectService;
     }
 
+    [HttpGet("{id}")]
+    public async Task<LearningObjectDto> GetLearningObjectById(int id)
+    {
+        var learningObject = await _learningObjectService.GetLearningObjectById(id);
+
+        return learningObject;
+    }
+
     [HttpPost]
     public async Task<LearningObjectDto> CreateLearningObject([FromBody] LearningObject_CreateRequest request)
     {
