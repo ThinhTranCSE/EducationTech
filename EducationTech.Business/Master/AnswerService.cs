@@ -40,7 +40,7 @@ class AnswerService : IAnswerService
     {
         var answer = _unitOfWork.Answers.GetAll().FirstOrDefault(x => x.Id == id);
 
-        if (answer != null)
+        if (answer == null)
         {
             throw new Exception("Answer not found");
         }
