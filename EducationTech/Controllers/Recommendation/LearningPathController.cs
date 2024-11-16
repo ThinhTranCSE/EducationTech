@@ -25,7 +25,7 @@ public class LearningPathController : BaseController
     //}
 
     [HttpGet("Recommend")]
-    public async Task<LearningPathDto> RecommendLearningPath([FromBody] LearningPath_RequestDto request)
+    public async Task<LearningPathDto> RecommendLearningPath()
     {
         var learnerId = _sessionService.CurrentUser?.Learner?.Id;
         if (learnerId == null)
