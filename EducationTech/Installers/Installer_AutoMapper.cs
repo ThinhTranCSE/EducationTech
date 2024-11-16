@@ -25,7 +25,6 @@ namespace EducationTech.Installers
         private void ConfigNullableProperties(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<int?, int>().ConvertUsing((src, dest) => src ?? dest);
-            cfg.CreateMap<string?, string>().ConvertUsing((src, dest) => src ?? dest);
             cfg.CreateMap<bool?, bool>().ConvertUsing((src, dest) => src ?? dest);
             cfg.CreateMap<DateTime?, DateTime>().ConvertUsing((src, dest) => src ?? dest);
             cfg.CreateMap<Guid?, Guid>().ConvertUsing((src, dest) => src ?? dest);
