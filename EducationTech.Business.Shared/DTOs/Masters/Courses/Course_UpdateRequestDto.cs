@@ -19,7 +19,6 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
         {
             cfg.CreateMap<Course_UpdateRequestDto, Course>()
                 .ForAllMembers(x => x.Condition((src, dest, srcMember) => srcMember != null));
-
         }
     }
 }

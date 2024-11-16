@@ -16,7 +16,7 @@ public class UnitOfWork : IUnitOfWork
     public IGraphClient GraphClient => _graphClient.WithAnnotations();
     #region Business Repositories
     public IAnswerRepository Answers { get; private set; }
-    public IAnswerUserRepository AnswerUsers { get; private set; }
+    public IAnswerLearnerRepository AnswerLearners { get; private set; }
     public ICommentRepository Comments { get; private set; }
     public IComunityRepository Comunities { get; private set; }
     public IImageRepository Images { get; private set; }
@@ -55,6 +55,10 @@ public class UnitOfWork : IUnitOfWork
     public ICourseGroupRepository CourseGroups { get; private set; }
 
     public ICourseSpecialityRepository CourseSpecialities { get; private set; }
+
+    public ICourseLearningPathOrderRepository CourseLearningPathOrders { get; private set; }
+    public ITopicLearningPathOrderRepository TopicLearningPathOrders { get; private set; }
+    public ILearningObjectLearningPathOrderRepository LearningObjectLearningPathOrders { get; private set; }
     #endregion
 
 
@@ -62,7 +66,7 @@ public class UnitOfWork : IUnitOfWork
         IGraphClient graphClient,
         IMainDatabaseContext context,
         IAnswerRepository answerRepository,
-        IAnswerUserRepository answerUserRepository,
+        IAnswerLearnerRepository answerUserRepository,
         ICommentRepository commentRepository,
         IComunityRepository comunityRepository,
         IImageRepository imageRepository,
@@ -87,14 +91,17 @@ public class UnitOfWork : IUnitOfWork
         ISpecialityRepository specialityRepository,
         ICourseGroupRepository courseGroups,
         IBranchRepository branchRepository,
-        ICourseSpecialityRepository courseSpecialityRepository
+        ICourseSpecialityRepository courseSpecialityRepository,
+        ICourseLearningPathOrderRepository courseLearningPathOrderRepository,
+        ITopicLearningPathOrderRepository topicLearningPathOrderRepository,
+        ILearningObjectLearningPathOrderRepository learningObjectLearningPathOrderRepository
 
         )
     {
         _graphClient = graphClient;
         _context = context;
         Answers = answerRepository;
-        AnswerUsers = answerUserRepository;
+        AnswerLearners = answerUserRepository;
         Comments = commentRepository;
         Comunities = comunityRepository;
         Images = imageRepository;
@@ -120,6 +127,9 @@ public class UnitOfWork : IUnitOfWork
         CourseGroups = courseGroups;
         Branches = branchRepository;
         CourseSpecialities = courseSpecialityRepository;
+        CourseLearningPathOrders = courseLearningPathOrderRepository;
+        TopicLearningPathOrders = topicLearningPathOrderRepository;
+        LearningObjectLearningPathOrders = learningObjectLearningPathOrderRepository;
     }
 
 

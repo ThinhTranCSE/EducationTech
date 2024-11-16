@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
-using EducationTech.Auth.Policies.Abstract;
 using EducationTech.Business.Shared.DTOs.Abstracts;
-using EducationTech.DataAccess.Seeders;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EducationTech.Installers
 {
@@ -19,11 +16,22 @@ namespace EducationTech.Installers
             services.AddAutoMapper(config =>
             {
                 dtoInstances.ForEach(x => x?.Configure(config));
+                ConfigNullableProperties(config);
             });
 
             return services;
         }
 
+        private void ConfigNullableProperties(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<int?, int>().ConvertUsing((src, dest) => src ?? dest);
+            cfg.CreateMap<string?, string>().ConvertUsing((src, dest) => src ?? dest);
+            cfg.CreateMap<bool?, bool>().ConvertUsing((src, dest) => src ?? dest);
+            cfg.CreateMap<DateTime?, DateTime>().ConvertUsing((src, dest) => src ?? dest);
+            cfg.CreateMap<Guid?, Guid>().ConvertUsing((src, dest) => src ?? dest);
+            cfg.CreateMap<float?, float>().ConvertUsing((src, dest) => src ?? dest);
+            cfg.CreateMap<double?, double>().ConvertUsing((src, dest) => src ?? dest);
+        }
         public WebApplicationBuilder InstallServicesToWebApplicationBuilder(WebApplicationBuilder builder, IConfiguration configuration)
         {
             return builder;

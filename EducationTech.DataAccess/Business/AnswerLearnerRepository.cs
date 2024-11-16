@@ -5,9 +5,9 @@ using EducationTech.DataAccess.Entities.Business;
 
 namespace EducationTech.DataAccess.Business
 {
-    public class AnswerUserRepository : Repository<AnswerUser>, IAnswerUserRepository
+    public class AnswerLearnerRepository : Repository<AnswerLearner>, IAnswerLearnerRepository
     {
-        public AnswerUserRepository(IMainDatabaseContext context) : base(context)
+        public AnswerLearnerRepository(IMainDatabaseContext context) : base(context)
         {
         }
 

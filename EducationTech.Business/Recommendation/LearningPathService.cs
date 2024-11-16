@@ -93,6 +93,8 @@ public class LearningPathService : ILearningPathService
     //    return learningPathDto;
     //}
 
+
+
     public async Task<LearningPathDto> RecomendLearningPathSemester(int learnerId, int specialityId)
     {
         int totalCreditToGraduate = 128;
@@ -285,7 +287,6 @@ public class LearningPathService : ILearningPathService
 
         return learningPathDto;
     }
-
 
     // utility methods
     private const double SCORE_WHEN_NO_LEARNING_OBJECT = double.MaxValue;

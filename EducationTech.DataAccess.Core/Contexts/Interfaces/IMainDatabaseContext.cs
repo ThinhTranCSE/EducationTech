@@ -7,30 +7,42 @@ namespace EducationTech.DataAccess.Core.Contexts.Interfaces;
 
 public interface IMainDatabaseContext : IDbContext
 {
-    public DbSet<User> Users { get; set; }
-    public DbSet<Role> Roles { get; set; }
-    public DbSet<UserRole> UserRoles { get; set; }
-    public DbSet<UserKey> UserKeys { get; set; }
-    public DbSet<Permission> Permissions { get; set; }
-    public DbSet<RolePermission> RolePermissions { get; set; }
-    public DbSet<Course> Courses { get; set; }
-    public DbSet<Comment> Comments { get; set; }
-    public DbSet<Comunity> Comunities { get; set; }
-    public DbSet<Quiz> Quizzes { get; set; }
-    public DbSet<QuizResult> QuizResults { get; set; }
-    public DbSet<Question> Questions { get; set; }
-    public DbSet<Answer> Answers { get; set; }
-    public DbSet<AnswerUser> AnswerUsers { get; set; }
-    public DbSet<Topic> Topics { get; set; }
-    public DbSet<Video> Videos { get; set; }
-    public DbSet<UploadedFile> UploadedFiles { get; set; }
-    public DbSet<Image> Images { get; set; }
+    public DbSet<User> Users { get; }
+    public DbSet<Role> Roles { get; }
+    public DbSet<UserRole> UserRoles { get; }
+    public DbSet<UserKey> UserKeys { get; }
+    public DbSet<Permission> Permissions { get; }
+    public DbSet<RolePermission> RolePermissions { get; }
+    public DbSet<Course> Courses { get; }
+    public DbSet<Comment> Comments { get; }
+    public DbSet<Comunity> Comunities { get; }
+    public DbSet<Quiz> Quizzes { get; }
+    public DbSet<QuizResult> QuizResults { get; }
+    public DbSet<Question> Questions { get; }
+    public DbSet<Answer> Answers { get; }
+    public DbSet<AnswerLearner> AnswerLearners { get; }
+    public DbSet<Topic> Topics { get; }
+    public DbSet<Video> Videos { get; }
+    public DbSet<UploadedFile> UploadedFiles { get; }
+    public DbSet<Image> Images { get; }
 
 
     //recommendation
-    public DbSet<Learner> Learners { get; set; }
-    public DbSet<LearnerLog> LearnerLogs { get; set; }
-    public DbSet<LearningObject> LearningObjects { get; set; }
-    public DbSet<RecommendTopic> RecommendTopics { get; set; }
-    public DbSet<TopicConjunction> TopicConjunctions { get; set; }
+    public DbSet<Learner> Learners { get; }
+    public DbSet<LearnerLog> LearnerLogs { get; }
+    public DbSet<LearningObject> LearningObjects { get; }
+    public DbSet<RecommendTopic> RecommendTopics { get; }
+    public DbSet<TopicConjunction> TopicConjunctions { get; }
+
+
+    public DbSet<CourseGroup> CourseGroups { get; }
+    public DbSet<Branch> Branches { get; }
+    public DbSet<Speciality> Specialities { get; }
+    public DbSet<PrerequisiteCourse> PrerequisiteCourses { get; }
+    public DbSet<CourseSpeciality> CourseSpecialities { get; }
+
+    //save learning path
+    public DbSet<CourseLearningPathOrder> CourseLearningPathOrders { get; }
+    public DbSet<TopicLearningPathOrder> TopicLearningPathOrders { get; }
+    public DbSet<LearningObjectLearningPathOrder> LearningObjectLearningPathOrders { get; }
 }

@@ -6,6 +6,7 @@ using EducationTech.Business.Shared.DTOs.Masters.QuizResults;
 using EducationTech.Business.Shared.DTOs.Masters.Quizzes;
 using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Business;
+using EducationTech.DataAccess.Entities.Recommendation;
 using Microsoft.EntityFrameworkCore;
 
 class QuizService : IQuizService
@@ -101,16 +102,16 @@ class QuizService : IQuizService
             throw new Exception("Quiz not found");
         }
 
-        var userId = _sessionService.CurrentUser?.Id;
+        var learnerId = _sessionService.CurrentUser?.Learner?.Id;
 
-        if (userId == null)
+        if (learnerId == null)
         {
             throw new Exception("You have not loged in");
         }
 
 
         var currentQuizResult = await _unitOfWork.QuizResults.GetAll()
-            .Where(x => x.QuizId == id && x.UserId == userId)
+            .Where(x => x.QuizId == id && x.LearnerId == learnerId)
             .Where(x => x.EndTime == null)
             .Where(x => x.StartTime.AddSeconds(quiz.TimeLimit) < DateTime.Now)
             .FirstOrDefaultAsync();
@@ -123,7 +124,7 @@ class QuizService : IQuizService
         var quizResult = new QuizResult
         {
             QuizId = id,
-            UserId = userId.Value,
+            LearnerId = learnerId.Value,
             StartTime = DateTime.Now
         };
 
@@ -145,21 +146,22 @@ class QuizService : IQuizService
     public async Task<QuizResultDto> SubmitQuiz(Quiz_SubmitQuizRequest request)
     {
         var quizResult = _unitOfWork.QuizResults.GetAll()
+            .Include(x => x.Quiz)
             .FirstOrDefault(x => x.Id == request.QuizResultId);
         if (quizResult == null)
         {
             throw new Exception("Quiz result not found");
         }
 
-        var userId = _sessionService.CurrentUser?.Id;
-        if (userId == null)
+        var learnerId = _sessionService.CurrentUser?.Learner?.Id;
+        if (learnerId == null)
         {
             throw new Exception("You have not loged in");
         }
 
-        if (quizResult.UserId != userId)
+        if (quizResult.LearnerId != learnerId)
         {
-            throw new Exception("You are not allowed to submit this quiz");
+            throw new Exception("you are not allowed to submit this quiz");
         }
 
         if (quizResult.EndTime != null)
@@ -194,19 +196,44 @@ class QuizService : IQuizService
                     score += answer.Score;
                 }
 
-                var answerUser = new AnswerUser
+                var answerLearner = new AnswerLearner
                 {
                     QuizResultId = quizResult.Id,
                     AnswerId = answer.Id,
-                    UserId = userId.Value
+                    LearnerId = learnerId.Value
                 };
 
-                _unitOfWork.AnswerUsers.Add(answerUser);
+                _unitOfWork.AnswerLearners.Add(answerLearner);
             }
 
             quizResult.EndTime = DateTime.Now;
             quizResult.Score = score;
             quizResult.TimeTaken = (int)(quizResult.EndTime - quizResult.StartTime).Value.TotalSeconds;
+
+            var learnerLog = await _unitOfWork.LearnerLogs.GetAll()
+                .Where(ll => ll.LearnerId == learnerId && ll.LearningObjectId == quizResult.Quiz.LearningObjectId)
+                .FirstOrDefaultAsync();
+
+            if (learnerLog == null)
+            {
+                learnerLog = new LearnerLog
+                {
+                    LearningObjectId = quizResult.Quiz.LearningObjectId,
+                    LearnerId = learnerId.Value,
+                    Score = score,
+                    TimeTaken = quizResult.TimeTaken.Value,
+                    Attempt = 1
+                };
+                _unitOfWork.LearnerLogs.Add(learnerLog);
+            }
+            else
+            {
+                if (learnerLog.Score < score)
+                {
+                    learnerLog.Score = score;
+                    learnerLog.TimeTaken = quizResult.TimeTaken.Value;
+                }
+            }
 
             _unitOfWork.SaveChanges();
 

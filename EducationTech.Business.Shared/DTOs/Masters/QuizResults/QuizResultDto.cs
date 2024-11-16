@@ -7,7 +7,7 @@ public class QuizResultDto : AbstractDto<QuizResult, QuizResultDto>
 {
     public int Id { get; set; }
     public int QuizId { get; set; }
-    public Guid UserId { get; set; }
+    public int LearnerId { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime? EndTime { get; set; }
     public int? Score { get; set; }

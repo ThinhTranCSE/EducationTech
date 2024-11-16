@@ -17,7 +17,7 @@ public interface IUnitOfWork : IDisposable
 
     #region Business Repositories
     IAnswerRepository Answers { get; }
-    IAnswerUserRepository AnswerUsers { get; }
+    IAnswerLearnerRepository AnswerLearners { get; }
     ICommentRepository Comments { get; }
     IComunityRepository Comunities { get; }
     IImageRepository Images { get; }
@@ -52,5 +52,9 @@ public interface IUnitOfWork : IDisposable
     ISpecialityRepository Specialities { get; }
     ICourseGroupRepository CourseGroups { get; }
     ICourseSpecialityRepository CourseSpecialities { get; }
+
+    ICourseLearningPathOrderRepository CourseLearningPathOrders { get; }
+    ITopicLearningPathOrderRepository TopicLearningPathOrders { get; }
+    ILearningObjectLearningPathOrderRepository LearningObjectLearningPathOrders { get; }
     #endregion
 }

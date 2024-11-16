@@ -137,7 +137,6 @@ namespace EducationTech.Business.Master
                 query = query
                     .Where(x => x.Specialities.Any(s => requestDto.SpecialityIds.Contains(s.SpecialityId)))
                     .Where(x => x.IsPublished);
-
             }
 
             if (offset != null)

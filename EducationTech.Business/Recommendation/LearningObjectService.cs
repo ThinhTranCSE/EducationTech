@@ -23,6 +23,7 @@ public class LearningObjectService : ILearningObjectService
     public async Task<LearningObjectDto> CreateLearningObject(LearningObject_CreateRequest request)
     {
         var learningObject = _mapper.Map<LearningObject>(request);
+        learningObject.Video = null;
 
         using var transaction = _unitOfWork.BeginTransaction();
         try

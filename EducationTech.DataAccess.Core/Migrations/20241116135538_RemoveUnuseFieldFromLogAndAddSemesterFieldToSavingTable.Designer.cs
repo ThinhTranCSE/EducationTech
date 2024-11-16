@@ -3,6 +3,7 @@ using System;
 using EducationTech.DataAccess.Core.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EducationTech.Migrations
 {
     [DbContext(typeof(EducationTechContext))]
-    partial class MainDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241116135538_RemoveUnuseFieldFromLogAndAddSemesterFieldToSavingTable")]
+    partial class RemoveUnuseFieldFromLogAndAddSemesterFieldToSavingTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,7 +47,7 @@ namespace EducationTech.Migrations
                     b.ToTable("Answers");
                 });
 
-            modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.AnswerLearner", b =>
+            modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.AnswerUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,21 +56,21 @@ namespace EducationTech.Migrations
                     b.Property<int>("AnswerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("LearnerId")
-                        .HasColumnType("int");
-
                     b.Property<int>("QuizResultId")
                         .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AnswerId");
 
-                    b.HasIndex("LearnerId");
-
                     b.HasIndex("QuizResultId");
 
-                    b.ToTable("AnswerLearners");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AnswerUsers");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Comment", b =>
@@ -193,9 +195,6 @@ namespace EducationTech.Migrations
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("LearnerId")
-                        .HasColumnType("int");
-
                     b.Property<int>("QuizId")
                         .HasColumnType("int");
 
@@ -208,11 +207,14 @@ namespace EducationTech.Migrations
                     b.Property<int?>("TimeTaken")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("LearnerId");
-
                     b.HasIndex("QuizId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("QuizResults");
                 });
@@ -814,17 +816,11 @@ namespace EducationTech.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.AnswerLearner", b =>
+            modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.AnswerUser", b =>
                 {
                     b.HasOne("EducationTech.DataAccess.Entities.Business.Answer", "Answer")
                         .WithMany()
                         .HasForeignKey("AnswerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EducationTech.DataAccess.Entities.Recommendation.Learner", "Learner")
-                        .WithMany()
-                        .HasForeignKey("LearnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -834,11 +830,17 @@ namespace EducationTech.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("EducationTech.DataAccess.Entities.Master.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Answer");
 
-                    b.Navigation("Learner");
-
                     b.Navigation("QuizResult");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Comment", b =>
@@ -912,21 +914,21 @@ namespace EducationTech.Migrations
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.QuizResult", b =>
                 {
-                    b.HasOne("EducationTech.DataAccess.Entities.Recommendation.Learner", "Learner")
-                        .WithMany()
-                        .HasForeignKey("LearnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("EducationTech.DataAccess.Entities.Business.Quiz", "Quiz")
                         .WithMany()
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Learner");
+                    b.HasOne("EducationTech.DataAccess.Entities.Master.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Quiz");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("EducationTech.DataAccess.Entities.Business.Topic", b =>

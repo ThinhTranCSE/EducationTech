@@ -105,7 +105,7 @@ public class RecommendTopicService : IRecomendTopicService
         using var transaction = _unitOfWork.BeginTransaction();
         try
         {
-            recommendTopic = _mapper.Map(requestDto, recommendTopic);
+            _mapper.Map(requestDto, recommendTopic);
             _unitOfWork.SaveChanges();
             transaction.Commit();
 

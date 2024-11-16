@@ -12,12 +12,9 @@ public class LearnerLog : Entity
     public int Id { get; set; }
     public int LearnerId { get; set; }
     public int LearningObjectId { get; set; }
-    public int Rating { get; set; }
     public int Score { get; set; }
     public int Attempt { get; set; }
     public int TimeTaken { get; set; }
-    public DateTime VisitedAt { get; set; }
-    public int VisitedTime { get; set; }
 
     public virtual Learner Learner { get; set; }
     public virtual LearningObject LearningObject { get; set; }

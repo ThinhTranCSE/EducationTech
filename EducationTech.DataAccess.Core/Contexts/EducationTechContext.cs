@@ -31,7 +31,7 @@ namespace EducationTech.DataAccess.Core.Contexts
         public DbSet<QuizResult> QuizResults { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
-        public DbSet<AnswerUser> AnswerUsers { get; set; }
+        public DbSet<AnswerLearner> AnswerLearners { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Video> Videos { get; set; }
         public DbSet<UploadedFile> UploadedFiles { get; set; }
@@ -51,6 +51,11 @@ namespace EducationTech.DataAccess.Core.Contexts
         public DbSet<Speciality> Specialities { get; set; }
         public DbSet<PrerequisiteCourse> PrerequisiteCourses { get; set; }
         public DbSet<CourseSpeciality> CourseSpecialities { get; set; }
+
+        //save learning path
+        public DbSet<CourseLearningPathOrder> CourseLearningPathOrders { get; set; }
+        public DbSet<TopicLearningPathOrder> TopicLearningPathOrders { get; set; }
+        public DbSet<LearningObjectLearningPathOrder> LearningObjectLearningPathOrders { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
