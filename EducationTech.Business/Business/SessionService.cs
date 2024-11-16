@@ -40,6 +40,11 @@ public class SessionService : ISessionService
         if (user == null)
         {
             user = _authService.GetUserFromToken(token);
+
+            if (user?.Learner != null)
+            {
+                user.Learner.User = null;
+            }
             await _cacheService.SetAsync(token, user, TimeSpan.FromMinutes(5));
         }
 
