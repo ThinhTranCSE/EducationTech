@@ -31,6 +31,7 @@ namespace EducationTech.Business.Master
         {
             var course = _mapper.Map<Course>(requestDto);
             course.Specialities = requestDto.SpecialityIds.Select(x => new CourseSpeciality { SpecialityId = x }).ToList();
+            course.Prerequisites = requestDto.PrerequisiteCourseIds.Select(x => new PrerequisiteCourse { PrerequisiteCourseId = x }).ToList();
             course.Comunity = new Comunity();
             if (requestDto.IsPublished)
             {
@@ -55,7 +56,10 @@ namespace EducationTech.Business.Master
         }
         public async Task<CourseDto> UpdateCourse(Course_UpdateRequestDto requestDto, int id)
         {
-            var course = await _unitOfWork.Courses.GetAll().Include(c => c.Specialities).FirstOrDefaultAsync(x => x.Id == id);
+            var course = await _unitOfWork.Courses.GetAll()
+                .Include(c => c.Specialities)
+                .Include(c => c.Prerequisites)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (course == null)
             {
@@ -73,6 +77,14 @@ namespace EducationTech.Business.Master
                 _unitOfWork.CourseSpecialities.RemoveRange(course.Specialities);
                 // Add new specialities
                 course.Specialities = requestDto.SpecialityIds.Select(x => new CourseSpeciality { SpecialityId = x }).ToList();
+            }
+
+            if (requestDto.PrerequisiteCourseIds != null)
+            {
+                // Remove all existing prerequisites
+                _unitOfWork.PrerequisiteCourses.RemoveRange(course.Prerequisites);
+                // Add new prerequisites
+                course.Prerequisites = requestDto.PrerequisiteCourseIds.Select(x => new PrerequisiteCourse { PrerequisiteCourseId = x }).ToList();
             }
 
             course = _mapper.Map(requestDto, course);
@@ -165,7 +177,6 @@ namespace EducationTech.Business.Master
             var courses = _unitOfWork.Courses.GetAll();
             return await courses.CountAsync();
         }
-
     }
 }
 

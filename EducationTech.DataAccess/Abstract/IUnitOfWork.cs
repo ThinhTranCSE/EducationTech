@@ -52,6 +52,7 @@ public interface IUnitOfWork : IDisposable
     ISpecialityRepository Specialities { get; }
     ICourseGroupRepository CourseGroups { get; }
     ICourseSpecialityRepository CourseSpecialities { get; }
+    IPrerequisiteCourseRepository PrerequisiteCourses { get; }
 
     ICourseLearningPathOrderRepository CourseLearningPathOrders { get; }
     ITopicLearningPathOrderRepository TopicLearningPathOrders { get; }

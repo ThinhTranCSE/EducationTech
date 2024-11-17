@@ -53,6 +53,7 @@ public class UnitOfWork : IUnitOfWork
     public IBranchRepository Branches { get; private set; }
     public ISpecialityRepository Specialities { get; private set; }
     public ICourseGroupRepository CourseGroups { get; private set; }
+    public IPrerequisiteCourseRepository PrerequisiteCourses { get; private set; }
 
     public ICourseSpecialityRepository CourseSpecialities { get; private set; }
 
@@ -90,6 +91,7 @@ public class UnitOfWork : IUnitOfWork
         //ITopicConjunctionRepository topicConjunctionRepository,
         ISpecialityRepository specialityRepository,
         ICourseGroupRepository courseGroups,
+        IPrerequisiteCourseRepository prerequisiteCourseRepository,
         IBranchRepository branchRepository,
         ICourseSpecialityRepository courseSpecialityRepository,
         ICourseLearningPathOrderRepository courseLearningPathOrderRepository,
@@ -125,6 +127,7 @@ public class UnitOfWork : IUnitOfWork
         //TopicConjunctions = topicConjunctionRepository;
         Specialities = specialityRepository;
         CourseGroups = courseGroups;
+        PrerequisiteCourses = prerequisiteCourseRepository;
         Branches = branchRepository;
         CourseSpecialities = courseSpecialityRepository;
         CourseLearningPathOrders = courseLearningPathOrderRepository;

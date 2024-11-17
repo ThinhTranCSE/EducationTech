@@ -14,5 +14,6 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
         public int RecommendedSemester { get; set; }
         public int? CourseGroupId { get; set; }
         public ICollection<int> SpecialityIds { get; set; } = new List<int>();
+        public ICollection<int> PrerequisiteCourseIds { get; set; } = new List<int>();
     }
 }

@@ -86,7 +86,6 @@ public class LearningObjectService : ILearningObjectService
             throw;
         }
     }
-
     public async Task<bool> DeleteLearningObject(int id)
     {
         var learningObject = _unitOfWork.LearningObjects.GetAll()
@@ -133,7 +132,6 @@ public class LearningObjectService : ILearningObjectService
             throw;
         }
     }
-
     public async Task<LearningObjectDto> GetLearningObjectById(int id)
     {
         var learningObject = _unitOfWork.LearningObjects.GetAll()

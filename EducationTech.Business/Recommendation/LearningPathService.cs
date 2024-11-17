@@ -192,6 +192,7 @@ public class LearningPathService : ILearningPathService
 
 
         var query = _unitOfWork.Courses.GetAll()
+            .Include(c => c.Prerequisites)
             .Include(c => c.CourseLearningPathOrders.Where(o => o.LearnerId == learnerId))
             .Include(c => c.Topics)
                 .ThenInclude(t => t.TopicLearningPathOrders.Where(o => o.LearnerId == learnerId))

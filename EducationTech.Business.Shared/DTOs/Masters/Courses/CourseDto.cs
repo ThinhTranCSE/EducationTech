@@ -26,6 +26,7 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
         public UserDto Owner { get; set; }
         public ICollection<RecommendTopicDto> Topics { get; set; } = new List<RecommendTopicDto>();
         public ICollection<CourseSpecialityDto> Specialities { get; set; } = new List<CourseSpecialityDto>();
+        public ICollection<PrerequisiteCourseDto> Prerequisites { get; set; } = new List<PrerequisiteCourseDto>();
         public override void Configure(IMapperConfigurationExpression cfg)
         {
             string hostName = GlobalReference.Instance.HostName;

@@ -12,4 +12,5 @@ public class Course_MinimalDto : AbstractDto<Course, Course_MinimalDto>
     public int Credits { get; set; }
     public virtual ICollection<CourseLearningPathOrderDto> CourseLearningPathOrders { get; set; } = new List<CourseLearningPathOrderDto>();
     public virtual ICollection<RecommendTopicDto> Topics { get; set; } = new List<RecommendTopicDto>();
+    public virtual ICollection<PrerequisiteCourseDto> Prerequisites { get; set; } = new List<PrerequisiteCourseDto>();
 }
