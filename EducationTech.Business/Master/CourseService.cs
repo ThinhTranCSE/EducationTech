@@ -30,18 +30,19 @@ namespace EducationTech.Business.Master
         public async Task<CourseDto> CreateCourse(Course_CreateRequestDto requestDto)
         {
             var course = _mapper.Map<Course>(requestDto);
-            course.Specialities = requestDto.SpecialityIds.Select(x => new CourseSpeciality { SpecialityId = x }).ToList();
-            course.Prerequisites = requestDto.PrerequisiteCourseIds.Select(x => new PrerequisiteCourse { PrerequisiteCourseId = x }).ToList();
-            course.Comunity = new Comunity();
-            if (requestDto.IsPublished)
-            {
-                course.PublishedAt = DateTime.Now;
-            }
-            course.OwnerId = _sessionService.CurrentUser.Id;
 
             using var transaction = _unitOfWork.BeginTransaction();
             try
             {
+                course.Specialities = requestDto.SpecialityIds.Select(x => new CourseSpeciality { SpecialityId = x }).ToList();
+                course.Prerequisites = requestDto.PrerequisiteCourseIds.Select(x => new PrerequisiteCourse { PrerequisiteCourseId = x }).ToList();
+                course.Comunity = new Comunity();
+                if (requestDto.IsPublished)
+                {
+                    course.PublishedAt = DateTime.Now;
+                }
+                course.OwnerId = _sessionService.CurrentUser.Id;
+
                 _unitOfWork.Courses.Add(course);
                 _unitOfWork.SaveChanges();
                 transaction.Commit();
@@ -65,33 +66,33 @@ namespace EducationTech.Business.Master
             {
                 throw new Exception("Course not found");
             }
-
-            if (requestDto.IsPublished != null && requestDto.IsPublished == true)
-            {
-                course.PublishedAt = DateTime.Now;
-            }
-
-            if (requestDto.SpecialityIds != null)
-            {
-                // Remove all existing specialities
-                _unitOfWork.CourseSpecialities.RemoveRange(course.Specialities);
-                // Add new specialities
-                course.Specialities = requestDto.SpecialityIds.Select(x => new CourseSpeciality { SpecialityId = x }).ToList();
-            }
-
-            if (requestDto.PrerequisiteCourseIds != null)
-            {
-                // Remove all existing prerequisites
-                _unitOfWork.PrerequisiteCourses.RemoveRange(course.Prerequisites);
-                // Add new prerequisites
-                course.Prerequisites = requestDto.PrerequisiteCourseIds.Select(x => new PrerequisiteCourse { PrerequisiteCourseId = x }).ToList();
-            }
-
-            course = _mapper.Map(requestDto, course);
-
             using var transaction = _unitOfWork.BeginTransaction();
             try
             {
+
+                if (requestDto.IsPublished != null && requestDto.IsPublished == true)
+                {
+                    course.PublishedAt = DateTime.Now;
+                }
+
+                if (requestDto.SpecialityIds != null)
+                {
+                    // Remove all existing specialities
+                    _unitOfWork.CourseSpecialities.RemoveRange(course.Specialities);
+                    // Add new specialities
+                    course.Specialities = requestDto.SpecialityIds.Select(x => new CourseSpeciality { SpecialityId = x }).ToList();
+                }
+
+                if (requestDto.PrerequisiteCourseIds != null)
+                {
+                    // Remove all existing prerequisites
+                    _unitOfWork.PrerequisiteCourses.RemoveRange(course.Prerequisites);
+                    // Add new prerequisites
+                    course.Prerequisites = requestDto.PrerequisiteCourseIds.Select(x => new PrerequisiteCourse { PrerequisiteCourseId = x }).ToList();
+                }
+
+                course = _mapper.Map(requestDto, course);
+
                 _unitOfWork.SaveChanges();
                 transaction.Commit();
 
