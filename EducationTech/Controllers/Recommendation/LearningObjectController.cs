@@ -1,4 +1,5 @@
 ﻿using EducationTech.Business.Recommendation.Interfaces;
+using EducationTech.Business.Shared.DTOs.Recommendation.LearnerLogs;
 using EducationTech.Business.Shared.DTOs.Recommendation.LearningObjects;
 using EducationTech.Controllers.Abstract;
 using Microsoft.AspNetCore.Mvc;
@@ -44,5 +45,13 @@ public class LearningObjectController : BaseController
         var result = await _learningObjectService.DeleteLearningObject(id);
 
         return result;
+    }
+
+    [HttpPost("Log")]
+    public async Task<LearnerLogDto> CreateLog([FromBody] LearnerLog_CreateRequest request)
+    {
+        var log = await _learningObjectService.CreateLog(request);
+
+        return log;
     }
 }
