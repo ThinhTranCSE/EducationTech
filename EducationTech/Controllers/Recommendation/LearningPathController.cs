@@ -36,8 +36,20 @@ public class LearningPathController : BaseController
         var specialityId = _sessionService.CurrentUser?.Learner?.SpecialityId;
 
         var learningPath = await _learningPathService.RecomendLearningPathSemester(learnerId.Value, specialityId.Value);
-
         return learningPath;
     }
+
+    [HttpGet("Load")]
+    public async Task<LearningPathDto?> LoadLearningPath()
+    {
+        return await _learningPathService.LoadLearningPath();
+    }
+
+    [HttpPost("Save")]
+    public async Task<bool> SaveLearningPath([FromBody] LearningPath_SaveRequest request)
+    {
+        return await _learningPathService.SaveLearningPath(request);
+    }
+
 
 }

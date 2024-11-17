@@ -33,6 +33,7 @@ public class Course : Entity
     public virtual CourseGroup? CourseGroup { get; set; }
     public virtual ICollection<CourseSpeciality> Specialities { get; set; } = new List<CourseSpeciality>();
 
+    public virtual ICollection<CourseLearningPathOrder> CourseLearningPathOrders { get; set; } = new List<CourseLearningPathOrder>();
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<Course>(modelBuilder);

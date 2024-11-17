@@ -4,5 +4,5 @@ namespace EducationTech.Business.Shared.DTOs.Recommendation.LearningPaths;
 
 public class LearningPath_SaveRequest
 {
-    public List<LearningPath_SaveRequest_Semester> LearningPath = new();
+    public List<LearningPath_SaveRequest_Semester> LearningPath { get; set; } = new List<LearningPath_SaveRequest_Semester>();
 }

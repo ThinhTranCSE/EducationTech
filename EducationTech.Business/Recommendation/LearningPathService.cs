@@ -181,6 +181,63 @@ public class LearningPathService : ILearningPathService
         }
     }
 
+    public async Task<LearningPathDto?> LoadLearningPath()
+    {
+        var learnerId = _sessionService.CurrentUser?.Learner?.Id;
+
+        if (learnerId == null)
+        {
+            throw new Exception("You are not Learner");
+        }
+
+
+        var query = _unitOfWork.Courses.GetAll()
+            .Include(c => c.CourseLearningPathOrders.Where(o => o.LearnerId == learnerId))
+            .Include(c => c.Topics)
+                .ThenInclude(t => t.TopicLearningPathOrders.Where(o => o.LearnerId == learnerId))
+            .Include(c => c.Topics)
+                .ThenInclude(t => t.LearningObjects)
+                .ThenInclude(lo => lo.LearningObjectLearningPathOrders.Where(o => o.LearnerId == learnerId))
+            .Where(c => c.CourseLearningPathOrders.Any(o => o.LearnerId == learnerId));
+
+        var courses = await query.ToListAsync();
+
+        if (courses.Count == 0)
+        {
+            return null;
+        }
+
+        var semesters = courses.GroupBy(c => c.CourseLearningPathOrders.First().Semester)
+            .Select(g => new SemesterCourseDto
+            {
+                Semester = g.Key,
+                Courses = _mapper.ProjectTo<Course_MinimalDto>(g.AsQueryable()).ToList(),
+                TotalCredits = g.Sum(c => c.Credits)
+            })
+            .OrderBy(sc => sc.Semester)
+            .ToList();
+
+        foreach (var semester in semesters)
+        {
+            foreach (var course in semester.Courses)
+            {
+                course.Topics = course.Topics.OrderBy(t => t.TopicLearningPathOrders.First().Order).ToList();
+                foreach (var topic in course.Topics)
+                {
+                    topic.LearningObjects = topic.LearningObjects.OrderBy(lo => lo.LearningObjectLearningPathOrders.First().Order).ToList();
+                }
+            }
+        }
+
+        var learningPathDto = new LearningPathDto
+        {
+            TotalCredits = semesters.Sum(c => c.TotalCredits),
+            LearningPath = semesters
+        };
+
+        return learningPathDto;
+    }
+
     public async Task<LearningPathDto> RecomendLearningPathSemester(int learnerId, int specialityId)
     {
         int totalCreditToGraduate = 128;

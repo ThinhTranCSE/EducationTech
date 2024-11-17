@@ -17,6 +17,7 @@ public class RecommendTopic : Entity
     public virtual Course Course { get; set; }
     public virtual ICollection<LearningObject> LearningObjects { get; set; }
 
+    public virtual ICollection<TopicLearningPathOrder> TopicLearningPathOrders { get; set; } = new List<TopicLearningPathOrder>();
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<RecommendTopic>(modelBuilder);

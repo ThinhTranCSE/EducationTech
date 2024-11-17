@@ -1,6 +1,7 @@
 ﻿using EducationTech.Business.Shared.DTOs.Abstracts;
 using EducationTech.Business.Shared.DTOs.Masters.Quizzes;
 using EducationTech.Business.Shared.DTOs.Masters.Videos;
+using EducationTech.Business.Shared.DTOs.Recommendation.LearningPaths;
 using EducationTech.DataAccess.Entities.Recommendation;
 using EducationTech.DataAccess.Shared.Enums.LearningObject;
 
@@ -18,6 +19,7 @@ public class LearningObjectDto : AbstractDto<LearningObject, LearningObjectDto>
     public int MaxLearningTime { get; set; }
     public virtual VideoDto? Video { get; set; }
     public virtual QuizDto? Quiz { get; set; }
+    public virtual ICollection<LearningObjectLearningPathOrderDto> LearningObjectLearningPathOrders { get; set; } = new List<LearningObjectLearningPathOrderDto>();
     public LearnerLogInformations LearnerLogInformations { get; set; }
 }
 
