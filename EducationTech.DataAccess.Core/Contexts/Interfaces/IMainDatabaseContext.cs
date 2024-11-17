@@ -16,12 +16,12 @@ public interface IMainDatabaseContext : IDbContext
     public DbSet<Course> Courses { get; }
     public DbSet<Comment> Comments { get; }
     public DbSet<Comunity> Comunities { get; }
+    public DbSet<Discussion> Discussions { get; }
     public DbSet<Quiz> Quizzes { get; }
     public DbSet<QuizResult> QuizResults { get; }
     public DbSet<Question> Questions { get; }
     public DbSet<Answer> Answers { get; }
     public DbSet<AnswerLearner> AnswerLearners { get; }
-    public DbSet<Topic> Topics { get; }
     public DbSet<Video> Videos { get; }
     public DbSet<UploadedFile> UploadedFiles { get; }
     public DbSet<Image> Images { get; }

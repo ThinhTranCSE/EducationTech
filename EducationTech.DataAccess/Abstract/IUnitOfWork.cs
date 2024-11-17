@@ -20,12 +20,12 @@ public interface IUnitOfWork : IDisposable
     IAnswerLearnerRepository AnswerLearners { get; }
     ICommentRepository Comments { get; }
     IComunityRepository Comunities { get; }
+    IDiscussionRepository Discussions { get; }
     IImageRepository Images { get; }
     IQuestionRepository Questions { get; }
     IQuizRepository Quizzes { get; }
 
     IQuizResultRepository QuizResults { get; }
-    ITopicRepository Topics { get; }
     IUploadedFileRepository UploadedFiles { get; }
     IUserKeyRepository UserKeys { get; }
     IVideoRepository Videos { get; }

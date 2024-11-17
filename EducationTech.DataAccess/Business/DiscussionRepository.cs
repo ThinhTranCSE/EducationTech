@@ -5,10 +5,9 @@ using EducationTech.DataAccess.Entities.Business;
 
 namespace EducationTech.DataAccess.Business;
 
-public class TopicRepository : Repository<Topic>, ITopicRepository
+public class DiscussionRepository : Repository<Discussion>, IDiscussionRepository
 {
-    public TopicRepository(IMainDatabaseContext context) : base(context)
+    public DiscussionRepository(IMainDatabaseContext context) : base(context)
     {
     }
-
 }

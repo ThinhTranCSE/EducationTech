@@ -19,12 +19,13 @@ public class UnitOfWork : IUnitOfWork
     public IAnswerLearnerRepository AnswerLearners { get; private set; }
     public ICommentRepository Comments { get; private set; }
     public IComunityRepository Comunities { get; private set; }
+
+    public IDiscussionRepository Discussions { get; private set; }
     public IImageRepository Images { get; private set; }
     public IQuestionRepository Questions { get; private set; }
     public IQuizRepository Quizzes { get; private set; }
 
     public IQuizResultRepository QuizResults { get; private set; }
-    public ITopicRepository Topics { get; private set; }
     public IUploadedFileRepository UploadedFiles { get; private set; }
     public IUserKeyRepository UserKeys { get; private set; }
     public IVideoRepository Videos { get; private set; }
@@ -70,11 +71,11 @@ public class UnitOfWork : IUnitOfWork
         IAnswerLearnerRepository answerUserRepository,
         ICommentRepository commentRepository,
         IComunityRepository comunityRepository,
+        IDiscussionRepository discussionRepository,
         IImageRepository imageRepository,
         IQuestionRepository questionRepository,
         IQuizRepository quizRepository,
         IQuizResultRepository quizResultRepository,
-        ITopicRepository topicRepository,
         IUploadedFileRepository uploadedFileRepository,
         IUserKeyRepository userKeyRepository,
         IVideoRepository videoRepository,
@@ -106,11 +107,11 @@ public class UnitOfWork : IUnitOfWork
         AnswerLearners = answerUserRepository;
         Comments = commentRepository;
         Comunities = comunityRepository;
+        Discussions = discussionRepository;
         Images = imageRepository;
         Questions = questionRepository;
         Quizzes = quizRepository;
         QuizResults = quizResultRepository;
-        Topics = topicRepository;
         UploadedFiles = uploadedFileRepository;
         UserKeys = userKeyRepository;
         Videos = videoRepository;

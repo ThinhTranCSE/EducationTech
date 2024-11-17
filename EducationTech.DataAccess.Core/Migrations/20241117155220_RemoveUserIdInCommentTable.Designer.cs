@@ -3,6 +3,7 @@ using System;
 using EducationTech.DataAccess.Core.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EducationTech.Migrations
 {
     [DbContext(typeof(EducationTechContext))]
-    partial class MainDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241117155220_RemoveUserIdInCommentTable")]
+    partial class RemoveUserIdInCommentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,9 +89,6 @@ namespace EducationTech.Migrations
                     b.Property<int>("Left")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("char(36)");
-
                     b.Property<int?>("RepliedCommentId")
                         .HasColumnType("int");
 
@@ -99,8 +98,6 @@ namespace EducationTech.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DiscussionId");
-
-                    b.HasIndex("OwnerId");
 
                     b.HasIndex("RepliedCommentId");
 
@@ -829,19 +826,11 @@ namespace EducationTech.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EducationTech.DataAccess.Entities.Master.User", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("EducationTech.DataAccess.Entities.Business.Comment", "RepliedComment")
                         .WithMany()
                         .HasForeignKey("RepliedCommentId");
 
                     b.Navigation("Discussion");
-
-                    b.Navigation("Owner");
 
                     b.Navigation("RepliedComment");
                 });

@@ -27,12 +27,12 @@ namespace EducationTech.DataAccess.Core.Contexts
         public DbSet<Course> Courses { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Comunity> Comunities { get; set; }
+        public DbSet<Discussion> Discussions { get; set; }
         public DbSet<Quiz> Quizzes { get; set; }
         public DbSet<QuizResult> QuizResults { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<AnswerLearner> AnswerLearners { get; set; }
-        public DbSet<Topic> Topics { get; set; }
         public DbSet<Video> Videos { get; set; }
         public DbSet<UploadedFile> UploadedFiles { get; set; }
         public DbSet<Image> Images { get; set; }

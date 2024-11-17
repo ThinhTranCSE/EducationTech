@@ -1,0 +1,52 @@
+﻿using AutoMapper;
+using EducationTech.Business.Business.Interfaces;
+using EducationTech.Business.Master.Interfaces;
+using EducationTech.Business.Shared.DTOs.Masters.Discussions;
+using EducationTech.DataAccess.Abstract;
+using EducationTech.DataAccess.Entities.Business;
+
+namespace EducationTech.Business.Master;
+
+public class DiscussionService : IDiscussionService
+{
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
+    private readonly ISessionService _sessionService;
+
+    public DiscussionService(IUnitOfWork unitOfWork, IMapper mapper, ISessionService sessionService)
+    {
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
+        _sessionService = sessionService;
+    }
+
+    public async Task<DiscussionDto> CreateDiscussion(Discussion_CreateRequest request)
+    {
+        var userId = _sessionService.CurrentUser?.Id;
+
+        if (userId == null)
+        {
+            throw new Exception("You have not loged in");
+        }
+
+        var discussion = _mapper.Map<Discussion>(request);
+        discussion.OwnerId = userId.Value;
+
+        using var transaction = _unitOfWork.BeginTransaction();
+        try
+        {
+            _unitOfWork.Discussions.Add(discussion);
+            _unitOfWork.SaveChanges();
+
+            transaction.Commit();
+
+            return _mapper.Map<DiscussionDto>(discussion);
+
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
+}
