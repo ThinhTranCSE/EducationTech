@@ -113,7 +113,7 @@ class QuizService : IQuizService
         var currentQuizResult = await _unitOfWork.QuizResults.GetAll()
             .Where(x => x.QuizId == id && x.LearnerId == learnerId)
             .Where(x => x.EndTime == null)
-            .Where(x => x.StartTime.AddSeconds(quiz.TimeLimit) < DateTime.Now)
+            .Where(x => x.StartTime.AddSeconds(quiz.TimeLimit) > DateTime.Now)
             .FirstOrDefaultAsync();
 
         if (currentQuizResult != null)
@@ -247,5 +247,21 @@ class QuizService : IQuizService
             throw;
         }
 
+    }
+
+    public async Task<List<QuizResultDto>> GetQuizResults(int quizId)
+    {
+        var learnerId = _sessionService.CurrentUser?.Learner?.Id;
+
+        if (learnerId == null)
+        {
+            throw new Exception("You are not loged in");
+        }
+
+        var quizResult = _unitOfWork.QuizResults.GetAll()
+            .Where(x => x.QuizId == quizId && x.LearnerId == learnerId)
+            .ToList();
+
+        return _mapper.ProjectTo<QuizResultDto>(quizResult.AsQueryable()).ToList();
     }
 }

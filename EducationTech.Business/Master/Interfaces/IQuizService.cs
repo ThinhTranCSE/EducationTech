@@ -12,4 +12,5 @@ public interface IQuizService : IService
 
     Task<QuizResultDto> StartQuiz(int id);
     Task<QuizResultDto> SubmitQuiz(Quiz_SubmitQuizRequest request);
+    Task<List<QuizResultDto>> GetQuizResults(int quizId);
 }

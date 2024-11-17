@@ -54,4 +54,11 @@ public class QuizController : BaseController
         var quizResult = await _quizService.SubmitQuiz(request);
         return quizResult;
     }
+
+    [HttpGet("{quizId}/results")]
+    public async Task<List<QuizResultDto>> GetQuizResults(int quizId)
+    {
+        var quizResults = await _quizService.GetQuizResults(quizId);
+        return quizResults;
+    }
 }
