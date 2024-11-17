@@ -108,6 +108,7 @@ namespace EducationTech.Business.Master
             var query = _unitOfWork.Courses.GetAll()
                 .Include(c => c.Owner)
                 .Include(c => c.Specialities)
+                .Include(c => c.Prerequisites)
                     .ThenInclude(cs => cs.Speciality)
                 .Include(c => c.CourseGroup)
                 .Include(c => c.Topics)
