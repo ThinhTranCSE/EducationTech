@@ -365,6 +365,7 @@ namespace EducationTech.Business.Business
             return _unitOfWork.Users.GetAll()
                 .Where(u => u.Id == userId)
                 .Include(u => u.Learner)
+                .AsNoTracking()
                 .FirstOrDefault();
         }
     }
