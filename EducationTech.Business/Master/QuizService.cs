@@ -169,7 +169,7 @@ class QuizService : IQuizService
             throw new Exception("Quiz already submitted");
         }
 
-        if (quizResult.StartTime.AddSeconds(quizResult.Quiz.TimeLimit) > DateTime.Now)
+        if (quizResult.StartTime.AddSeconds(quizResult.Quiz.TimeLimit) < DateTime.Now)
         {
             throw new Exception("Quiz time limit exceeded");
         }
