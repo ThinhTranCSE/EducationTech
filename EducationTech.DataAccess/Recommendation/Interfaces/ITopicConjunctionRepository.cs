@@ -1,8 +1,8 @@
-﻿using EducationTech.DataAccess.Abstract;
-using EducationTech.DataAccess.Entities.Recommendation;
+﻿//using EducationTech.DataAccess.Abstract;
+//using EducationTech.DataAccess.Entities.Recommendation;
 
-namespace EducationTech.DataAccess.Recommendation.Interfaces;
+//namespace EducationTech.DataAccess.Recommendation.Interfaces;
 
-public interface ITopicConjunctionRepository : IRepository<TopicConjunction>
-{
-}
+//public interface ITopicConjunctionRepository : IRepository<TopicConjunction>
+//{
+//}

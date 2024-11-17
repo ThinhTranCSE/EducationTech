@@ -1,14 +1,14 @@
-﻿using EducationTech.DataAccess.Abstract;
-using EducationTech.DataAccess.Core.Contexts.Interfaces;
-using EducationTech.DataAccess.Entities.Recommendation;
-using EducationTech.DataAccess.Recommendation.Interfaces;
+﻿//using EducationTech.DataAccess.Abstract;
+//using EducationTech.DataAccess.Core.Contexts.Interfaces;
+//using EducationTech.DataAccess.Entities.Recommendation;
+//using EducationTech.DataAccess.Recommendation.Interfaces;
 
-namespace EducationTech.DataAccess.Recommendation;
+//namespace EducationTech.DataAccess.Recommendation;
 
-public class TopicConjunctionRepository : Repository<TopicConjunction>, ITopicConjunctionRepository
-{
-    public TopicConjunctionRepository(IMainDatabaseContext context) : base(context)
-    {
-    }
+//public class TopicConjunctionRepository : Repository<TopicConjunction>, ITopicConjunctionRepository
+//{
+//    public TopicConjunctionRepository(IMainDatabaseContext context) : base(context)
+//    {
+//    }
 
-}
+//}

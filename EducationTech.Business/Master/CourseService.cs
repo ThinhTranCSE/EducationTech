@@ -4,6 +4,7 @@ using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Courses;
 using EducationTech.DataAccess.Abstract;
+using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Entities.Recommendation;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ namespace EducationTech.Business.Master
         {
             var course = _mapper.Map<Course>(requestDto);
             course.Specialities = requestDto.SpecialityIds.Select(x => new CourseSpeciality { SpecialityId = x }).ToList();
+            course.Comunity = new Comunity();
             if (requestDto.IsPublished)
             {
                 course.PublishedAt = DateTime.Now;

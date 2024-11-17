@@ -43,7 +43,7 @@ namespace EducationTech.DataAccess.Core.Contexts
         public DbSet<LearnerLog> LearnerLogs { get; set; }
         public DbSet<LearningObject> LearningObjects { get; set; }
         public DbSet<RecommendTopic> RecommendTopics { get; set; }
-        public DbSet<TopicConjunction> TopicConjunctions { get; set; }
+        //public DbSet<TopicConjunction> TopicConjunctions { get; set; }
 
 
         public DbSet<CourseGroup> CourseGroups { get; set; }

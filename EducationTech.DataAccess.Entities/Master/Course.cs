@@ -1,4 +1,5 @@
 ﻿using EducationTech.DataAccess.Entities.Abstract;
+using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Recommendation;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -32,7 +33,7 @@ public class Course : Entity
     public virtual ICollection<PrerequisiteCourse> Prerequisites { get; set; } = new List<PrerequisiteCourse>();
     public virtual CourseGroup? CourseGroup { get; set; }
     public virtual ICollection<CourseSpeciality> Specialities { get; set; } = new List<CourseSpeciality>();
-
+    public virtual Comunity Comunity { get; set; }
     public virtual ICollection<CourseLearningPathOrder> CourseLearningPathOrders { get; set; } = new List<CourseLearningPathOrder>();
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {

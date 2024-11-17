@@ -48,7 +48,7 @@ public class UnitOfWork : IUnitOfWork
     public ILearnerRepository Learners { get; private set; }
     public ILearningObjectRepository LearningObjects { get; private set; }
     public IRecommendTopicRepository RecommendTopics { get; private set; }
-    public ITopicConjunctionRepository TopicConjunctions { get; private set; }
+    //public ITopicConjunctionRepository TopicConjunctions { get; private set; }
 
     public IBranchRepository Branches { get; private set; }
     public ISpecialityRepository Specialities { get; private set; }
@@ -87,7 +87,7 @@ public class UnitOfWork : IUnitOfWork
         ILearnerRepository learnerRepository,
         ILearningObjectRepository learningObjectRepository,
         IRecommendTopicRepository recommendTopicRepository,
-        ITopicConjunctionRepository topicConjunctionRepository,
+        //ITopicConjunctionRepository topicConjunctionRepository,
         ISpecialityRepository specialityRepository,
         ICourseGroupRepository courseGroups,
         IBranchRepository branchRepository,
@@ -122,7 +122,7 @@ public class UnitOfWork : IUnitOfWork
         Learners = learnerRepository;
         LearningObjects = learningObjectRepository;
         RecommendTopics = recommendTopicRepository;
-        TopicConjunctions = topicConjunctionRepository;
+        //TopicConjunctions = topicConjunctionRepository;
         Specialities = specialityRepository;
         CourseGroups = courseGroups;
         Branches = branchRepository;

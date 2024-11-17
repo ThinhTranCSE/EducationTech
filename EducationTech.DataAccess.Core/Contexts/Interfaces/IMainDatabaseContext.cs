@@ -32,7 +32,7 @@ public interface IMainDatabaseContext : IDbContext
     public DbSet<LearnerLog> LearnerLogs { get; }
     public DbSet<LearningObject> LearningObjects { get; }
     public DbSet<RecommendTopic> RecommendTopics { get; }
-    public DbSet<TopicConjunction> TopicConjunctions { get; }
+    //public DbSet<TopicConjunction> TopicConjunctions { get; }
 
 
     public DbSet<CourseGroup> CourseGroups { get; }
