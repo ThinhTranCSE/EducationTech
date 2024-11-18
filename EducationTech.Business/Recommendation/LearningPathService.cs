@@ -376,6 +376,7 @@ public class LearningPathService : ILearningPathService
                 }
             }
 
+            var semesterCourseIds = new HashSet<int>();
             foreach (var course in sortedCoursesList)
             {
                 if (averageCreditsPerSemester <= currentSemsesterCredits && currentSemsesterCredits <= maxCreditsPerSemester)
@@ -395,7 +396,7 @@ public class LearningPathService : ILearningPathService
                 }
 
                 //chọn course hiện tại
-                learnedCourseIds.Add(course.Id);
+                semesterCourseIds.Add(course.Id);
                 semesterCourses.Add(course);
                 currentSemsesterCredits += course.Credits;
 
@@ -410,6 +411,11 @@ public class LearningPathService : ILearningPathService
             foreach (var course in semesterCourses)
             {
                 sortedCoursesList.Remove(course);
+            }
+
+            foreach (var courseId in semesterCourseIds)
+            {
+                learnedCourseIds.Add(courseId);
             }
         }
 
