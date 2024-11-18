@@ -69,6 +69,8 @@ public class CommentService : ICommentService
 
             transaction.Commit();
 
+            _unitOfWork.Entry(comment).Reference(c => c.Owner).Load();
+
             return _mapper.Map<CommentDto>(comment);
         }
         catch
