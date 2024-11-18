@@ -117,6 +117,18 @@ namespace EducationTech.Business.Master
                     .ThenInclude(t => t.LearningObjects)
                 .Where(x => x.Id == id);
 
+            var learnerId = _sessionService.CurrentUser?.Learner?.Id;
+
+            if (learnerId != null)
+            {
+                query = query
+                    .Include(c => c.Topics)
+                        .ThenInclude(t => t.TopicLearningPathOrders.Where(o => o.LearnerId == learnerId))
+                    .Include(c => c.Topics)
+                        .ThenInclude(t => t.LearningObjects)
+                            .ThenInclude(lo => lo.LearningObjectLearningPathOrders.Where(o => o.LearnerId == learnerId));
+
+            }
             if (request.IsGetFullDetail)
             {
                 query = query
@@ -129,18 +141,6 @@ namespace EducationTech.Business.Master
                                     .ThenInclude(q => q.Questions)
                                         .ThenInclude(q => q.Answers);
 
-                var learnerId = _sessionService.CurrentUser?.Learner?.Id;
-
-                if (learnerId != null)
-                {
-                    query = query
-                        .Include(c => c.Topics)
-                            .ThenInclude(t => t.TopicLearningPathOrders.Where(o => o.LearnerId == learnerId))
-                        .Include(c => c.Topics)
-                            .ThenInclude(t => t.LearningObjects)
-                                .ThenInclude(lo => lo.LearningObjectLearningPathOrders.Where(o => o.LearnerId == learnerId));
-
-                }
 
             }
 
