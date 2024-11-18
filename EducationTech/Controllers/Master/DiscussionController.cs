@@ -22,4 +22,11 @@ public class DiscussionController : BaseController
         return result;
     }
 
+    [HttpGet("{id}")]
+    public async Task<DiscussionDto> GetDiscussionById(int id)
+    {
+        var result = await _discussionService.GetDiscussionById(id);
+
+        return result;
+    }
 }

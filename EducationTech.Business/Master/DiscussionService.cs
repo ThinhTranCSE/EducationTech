@@ -4,6 +4,7 @@ using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Discussions;
 using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Business;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.Business.Master;
 
@@ -48,5 +49,21 @@ public class DiscussionService : IDiscussionService
             transaction.Rollback();
             throw;
         }
+    }
+
+    public async Task<DiscussionDto> GetDiscussionById(int id)
+    {
+        var discussion = await _unitOfWork.Discussions.GetAll()
+            .Include(d => d.Owner)
+            .Include(d => d.Comments)
+                .ThenInclude(c => c.Owner)
+            .FirstOrDefaultAsync(d => d.Id == id);
+
+        if (discussion == null)
+        {
+            throw new Exception("Discussion not found");
+        }
+
+        return _mapper.Map<DiscussionDto>(discussion);
     }
 }

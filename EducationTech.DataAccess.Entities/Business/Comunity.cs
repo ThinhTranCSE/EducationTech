@@ -14,6 +14,8 @@ namespace EducationTech.DataAccess.Entities.Business
         public int CourseId { get; set; }
         public virtual Course Course { get; set; }
 
+        public virtual ICollection<Discussion> Discussions { get; set; } = new List<Discussion>();
+
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ConfigureSideEffects<Comunity>(modelBuilder);

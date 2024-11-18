@@ -1,5 +1,6 @@
 ﻿using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Master.Interfaces;
+using EducationTech.Business.Shared.DTOs.Masters.Comunities;
 using EducationTech.Business.Shared.DTOs.Masters.Courses;
 using EducationTech.Controllers.Abstract;
 using EducationTech.DataAccess.Core.Contexts;
@@ -41,6 +42,13 @@ public class CourseController : BaseController
     {
         var course = await _courseService.UpdateCourse(requestDto, id);
         return course;
+    }
+
+    [HttpGet("{courseId}/Comunity")]
+    public async Task<ComunityDto> GetComunity(int courseId)
+    {
+        var comunity = await _courseService.GetComnunity(courseId);
+        return comunity;
     }
 
 }

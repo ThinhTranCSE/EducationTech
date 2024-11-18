@@ -2,6 +2,7 @@
 using EducationTech.Business.Abstract;
 using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Master.Interfaces;
+using EducationTech.Business.Shared.DTOs.Masters.Comunities;
 using EducationTech.Business.Shared.DTOs.Masters.Courses;
 using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Business;
@@ -193,6 +194,20 @@ namespace EducationTech.Business.Master
         {
             var courses = _unitOfWork.Courses.GetAll();
             return await courses.CountAsync();
+        }
+
+        public async Task<ComunityDto> GetComnunity(int courseId)
+        {
+            var comunity = await _unitOfWork.Comunities.GetAll()
+                .Include(c => c.Discussions)
+                .FirstOrDefaultAsync(x => x.CourseId == courseId);
+
+            if (comunity == null)
+            {
+                throw new Exception("Comunity not found");
+            }
+
+            return _mapper.Map<ComunityDto>(comunity);
         }
     }
 }
