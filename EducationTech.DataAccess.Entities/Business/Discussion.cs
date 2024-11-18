@@ -19,7 +19,7 @@ public class Discussion : Entity
 
     public virtual User Owner { get; set; }
     public virtual Comunity Comunity { get; set; }
-    public virtual ICollection<Comment> Comments { get; set; }
+    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<Discussion>(modelBuilder);

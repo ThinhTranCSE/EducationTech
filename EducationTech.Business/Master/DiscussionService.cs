@@ -44,7 +44,7 @@ public class DiscussionService : IDiscussionService
             return _mapper.Map<DiscussionDto>(discussion);
 
         }
-        catch (Exception ex)
+        catch
         {
             transaction.Rollback();
             throw;

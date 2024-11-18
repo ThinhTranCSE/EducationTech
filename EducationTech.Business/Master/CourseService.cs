@@ -42,7 +42,15 @@ namespace EducationTech.Business.Master
                 {
                     course.PublishedAt = DateTime.Now;
                 }
-                course.OwnerId = _sessionService.CurrentUser.Id;
+
+                var userId = _sessionService.CurrentUser?.Id;
+
+                if (userId == null)
+                {
+                    throw new Exception("You have not loged in");
+                }
+
+                course.OwnerId = userId.Value;
 
                 _unitOfWork.Courses.Add(course);
                 _unitOfWork.SaveChanges();
