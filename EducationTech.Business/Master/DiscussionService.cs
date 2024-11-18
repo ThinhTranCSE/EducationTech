@@ -41,6 +41,8 @@ public class DiscussionService : IDiscussionService
 
             transaction.Commit();
 
+            _unitOfWork.Entry(discussion).Reference(d => d.Owner).Load();
+
             return _mapper.Map<DiscussionDto>(discussion);
 
         }
