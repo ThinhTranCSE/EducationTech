@@ -200,6 +200,7 @@ namespace EducationTech.Business.Master
         {
             var comunity = await _unitOfWork.Comunities.GetAll()
                 .Include(c => c.Discussions)
+                    .ThenInclude(d => d.Owner)
                 .FirstOrDefaultAsync(x => x.CourseId == courseId);
 
             if (comunity == null)

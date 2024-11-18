@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EducationTech.Business.Shared.DTOs.Abstracts;
 using EducationTech.Business.Shared.DTOs.Masters.Comments;
+using EducationTech.Business.Shared.DTOs.Masters.Users;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Shared.NestedSet;
 
@@ -14,6 +15,7 @@ public class DiscussionDto : AbstractDto<Discussion, DiscussionDto>
     public Guid OwnerId { get; set; }
     public int ComunityId { get; set; }
 
+    public UserDto Owner { get; set; }
     public ICollection<NestedSetRecursiveNodeDto<CommentDto>> Comments { get; set; } = new List<NestedSetRecursiveNodeDto<CommentDto>>();
 
     public override void Configure(IMapperConfigurationExpression cfg)

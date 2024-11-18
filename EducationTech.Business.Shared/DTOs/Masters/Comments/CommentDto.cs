@@ -1,4 +1,5 @@
 ﻿using EducationTech.Business.Shared.DTOs.Abstracts;
+using EducationTech.Business.Shared.DTOs.Masters.Users;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Shared.NestedSet;
 
@@ -13,4 +14,6 @@ public class CommentDto : AbstractDto<Comment, CommentDto>, INestedSetNode
     public int Right { get; set; }
     public int? RepliedCommentId { get; set; }
     public int DiscussionId { get; set; }
+
+    public UserDto Owner { get; set; }
 }
