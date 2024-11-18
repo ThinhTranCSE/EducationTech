@@ -30,33 +30,53 @@ public class CommentService : ICommentService
             throw new Exception("You have not loged in");
         }
 
-        var comment = _mapper.Map<Comment>(request);
-
-        comment.OwnerId = userId.Value;
-
-        if (request.RepliedCommentId != null)
+        using var transaction = _unitOfWork.BeginTransaction();
+        try
         {
-            var repliedComment = await _unitOfWork.Comments.GetAll().FirstOrDefaultAsync(x => x.Id == request.RepliedCommentId);
+            var comment = _mapper.Map<Comment>(request);
 
-            if (repliedComment == null)
+            comment.OwnerId = userId.Value;
+
+            if (request.RepliedCommentId != null)
             {
-                throw new Exception("Replied comment not found");
+                var repliedComment = await _unitOfWork.Comments.GetAll().FirstOrDefaultAsync(x => x.Id == request.RepliedCommentId);
+
+                if (repliedComment == null)
+                {
+                    throw new Exception("Replied comment not found");
+                }
+
+                _unitOfWork.Comments.AddNode(repliedComment.Right - 1, comment);
+            }
+            else
+            {
+                var count = await _unitOfWork.Comments.GetAll()
+                    .Where(c => c.DiscussionId == request.DiscussionId)
+                    .CountAsync(c => c.DiscussionId == request.DiscussionId);
+
+                var maxRight = 0;
+                if (count != 0)
+                {
+                    maxRight = await _unitOfWork.Comments.GetAll()
+                    .Where(c => c.DiscussionId == request.DiscussionId)
+                    .MaxAsync(c => c.Right);
+                }
+
+                _unitOfWork.Comments.AddNode(maxRight, comment);
             }
 
-            _unitOfWork.Comments.AddNode(repliedComment.Right - 1, comment);
+            _unitOfWork.SaveChanges();
+
+            transaction.Commit();
+
+            return _mapper.Map<CommentDto>(comment);
         }
-        else
+        catch
         {
-            var maxRight = await _unitOfWork.Comments.GetAll()
-                .Where(c => c.DiscussionId == request.DiscussionId)
-                .MaxAsync(c => c.Right);
-
-            _unitOfWork.Comments.AddNode(maxRight, comment);
+            transaction.Rollback();
+            throw;
         }
 
-        _unitOfWork.SaveChanges();
-
-        return _mapper.Map<CommentDto>(comment);
 
     }
 }

@@ -106,6 +106,7 @@ namespace EducationTech.Business.Master
         }
         public async Task<CourseDto> GetCourseById(Course_GetByIdRequestDto request, int id)
         {
+
             var query = _unitOfWork.Courses.GetAll()
                 .Include(c => c.Owner)
                 .Include(c => c.Prerequisites)
@@ -127,6 +128,20 @@ namespace EducationTech.Business.Master
                                 .ThenInclude(lo => lo.Quiz)
                                     .ThenInclude(q => q.Questions)
                                         .ThenInclude(q => q.Answers);
+
+                var learnerId = _sessionService.CurrentUser?.Learner?.Id;
+
+                if (learnerId != null)
+                {
+                    query = query
+                        .Include(c => c.Topics)
+                            .ThenInclude(t => t.TopicLearningPathOrders.Where(o => o.LearnerId == learnerId))
+                        .Include(c => c.Topics)
+                            .ThenInclude(t => t.LearningObjects)
+                                .ThenInclude(lo => lo.LearningObjectLearningPathOrders.Where(o => o.LearnerId == learnerId));
+
+                }
+
             }
 
             var course = await query.FirstOrDefaultAsync();
