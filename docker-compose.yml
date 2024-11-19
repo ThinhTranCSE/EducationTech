@@ -54,5 +54,5 @@ networks:
 
 volumes:
   mysql_data:
-  neo4j_data:
-  neo4j_logs:
+  # neo4j_data:
+  # neo4j_logs:

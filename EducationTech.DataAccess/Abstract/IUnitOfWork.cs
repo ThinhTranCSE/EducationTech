@@ -4,13 +4,12 @@ using EducationTech.DataAccess.Master.Interfaces;
 using EducationTech.DataAccess.Recommendation.Interfaces;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
-using Neo4jClient;
 
 namespace EducationTech.DataAccess.Abstract;
 
 public interface IUnitOfWork : IDisposable
 {
-    IGraphClient GraphClient { get; }
+    //IGraphClient GraphClient { get; }
     int SaveChanges();
     IDbContextTransaction BeginTransaction();
     EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class, IEntity;
