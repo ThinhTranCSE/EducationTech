@@ -90,8 +90,8 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                     //    }
                     //    _context.SaveChanges();
                     //}
+                    _context.SaveChanges();
                 }
-                _context.SaveChanges();
                 transaction.Commit();
                 //graphTransaction.CommitAsync().Wait();
                 // _context.Database.ExecuteSqlRaw("SET FOREIGN_KEY_CHECKS=1;");
