@@ -2,17 +2,16 @@
 using EducationTech.DataAccess.Core.Contexts;
 using EducationTech.DataAccess.Entities.Recommendation;
 using EducationTech.Storage;
-using Neo4jClient;
 using System.Globalization;
 
 namespace EducationTech.DataAccess.Seeders.Seeds
 {
     public class RecommendTopicSeeder : Seeder
     {
-        private readonly IGraphClient _graphClient;
-        public RecommendTopicSeeder(EducationTechContext context, IGraphClient graphClient) : base(context)
+        //private readonly IGraphClient _graphClient;
+        public RecommendTopicSeeder(EducationTechContext context) : base(context)
         {
-            _graphClient = graphClient;
+            //_graphClient = graphClient;
         }
 
         public override void Seed()
@@ -28,10 +27,15 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                 //_context.Database.ExecuteSqlRaw("SET FOREIGN_KEY_CHECKS=0;");
                 foreach (var record in records)
                 {
+                    var courseId = int.Parse(record.CourseId);
+                    var courseTopics = _context.RecommendTopics.Where(t => t.CourseId == courseId).ToList();
+                    var order = courseTopics.Count + 1;
+
                     var createdTopic = new RecommendTopic
                     {
-                        CourseId = int.Parse(record.CourseId),
-                        Name = record.Name
+                        CourseId = courseId,
+                        Name = record.Name,
+                        Order = order
                     };
 
                     _context.RecommendTopics.Add(createdTopic);

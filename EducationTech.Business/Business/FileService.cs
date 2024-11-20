@@ -305,6 +305,7 @@ public class FileService : IFileService
         _unitOfWork.UploadedFiles.Add(fileEntity);
         _unitOfWork.SaveChanges();
 
+        Console.WriteLine(_globalUsings.PathCollection[extension]);
         string categoryDirectory = _globalUsings.PathCollection[extension];
         string fileName = $"{fileEntity.Id}.{extension}";
         string filePath = Path.Combine(categoryDirectory, fileName);

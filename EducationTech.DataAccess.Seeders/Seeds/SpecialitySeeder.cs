@@ -24,7 +24,7 @@ public class SpecialitySeeder : Seeder
 
             foreach (var record in records)
             {
-                if (_context.Branches.Any(x => x.Name == record.Name))
+                if (_context.Specialities.Any(x => x.Name == record.Name))
                 {
                     continue;
                 }

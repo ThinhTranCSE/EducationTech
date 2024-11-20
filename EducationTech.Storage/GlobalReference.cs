@@ -1,4 +1,5 @@
 ﻿using EducationTech.Storage.Enums;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace EducationTech.Storage
@@ -83,6 +84,7 @@ namespace EducationTech.Storage
         }
         private string GetThisFilePath([CallerFilePath] string path = null)
         {
+            path = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             return path;
         }
         private string GetContentRootPath()

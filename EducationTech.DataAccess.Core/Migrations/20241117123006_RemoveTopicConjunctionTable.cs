@@ -12,15 +12,6 @@ namespace EducationTech.Migrations
             migrationBuilder.DropTable(
                 name: "TopicConjunctions");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Comunities_CourseId",
-                table: "Comunities");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comunities_CourseId",
-                table: "Comunities",
-                column: "CourseId",
-                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

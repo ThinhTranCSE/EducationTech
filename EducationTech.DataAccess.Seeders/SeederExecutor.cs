@@ -1,6 +1,6 @@
 ﻿using EducationTech.DataAccess.Core.Contexts;
+using EducationTech.DataAccess.Seeders.Seeds;
 using Microsoft.Extensions.DependencyInjection;
-using Org.BouncyCastle.Tls;
 using Serilog;
 
 namespace EducationTech.DataAccess.Seeders
@@ -43,12 +43,47 @@ namespace EducationTech.DataAccess.Seeders
 
         private void Seed()
         {
-            var seeders = _seeders.Values.OrderBy(s => s.Piority);
+            var seeders = _seeders.Values.OrderBy(s => s.Piority).ToList();
             foreach (ISeeder seeder in seeders)
             {
                 seeder.Seed();
             }
             Log.Debug("All seeders executed");
+        }
+
+        private void SeedPhase1()
+        {
+            var seederNames = new List<string>
+            {
+                nameof(PermissionSeeder),
+                nameof(RoleSeeder),
+                nameof(RolePermissionSeeder),
+                nameof(BranchSeeder),
+                nameof(SpecialitySeeder),
+                nameof(CourseGroupSeeder),
+                nameof(UserSeeder),
+            };
+            var seeders = seederNames.Select(name => _seeders[name]).ToList();
+            foreach (ISeeder seeder in seeders)
+            {
+                seeder.Seed();
+            }
+        }
+
+        private void SeedPhase2()
+        {
+            var seederNames = new List<string>
+            {
+                nameof(CourseSeeder),
+                nameof(RecommendTopicSeeder),
+                nameof(LearningObjectSeeder),
+                nameof(LearnerLogSeeder),
+            };
+            var seeders = seederNames.Select(name => _seeders[name]).ToList();
+            foreach (ISeeder seeder in seeders)
+            {
+                seeder.Seed();
+            }
         }
 
         private void Seed(string seederName)
@@ -82,10 +117,24 @@ namespace EducationTech.DataAccess.Seeders
                 {
                     return;
                 }
-                foreach (string seederName in args.Skip(1))
+
+
+                if (args[1] == "phase1")
                 {
-                    Seed(seederName);
+                    SeedPhase1();
                 }
+                else if (args[1] == "phase2")
+                {
+                    SeedPhase2();
+                }
+                else
+                {
+                    foreach (string seederName in args.Skip(1))
+                    {
+                        Seed(seederName);
+                    }
+                }
+
                 tokenSource.Cancel();
             }
         }

@@ -1,10 +1,5 @@
 ﻿using EducationTech.DataAccess.Core.Contexts;
 using EducationTech.Shared.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.DataAccess.Seeders.Seeds
 {
@@ -24,12 +19,11 @@ namespace EducationTech.DataAccess.Seeders.Seeds
 
             var rolePermissionMapping = new Dictionary<RoleType, IEnumerable<PermissionType>>();
             rolePermissionMapping.Add(RoleType.Admin, new List<PermissionType> { PermissionType.AdminOnly, PermissionType.UploadCourse, PermissionType.UpdateCourse, PermissionType.DeleteCourse, PermissionType.DeleteCourse });
-            rolePermissionMapping.Add(RoleType.GroupAdmin, new List<PermissionType> { PermissionType.AdminOnly, PermissionType.UploadCourse, PermissionType.UpdateCourse, PermissionType.DeleteCourse, PermissionType.DeleteCourse });
             rolePermissionMapping.Add(RoleType.Instructor, new List<PermissionType> { PermissionType.UploadCourse, PermissionType.UpdateCourse, PermissionType.DeleteCourse });
 
             foreach (var role in roles)
             {
-                if(rolePermissionMapping.TryGetValue((RoleType)Enum.Parse(typeof(RoleType), role.Name), out var permissions))
+                if (rolePermissionMapping.TryGetValue((RoleType)Enum.Parse(typeof(RoleType), role.Name), out var permissions))
                 {
                     foreach (var permissionType in permissions)
                     {

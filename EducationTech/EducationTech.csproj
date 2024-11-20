@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Configurations>Debug;Release;Debug Seeder</Configurations>
+    <Configurations>Debug;Release;Debug Seeder;DebugV2</Configurations>
     <UserSecretsId>9e7daf8d-0ab5-44e9-9d21-788c65fef37e</UserSecretsId>
 	<EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
   </PropertyGroup>

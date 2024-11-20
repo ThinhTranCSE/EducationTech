@@ -1,11 +1,10 @@
-﻿using CsvHelper;
+﻿using Bogus;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
 using EducationTech.DataAccess.Core.Contexts;
+using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Recommendation;
 using EducationTech.DataAccess.Shared.Enums.LearningObject;
-using EducationTech.Storage;
-using System.Globalization;
 
 namespace EducationTech.DataAccess.Seeders.Seeds
 {
@@ -20,27 +19,91 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var globalUsings = GlobalReference.Instance;
-                using var reader = new StreamReader(Path.Combine(globalUsings.StaticFilesPath, "LearningObjects.csv"));
-                using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+                var video = _context.Videos.FirstOrDefault();
 
-                csv.Context.RegisterClassMap<LearningObjectRecord>();
-                var records = csv.GetRecords<LearningObject>();
-                foreach (var record in records)
+                if (video == null)
                 {
-                    if (_context.LearningObjects.Any(x =>
-                        x.Title == record.Title &&
-                        x.TopicId == record.TopicId &&
-                        x.MaxScore == record.MaxScore &&
-                        x.MaxLearningTime == record.MaxLearningTime &&
-                        x.Type == record.Type &&
-                        x.Difficulty == record.Difficulty
-                        ))
-                    {
-                        continue;
-                    }
-                    _context.LearningObjects.Add(record);
+                    throw new Exception("No video found, please use api upload at least 1 video first");
                 }
+
+
+                var learningObjectGenerator = new Faker<LearningObject>()
+                    .RuleFor(lo => lo.Difficulty, f => f.Random.Int(10, 100))
+                    .RuleFor(lo => lo.MaxScore, f => f.Random.Int(5, 8) * 10)
+                    .RuleFor(lo => lo.MaxLearningTime, f => f.Random.Int(50, 100))
+                    .RuleFor(lo => lo.Type, f => f.PickRandom(LOType.Explanatory, LOType.Evaluative));
+
+                var questionGenerator = new Faker<Question>()
+                    .RuleFor(q => q.Content, f => f.Lorem.Sentence());
+
+
+                var topics = _context.RecommendTopics.ToList();
+
+                foreach (var topic in topics)
+                {
+                    var learningObjects = learningObjectGenerator.Generate(5);
+                    int order = 1;
+                    learningObjects.ForEach(lo =>
+                    {
+                        lo.TopicId = topic.Id;
+                        lo.Order = order++;
+                        string title = lo.Type == LOType.Explanatory ? "Video" : "Quiz";
+                        lo.Title = $"{title} {lo.Order}";
+
+                        if (lo.Type == LOType.Explanatory)
+                        {
+                            lo.Video = new Video
+                            {
+                                FileId = video.FileId,
+                                Url = video.Url
+                            };
+                        }
+                        else
+                        {
+                            var questions = questionGenerator.Generate(lo.MaxScore / 10);
+
+                            foreach (var question in questions)
+                            {
+                                question.Answers = new List<Answer>
+                                   {
+                                    new Answer
+                                    {
+                                        Content = "True answer",
+                                        IsCorrect = true,
+                                        Score = 10
+                                    },
+                                    new Answer
+                                    {
+                                        Content = "Answer 2",
+                                        IsCorrect = false,
+                                        Score = 0
+                                    },
+                                    new Answer
+                                    {
+                                        Content = "Answer 3",
+                                        IsCorrect = false,
+                                        Score = 0
+                                    },
+                                    new Answer
+                                    {
+                                        Content = "Answer 4",
+                                        IsCorrect = false,
+                                        Score = 0
+                                    }
+                                };
+                            }
+
+                            lo.Quiz = new Quiz
+                            {
+                                TimeLimit = lo.MaxLearningTime,
+                                Questions = questions
+                            };
+                        }
+
+                        _context.LearningObjects.Add(lo);
+                    });
+                }
+
                 _context.SaveChanges();
 
                 transaction.Commit();

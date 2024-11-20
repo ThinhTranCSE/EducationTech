@@ -3,7 +3,6 @@ using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
 using EducationTech.DataAccess.Core.Contexts;
 using EducationTech.DataAccess.Entities.Recommendation;
-using EducationTech.Storage;
 using System.Globalization;
 
 namespace EducationTech.DataAccess.Seeders.Seeds
@@ -19,27 +18,32 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var globalReference = GlobalReference.Instance;
-                using var reader = new StreamReader(Path.Combine(globalReference.StaticFilesPath, "LearnerLogs.csv"));
-                using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+                var learners = _context.Learners.ToList();
 
-                csv.Context.RegisterClassMap<LearnerLogRecord>();
-                var records = csv.GetRecords<LearnerLog>();
-                foreach (var record in records)
+                var learningObjects = _context.LearningObjects.ToList();
+
+                var ramdom = new Random();
+                foreach (var learningObject in learningObjects)
                 {
-                    if (_context.LearnerLogs.Any(x =>
-                        x.LearnerId == record.LearnerId &&
-                        x.LearningObjectId == record.LearningObjectId &&
-                        x.Score == record.Score &&
-                        x.Attempt == record.Attempt &&
-                        x.TimeTaken == record.TimeTaken
-                        ))
+                    //take 5 random learners
+                    var randomLearners = learners.OrderBy(x => Guid.NewGuid()).Take(5).ToList();
+
+                    foreach (var learner in randomLearners)
                     {
-                        continue;
+                        var learnerLog = new LearnerLog
+                        {
+                            LearnerId = learner.Id,
+                            LearningObjectId = learningObject.Id,
+                            Score = ramdom.Next(0, learningObject.MaxScore),
+                            Attempt = ramdom.Next(1, 5),
+                            TimeTaken = ramdom.Next(10, learningObject.MaxLearningTime)
+                        };
+
+                        _context.LearnerLogs.Add(learnerLog);
                     }
 
-                    _context.LearnerLogs.Add(record);
                 }
+
                 _context.SaveChanges();
                 transaction.Commit();
             }
