@@ -21,8 +21,8 @@ namespace EducationTech.DataAccess.Entities.Master
         public FileType FileType { get; set; }
         public Guid UserId { get; set; }
         public virtual User User { get; set; }
-        public virtual Image? Image { get; set; }
-        public virtual Video? Video { get; set; }
+        public virtual ICollection<Image> Images { get; set; } = new List<Image>();
+        public virtual ICollection<Video> Videos { get; set; } = new List<Video>();
 
         public override void OnModelCreating(ModelBuilder modelBuilder)
         {

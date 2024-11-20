@@ -359,8 +359,8 @@ public class FileService : IFileService
 
         var fileQuery = _unitOfWork.UploadedFiles.GetAll();
         fileQuery = fileQuery
-            .Include(f => f.Image)
-            .Include(f => f.Video)
+            .Include(f => f.Images)
+            .Include(f => f.Videos)
             .Where(f => f.UserId == currentUser.Id);
 
         var files = await fileQuery.ToListAsync();

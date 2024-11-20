@@ -3,11 +3,6 @@ using EducationTech.Business.Shared.DTOs.Masters.Images;
 using EducationTech.Business.Shared.DTOs.Masters.Videos;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.Storage.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationTech.Business.Shared.DTOs.Business.File
 {
@@ -21,8 +16,8 @@ namespace EducationTech.Business.Shared.DTOs.Business.File
         public bool IsPublic { get; set; }
         public Guid UserId { get; set; }
         public FileType FileType { get; set; }
-        public VideoDto? Video { get; set; }
-        public ImageDto? Image { get; set; }
+        public ICollection<VideoDto> Videos { get; set; } = new List<VideoDto>();
+        public ICollection<ImageDto> Images { get; set; } = new List<ImageDto>();
 
     }
 }
