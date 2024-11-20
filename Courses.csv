@@ -58,8 +58,8 @@ Id,CourseId,Name,Credits,CourseGroupId,Prerequisites,RecommendedSemester,Special
 57,CO3043,Phát triển ứng dụng trên thiết bị di động,3,4,,7,"4, 5",1
 58,CO3045,Lập trình game,3,4,,7,"4, 5",1
 59,CO3047,Mạng máy tính nâng cao,3,4,,7,3,1
-60,CO3049,Lập trình web,3,4,,7,"3, 4, 5",1
-61,CO3051,Hệ thống thiết bị di động,3,4,,7,"3, 4, 5",1
+60,CO3049,Lập trình web,3,4,,7,"3, 4, 2005",1
+61,CO3051,Hệ thống thiết bị di động,3,4,,7,"3, 4, 2005",1
 62,CO3057,Xử lý ảnh số và thị giác máy tính,3,4,,7,5,1
 63,CO3059,Đồ họa máy tính,3,4,,7,5,1
 64,CO3061,Nhập môn trí tuệ nhân tạo,3,4,,7,4,1
@@ -69,7 +69,7 @@ Id,CourseId,Name,Credits,CourseGroupId,Prerequisites,RecommendedSemester,Special
 68,CO3071,Hệ phân bố,3,4,,7,,1
 69,CO3083,Mật mã học và mã hóa thông tin,3,4,,7,3,1
 70,CO3085,Xử lý ngôn ngữ tự nhiên,3,4,,7,4,1
-71,CO3089,Những chủ đề nâng cao trong khoa học máy tính,3,4,,7,"2, 3, 4",1
+71,CO3089,Những chủ đề nâng cao trong khoa học máy tính,3,4,,7,"2, 3, 2004",1
 72,CO3115,Phân tích và thiết kế hệ thống,3,4,,7,"1, 2",1
 73,CO3117,Học máy,3,4,,7,"4, 5",1
 74,CO4025,Mạng xã hội và thông tin,3,4,,7,4,1
@@ -79,5 +79,5 @@ Id,CourseId,Name,Credits,CourseGroupId,Prerequisites,RecommendedSemester,Special
 78,CO4037,Hệ thống thông tin quản lý,3,4,,7,1,1
 79,CO4039,Bảo mật sinh trắc,3,4,,7,1,1
 80,CO3335,Thực tập ngoài trường,2,,,6,"1, 2, 3, 4, 5",1
-81,CO4029,Đồ án chuyên ngành,2,,80,7,"1, 2, 3, 4, 5",1
+81,CO4029,Đồ án chuyên ngành,2,,,7,"1, 2, 3, 4, 5",1
 82,CO4337,Đồ án tốt nghiệp (Khoa học Máy tính),4,,"80, 81",8,"1, 2, 3, 4, 5",1

@@ -35,7 +35,7 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                     {
                         CourseId = courseId,
                         Name = record.Name,
-                        Order = order
+                        Order = order++
                     };
 
                     _context.RecommendTopics.Add(createdTopic);
