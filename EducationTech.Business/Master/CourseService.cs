@@ -9,6 +9,7 @@ using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Entities.Recommendation;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace EducationTech.Business.Master
 {
@@ -35,6 +36,14 @@ namespace EducationTech.Business.Master
             using var transaction = _unitOfWork.BeginTransaction();
             try
             {
+                string pattern = @"^(?:https?:\/\/)?[^\/]+\/(.+)$";
+                Match match = Regex.Match(course.ImageUrl, pattern);
+
+                if (match.Success)
+                {
+                    course.ImageUrl = match.Groups[1].Value;
+                }
+
                 course.Specialities = requestDto.SpecialityIds.Select(x => new CourseSpeciality { SpecialityId = x }).ToList();
                 course.Prerequisites = requestDto.PrerequisiteCourseIds.Select(x => new PrerequisiteCourse { PrerequisiteCourseId = x }).ToList();
                 course.Comunity = new Comunity();
@@ -78,6 +87,13 @@ namespace EducationTech.Business.Master
             using var transaction = _unitOfWork.BeginTransaction();
             try
             {
+                string pattern = @"^(?:https?:\/\/)?[^\/]+\/(.+)$";
+                Match match = Regex.Match(course.ImageUrl, pattern);
+
+                if (match.Success)
+                {
+                    course.ImageUrl = match.Groups[1].Value;
+                }
 
                 if (requestDto.IsPublished != null && requestDto.IsPublished == true)
                 {
