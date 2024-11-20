@@ -3,8 +3,10 @@ using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
 using EducationTech.DataAccess.Core.Contexts;
 using EducationTech.DataAccess.Entities.Business;
+using EducationTech.DataAccess.Entities.Master;
 using EducationTech.DataAccess.Entities.Recommendation;
 using EducationTech.DataAccess.Shared.Enums.LearningObject;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationTech.DataAccess.Seeders.Seeds
 {
@@ -19,7 +21,9 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var video = _context.Videos.FirstOrDefault();
+                var video = _context.Videos
+                    .Include(v => v.File)
+                    .FirstOrDefault();
 
                 if (video == null)
                 {
@@ -54,8 +58,18 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                         {
                             lo.Video = new Video
                             {
-                                FileId = video.FileId,
-                                Url = video.Url
+                                Url = video.Url,
+                                File = new UploadedFile
+                                {
+                                    OriginalFileName = video.File.OriginalFileName,
+                                    Extension = video.File.Extension,
+                                    Size = video.File.Size,
+                                    Path = video.File.Path,
+                                    IsCompleted = video.File.IsCompleted,
+                                    IsPublic = video.File.IsPublic,
+                                    FileType = video.File.FileType,
+                                    UserId = video.File.UserId
+                                }
                             };
                         }
                         else

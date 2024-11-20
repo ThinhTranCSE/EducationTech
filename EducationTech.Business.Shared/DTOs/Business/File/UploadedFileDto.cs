@@ -16,8 +16,8 @@ namespace EducationTech.Business.Shared.DTOs.Business.File
         public bool IsPublic { get; set; }
         public Guid UserId { get; set; }
         public FileType FileType { get; set; }
-        public ICollection<VideoDto> Videos { get; set; } = new List<VideoDto>();
-        public ICollection<ImageDto> Images { get; set; } = new List<ImageDto>();
+        public VideoDto? Video { get; set; }
+        public ImageDto? Image { get; set; }
 
     }
 }
