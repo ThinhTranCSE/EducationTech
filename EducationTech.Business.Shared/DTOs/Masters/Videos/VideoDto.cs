@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using EducationTech.Business.Shared.DTOs.Abstracts;
-using EducationTech.Business.Shared.DTOs.Masters.Images;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.Storage;
 
@@ -16,7 +15,7 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Videos
         {
             string hostName = GlobalReference.Instance.HostName;
             string scheme = GlobalReference.Instance.HostScheme;
-            cfg.CreateMap<Image, ImageDto>()
+            cfg.CreateMap<Video, VideoDto>()
                 .ForMember(x => x.Url, opt => opt.MapFrom(x => $"{scheme}://{hostName}/{x.Url}"))
                 .ReverseMap();
         }
