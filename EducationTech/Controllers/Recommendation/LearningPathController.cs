@@ -51,5 +51,10 @@ public class LearningPathController : BaseController
         return await _learningPathService.SaveLearningPath(request);
     }
 
+    [HttpGet("Progress")]
+    public async Task<LearningPath_ProgressDto?> LoadLearningPathProgress()
+    {
+        return await _learningPathService.LoadLearningPathProgress();
+    }
 
 }

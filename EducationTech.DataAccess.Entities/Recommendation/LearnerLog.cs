@@ -7,6 +7,7 @@ namespace EducationTech.DataAccess.Entities.Recommendation;
 
 public class LearnerLog : Entity
 {
+    public override bool Timestamp => true;
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }

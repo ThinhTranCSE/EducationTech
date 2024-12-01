@@ -9,4 +9,5 @@ public interface ILearningPathService : IService
     Task<LearningPathDto> RecomendLearningPathSemester(int learnerId, int specialityId);
     Task<bool> SaveLearningPath(LearningPath_SaveRequest request);
     Task<LearningPathDto?> LoadLearningPath();
+    Task<LearningPath_ProgressDto?> LoadLearningPathProgress();
 };

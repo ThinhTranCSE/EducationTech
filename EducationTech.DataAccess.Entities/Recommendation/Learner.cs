@@ -18,6 +18,10 @@ public class Learner : Entity
     public virtual Speciality Speciality { get; set; } = null!;
     public virtual ICollection<LearnerLog> LearnerLogs { get; set; }
 
+    public virtual ICollection<CourseLearningPathOrder> CourseLearningPathOrders { get; set; } = new List<CourseLearningPathOrder>();
+    public virtual ICollection<TopicLearningPathOrder> TopicLearningPathOrders { get; set; } = new List<TopicLearningPathOrder>();
+    public virtual ICollection<LearningObjectLearningPathOrder> LearningObjectLearningPathOrders { get; set; } = new List<LearningObjectLearningPathOrder>();
+
     public override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureSideEffects<Learner>(modelBuilder);

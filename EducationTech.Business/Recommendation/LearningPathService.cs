@@ -238,6 +238,54 @@ public class LearningPathService : ILearningPathService
 
         return learningPathDto;
     }
+    public async Task<LearningPath_ProgressDto?> LoadLearningPathProgress()
+    {
+        var learnerId = _sessionService.CurrentUser?.Learner?.Id;
+
+        if (learnerId == null)
+        {
+            throw new Exception("You are not Learner");
+        }
+
+        var learningObjectLearningPathOrders = await _unitOfWork.LearningObjectLearningPathOrders.GetAll()
+            .Where(lo => lo.LearnerId == learnerId)
+            .Include(lo => lo.LearningObject)
+                .ThenInclude(lo => lo.LearnerLogs.Where(ll => ll.LearnerId == learnerId))
+            .ToListAsync();
+
+        if (learningObjectLearningPathOrders.Count() == 0)
+        {
+            throw new Exception("Learning path not found");
+        }
+
+        int totalLearningObjectCount = learningObjectLearningPathOrders.Count();
+        int passedLearningObjectCount = 0;
+        var passedLearningObjects = new List<LearningObject>();
+        foreach (var learningObject in learningObjectLearningPathOrders.Select(o => o.LearningObject))
+        {
+            if (learningObject.LearnerLogs.Count() == 0)
+            {
+                continue;
+            }
+
+            var leanerLog = learningObject.LearnerLogs.First();
+
+            if (leanerLog.Score >= learningObject.MaxScore * 0.5)
+            {
+                passedLearningObjectCount++;
+                passedLearningObjects.Add(learningObject);
+            }
+        }
+
+        var result = new LearningPath_ProgressDto
+        {
+            TotalLearningObjectCount = totalLearningObjectCount,
+            PassedLearningObjectCount = passedLearningObjectCount,
+            PassedLearningObjects = _mapper.ProjectTo<LearningObjectDto>(passedLearningObjects.AsQueryable()).ToList()
+        };
+
+        return result;
+    }
 
     public async Task<LearningPathDto> RecomendLearningPathSemester(int learnerId, int specialityId)
     {
@@ -602,7 +650,6 @@ public class LearningPathService : ILearningPathService
 
         return delta * learningObject.Difficulty + zeta * (1 - (meanScore / maximumScore)) + theta * (meanTime / minimumTime);
     }
-
 
 }
 
