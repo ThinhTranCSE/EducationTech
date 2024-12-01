@@ -10,10 +10,13 @@ namespace EducationTech.DataAccess.Core
     {
         public EducationTechContext CreateDbContext(string[] args)
         {
-            string appjsonPath = Path.Combine("appsettings.json");
+            string appsettingsPath = Path.Combine(
+                Directory.GetParent(Directory.GetCurrentDirectory()).FullName,
+                "EducationTech",
+                "appsettings.json");
             IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile(appjsonPath)
+                .SetBasePath(Path.GetDirectoryName(appsettingsPath))
+                .AddJsonFile(appsettingsPath)
                 .Build();
             var optionsBuilder = new DbContextOptionsBuilder<EducationTechContext>();
 
