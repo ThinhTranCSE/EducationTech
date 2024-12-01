@@ -4,7 +4,6 @@ using EducationTech.Business.Shared.DTOs.Business.Dashboards;
 using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Recommendation;
 using Microsoft.EntityFrameworkCore;
-using Neo4jClient.DataAnnotations.Cypher.Functions;
 
 namespace EducationTech.Business.Business;
 
@@ -38,16 +37,17 @@ public class DashboardService : IDashboardService
         query = query
             .Include(x => x.Role);
 
-        var roleStatistics = await query
+        var roleStatistics = query
+            .ToList()
             .GroupBy(x => x.Role.Name)
             .Select(x => new RoleStatistic
             {
                 RoleName = x.Key,
                 UserCount = x.Count()
             })
-            .ToListAsync();
+            .ToList();
 
-        var totalUserCount = _unitOfWork.Users.GetAll().Count();
+        var totalUserCount = await _unitOfWork.Users.GetAll().CountAsync();
 
         return new UserStatistic
         {
@@ -67,7 +67,8 @@ public class DashboardService : IDashboardService
                 .ThenInclude(o => o.Topic)
             .Include(l => l.LearningObjectLearningPathOrders)
                 .ThenInclude(o => o.LearningObject)
-            .Include(l => l.LearnerLogs);
+            .Include(l => l.LearnerLogs)
+            .Where(l => l.CourseLearningPathOrders.Any() && l.TopicLearningPathOrders.Any() && l.LearningObjectLearningPathOrders.Any());
 
 
         if (specialityIds.Any())
@@ -78,8 +79,6 @@ public class DashboardService : IDashboardService
 
 
         var savedLearningPathLearners = await query.ToListAsync();
-
-
 
 
         var totalSavedLearningPath = savedLearningPathLearners.Count();
