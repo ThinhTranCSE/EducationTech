@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Shared.DTOs.Business.Dashboards;
+using EducationTech.Business.Shared.DTOs.Masters.Courses;
+using EducationTech.Business.Shared.DTOs.Recommendation.LearningPaths;
 using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Recommendation;
 using Microsoft.EntityFrameworkCore;
@@ -37,8 +39,10 @@ public class DashboardService : IDashboardService
         query = query
             .Include(x => x.Role);
 
-        var roleStatistics = query
-            .ToList()
+        var userRoles = await query.ToListAsync();
+
+
+        var roleStatistics = userRoles
             .GroupBy(x => x.Role.Name)
             .Select(x => new RoleStatistic
             {
@@ -47,7 +51,7 @@ public class DashboardService : IDashboardService
             })
             .ToList();
 
-        var totalUserCount = await _unitOfWork.Users.GetAll().CountAsync();
+        var totalUserCount = _unitOfWork.Users.GetAll().Count();
 
         return new UserStatistic
         {
@@ -61,14 +65,8 @@ public class DashboardService : IDashboardService
         var query = _unitOfWork.Learners.GetAll();
 
         query = query
-            .Include(l => l.CourseLearningPathOrders)
-                .ThenInclude(o => o.Course)
-            .Include(l => l.TopicLearningPathOrders)
-                .ThenInclude(o => o.Topic)
-            .Include(l => l.LearningObjectLearningPathOrders)
-                .ThenInclude(o => o.LearningObject)
             .Include(l => l.LearnerLogs)
-            .Where(l => l.CourseLearningPathOrders.Any() && l.TopicLearningPathOrders.Any() && l.LearningObjectLearningPathOrders.Any());
+            .Where(l => l.CourseLearningPathOrders.Any());
 
 
         if (specialityIds.Any())
@@ -92,7 +90,7 @@ public class DashboardService : IDashboardService
                 continue;
             }
 
-            if (IsLearningPathUsed(learner))
+            if (await IsLearningPathUsed(learner))
             {
                 usedLearningPathLearners.Add(learner);
             }
@@ -104,42 +102,26 @@ public class DashboardService : IDashboardService
 
         var learningPathScoreStatistics = new List<LearningPathScoreStatistic>();
 
-        var usedLearningPathScores = usedLearningPathLearners
-            .Select(l => CalculateLearnerScore(l))
-            .ToList();
-        var notUsedLearningPathScores = notUsedLearningPathLearners
-            .Select(l => CalculateLearnerScore(l))
-            .ToList();
-
-        foreach (var specialityId in specialityIds)
+        if (specialityIds.Any())
         {
-            var speciality = await _unitOfWork.Specialities.GetAll().FirstOrDefaultAsync(s => s.Id == specialityId);
-
-            var bandScoreStatistics = new List<LearningPathBandScoreStatistic>();
-
-            for (int i = 0; i < 10; i++)
+            foreach (var specialityId in specialityIds)
             {
-                var minScoreBand = i * 10;
-                var maxScoreBand = (i + 1) * 10;
+                var speciality = await _unitOfWork.Specialities.GetAll().FirstOrDefaultAsync(s => s.Id == specialityId);
 
-                var usedLearningPathCount = usedLearningPathScores.Count(s => s >= minScoreBand && s < maxScoreBand);
+                var usedLearningPathLearnersForSpeciality = usedLearningPathLearners
+                    .Where(l => l.SpecialityId == specialityId)
+                    .ToList();
 
-                var notUsedLearningPathCount = notUsedLearningPathScores.Count(s => s >= minScoreBand && s < maxScoreBand);
+                var notUsedLearningPathLearnersForSpeciality = notUsedLearningPathLearners
+                    .Where(l => l.SpecialityId == specialityId)
+                    .ToList();
 
-                bandScoreStatistics.Add(new LearningPathBandScoreStatistic
-                {
-                    MinScoreBand = minScoreBand,
-                    MaxScoreBand = maxScoreBand,
-                    UsedLearningPathCount = usedLearningPathCount,
-                    NotUsedLearningPathCount = notUsedLearningPathCount
-                });
+                CalculateLearningPathBandScoreStatistics(learningPathScoreStatistics, speciality?.Name, usedLearningPathLearnersForSpeciality, notUsedLearningPathLearnersForSpeciality);
             }
-
-            learningPathScoreStatistics.Add(new LearningPathScoreStatistic
-            {
-                SpecialityName = speciality.Name,
-                BandScoreStatistics = bandScoreStatistics
-            });
+        }
+        else
+        {
+            CalculateLearningPathBandScoreStatistics(learningPathScoreStatistics, null, usedLearningPathLearners, notUsedLearningPathLearners);
         }
 
         return new LearningPathStatistic
@@ -169,50 +151,59 @@ public class DashboardService : IDashboardService
         return score / learnerLogs.Count;
     }
 
-    private bool IsLearningPathUsed(Learner learner)
+    private async Task<bool> IsLearningPathUsed(Learner learner)
     {
         var learnerLogs = learner.LearnerLogs
-                .OrderBy(ll => ll.CreatedAt)
-                .ToList();
+            .OrderBy(l => l.CreatedAt)
+            .ToList();
+
+        var learningObjectIds = learnerLogs.Select(ll => ll.LearningObjectId).ToList();
 
         int order = 1;
         var learningObjectLearnedOrderLookup = learnerLogs.ToDictionary(ll => ll.LearningObjectId, ll => order++);
 
-        var semesters = learner.CourseLearningPathOrders
-            .GroupBy(o => o.Semester)
-            .Select(g => new GroupSemester
+        // build cây learning path
+        var learnerId = learner.Id;
+
+        var query = _unitOfWork.Courses.GetAll()
+            .Include(c => c.CourseLearningPathOrders.Where(o => o.LearnerId == learnerId))
+            .Include(c => c.Topics)
+                .ThenInclude(t => t.TopicLearningPathOrders.Where(o => o.LearnerId == learnerId))
+            .Include(c => c.Topics
+                .Where(t => t.LearningObjects.Any(lo => learningObjectIds.Contains(lo.Id))))
+                .ThenInclude(t => t.LearningObjects
+                    .Where(lo => learningObjectIds.Contains(lo.Id)))
+                    .ThenInclude(lo => lo.LearningObjectLearningPathOrders.Where(o => o.LearnerId == learnerId))
+            .Where(c => c.CourseLearningPathOrders.Any(o => o.LearnerId == learnerId) &&
+                        c.Topics.Any(t => t.LearningObjects.Any(lo => learningObjectIds.Contains(lo.Id))));
+
+
+        var courses = await query.ToListAsync();
+
+        var semesters = courses.GroupBy(c => c.CourseLearningPathOrders.First().Semester)
+            .Select(g => new SemesterCourseDto
             {
                 Semester = g.Key,
-                Courses = g.Select(g => new GroupCourse
-                {
-                    CourseId = g.CourseId,
-                    Order = g.Order,
-                    Topics = learner.TopicLearningPathOrders
-                        .Where(t => t.Topic.CourseId == g.CourseId)
-                        .Select(t => new GroupTopic
-                        {
-                            TopicId = t.TopicId,
-                            Order = t.Order,
-                            LearningObjects = learner.LearningObjectLearningPathOrders
-                                .Where(lo => lo.LearningObject.TopicId == t.TopicId)
-                                .Select(lo => new GroupLearningObject
-                                {
-                                    LearningObjectId = lo.LearningObjectId,
-                                    Order = lo.Order
-                                })
-                                .OrderBy(lo => lo.Order)
-                                .ToList()
-                        })
-                        .OrderBy(o => o.Order)
-                        .ToList()
-                })
-                .OrderBy(g => g.Order)
-                .ToList()
+                Courses = _mapper.ProjectTo<Course_MinimalDto>(g.AsQueryable()).OrderBy(c => c.CourseLearningPathOrders.First().Order).ToList(),
+                TotalCredits = 0
             })
-            .OrderBy(g => g.Semester)
+            .OrderBy(sc => sc.Semester)
             .ToList();
 
-        bool isUsed = true;
+        foreach (var semester in semesters)
+        {
+            foreach (var course in semester.Courses)
+            {
+                course.Topics = course.Topics.OrderBy(t => t.TopicLearningPathOrders.First().Order).ToList();
+                foreach (var topic in course.Topics)
+                {
+                    topic.LearningObjects = topic.LearningObjects.OrderBy(lo => lo.LearningObjectLearningPathOrders.First().Order).ToList();
+                }
+            }
+        }
+
+
+        var isLearningPathUsed = true;
 
         foreach (var semester in semesters)
         {
@@ -220,74 +211,81 @@ public class DashboardService : IDashboardService
             {
                 foreach (var topic in course.Topics)
                 {
-                    int currentOrder = -1;
-
-                    // kiểm tra học có liền mạch không
-                    bool isNotFoundBeforeLog = false;
-
+                    int lastLearnedOrder = -1;
                     foreach (var learningObject in topic.LearningObjects)
                     {
-                        if (learningObjectLearnedOrderLookup.TryGetValue(learningObject.LearningObjectId, out var learnedOrder))
+                        if (!learningObjectLearnedOrderLookup.TryGetValue(learningObject.Id, out var learnedOrder))
                         {
-                            if (isNotFoundBeforeLog)
-                            {
-                                isUsed = false;
-                                break;
-                            }
-                            if (learnedOrder < currentOrder)
-                            {
-                                isUsed = false;
-                                break;
-                            }
+                            isLearningPathUsed = false;
+                            break;
+                        }
 
-                            currentOrder = learnedOrder;
-                        }
-                        else
+                        if (learningObject.LearningObjectLearningPathOrders.First().Order <= learnedOrder)
                         {
-                            isNotFoundBeforeLog = true;
+                            isLearningPathUsed = false;
+                            break;
                         }
+
+                        lastLearnedOrder = learnedOrder;
                     }
 
-                    if (!isUsed)
+                    if (!isLearningPathUsed)
                     {
                         break;
                     }
                 }
 
-                if (!isUsed)
+                if (!isLearningPathUsed)
                 {
                     break;
                 }
             }
+
+            if (!isLearningPathUsed)
+            {
+                break;
+            }
         }
 
-        return isUsed;
+        return isLearningPathUsed;
     }
 
+    private void CalculateLearningPathBandScoreStatistics(List<LearningPathScoreStatistic> learningPathScoreStatistics, string? specialityName, List<Learner> usedLearningPathLearners, List<Learner> notUsedLearningPathLearners)
+    {
+        var usedLearningPathScores = usedLearningPathLearners
+            .Select(l => CalculateLearnerScore(l))
+            .ToList();
+        var notUsedLearningPathScores = notUsedLearningPathLearners
+            .Select(l => CalculateLearnerScore(l))
+            .ToList();
+
+        var bandScoreStatistics = new List<LearningPathBandScoreStatistic>();
+
+        for (int i = 0; i < 10; i++)
+        {
+            var minScoreBand = i * 10;
+            var maxScoreBand = (i + 1) * 10;
+
+            var usedLearningPathCount = usedLearningPathScores.Count(s => s >= minScoreBand && s < maxScoreBand);
+
+            var notUsedLearningPathCount = notUsedLearningPathScores.Count(s => s >= minScoreBand && s < maxScoreBand);
+
+            bandScoreStatistics.Add(new LearningPathBandScoreStatistic
+            {
+                MinScoreBand = minScoreBand,
+                MaxScoreBand = maxScoreBand,
+                UsedLearningPathCount = usedLearningPathCount,
+                NotUsedLearningPathCount = notUsedLearningPathCount
+            });
+        }
+
+        learningPathScoreStatistics.Add(new LearningPathScoreStatistic
+        {
+            SpecialityName = specialityName,
+            BandScoreStatistics = bandScoreStatistics
+        });
+
+    }
 }
 
-public class GroupSemester
-{
-    public int Semester { get; set; }
-    public List<GroupCourse> Courses { get; set; }
-}
 
-public class GroupCourse
-{
-    public int CourseId { get; set; }
-    public int Order { get; set; }
-    public List<GroupTopic> Topics { get; set; } = new List<GroupTopic>();
-}
-
-public class GroupTopic
-{
-    public int TopicId { get; set; }
-    public int Order { get; set; }
-    public List<GroupLearningObject> LearningObjects { get; set; } = new List<GroupLearningObject>();
-}
-
-public class GroupLearningObject
-{
-    public int LearningObjectId { get; set; }
-    public int Order { get; set; }
-}

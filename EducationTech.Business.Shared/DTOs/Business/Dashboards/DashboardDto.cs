@@ -28,7 +28,7 @@ public class LearningPathStatistic
 
 public class LearningPathScoreStatistic
 {
-    public string SpecialityName { get; set; }
+    public string? SpecialityName { get; set; }
     public ICollection<LearningPathBandScoreStatistic> BandScoreStatistics { get; set; } = new List<LearningPathBandScoreStatistic>();
 }
 

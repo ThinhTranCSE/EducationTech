@@ -126,9 +126,11 @@ public class LearningPathService : ILearningPathService
 
             _unitOfWork.SaveChanges();
 
+            var courseOrder = 1;
+            var topicOrder = 1;
+            var learningObjectOrder = 1;
             foreach (var semester in request.LearningPath)
             {
-                var courseOrder = 1;
                 foreach (var course in semester.Courses)
                 {
                     var courseSave = new CourseLearningPathOrder
@@ -141,7 +143,6 @@ public class LearningPathService : ILearningPathService
                     _unitOfWork.CourseLearningPathOrders.Add(courseSave);
                     courseOrder++;
 
-                    var topicOrder = 1;
                     foreach (var topic in course.Topics)
                     {
                         var topicSave = new TopicLearningPathOrder
@@ -153,7 +154,6 @@ public class LearningPathService : ILearningPathService
                         _unitOfWork.TopicLearningPathOrders.Add(topicSave);
                         topicOrder++;
 
-                        var learningObjectOrder = 1;
                         foreach (var learningObject in topic.LearningObjects)
                         {
                             var learningObjectSave = new LearningObjectLearningPathOrder
@@ -212,7 +212,7 @@ public class LearningPathService : ILearningPathService
             .Select(g => new SemesterCourseDto
             {
                 Semester = g.Key,
-                Courses = _mapper.ProjectTo<Course_MinimalDto>(g.AsQueryable()).ToList(),
+                Courses = _mapper.ProjectTo<Course_MinimalDto>(g.AsQueryable()).OrderBy(c => c.CourseLearningPathOrders.First().Order).ToList(),
                 TotalCredits = g.Sum(c => c.Credits)
             })
             .OrderBy(sc => sc.Semester)
