@@ -18,10 +18,9 @@ public class RoleStatistic
     public int UserCount { get; set; }
 }
 
+
 public class LearningPathStatistic
 {
-    public int TotalSavedLearningPath { get; set; }
-    public int TotalUsedLearningPath { get; set; }
     public ICollection<LearningPathScoreStatistic> LearningPathScoreStatistics { get; set; } = new List<LearningPathScoreStatistic>();
 }
 
@@ -29,6 +28,9 @@ public class LearningPathStatistic
 public class LearningPathScoreStatistic
 {
     public string? SpecialityName { get; set; }
+    public int TotalLearnerInSpeciality { get; set; }
+    public int TotalSavedLearningPath { get; set; }
+    public int TotalUsedLearningPath { get; set; }
     public ICollection<LearningPathBandScoreStatistic> BandScoreStatistics { get; set; } = new List<LearningPathBandScoreStatistic>();
 }
 

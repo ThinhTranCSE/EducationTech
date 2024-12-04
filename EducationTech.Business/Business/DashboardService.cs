@@ -106,7 +106,9 @@ public class DashboardService : IDashboardService
         {
             foreach (var specialityId in specialityIds)
             {
-                var speciality = await _unitOfWork.Specialities.GetAll().FirstOrDefaultAsync(s => s.Id == specialityId);
+                var speciality = await _unitOfWork.Specialities.GetAll()
+                    .Include(s => s.Learners)
+                    .FirstOrDefaultAsync(s => s.Id == specialityId);
 
                 var usedLearningPathLearnersForSpeciality = usedLearningPathLearners
                     .Where(l => l.SpecialityId == specialityId)
@@ -116,7 +118,7 @@ public class DashboardService : IDashboardService
                     .Where(l => l.SpecialityId == specialityId)
                     .ToList();
 
-                CalculateLearningPathBandScoreStatistics(learningPathScoreStatistics, speciality?.Name, usedLearningPathLearnersForSpeciality, notUsedLearningPathLearnersForSpeciality);
+                CalculateLearningPathBandScoreStatistics(learningPathScoreStatistics, speciality, usedLearningPathLearnersForSpeciality, notUsedLearningPathLearnersForSpeciality);
             }
         }
         else
@@ -126,8 +128,6 @@ public class DashboardService : IDashboardService
 
         return new LearningPathStatistic
         {
-            TotalSavedLearningPath = totalSavedLearningPath,
-            TotalUsedLearningPath = totalUsedLearningPath,
             LearningPathScoreStatistics = learningPathScoreStatistics
         };
     }
@@ -250,7 +250,7 @@ public class DashboardService : IDashboardService
         return isLearningPathUsed;
     }
 
-    private void CalculateLearningPathBandScoreStatistics(List<LearningPathScoreStatistic> learningPathScoreStatistics, string? specialityName, List<Learner> usedLearningPathLearners, List<Learner> notUsedLearningPathLearners)
+    private void CalculateLearningPathBandScoreStatistics(List<LearningPathScoreStatistic> learningPathScoreStatistics, Speciality? speciality, List<Learner> usedLearningPathLearners, List<Learner> notUsedLearningPathLearners)
     {
         var usedLearningPathScores = usedLearningPathLearners
             .Select(l => CalculateLearnerScore(l))
@@ -281,7 +281,10 @@ public class DashboardService : IDashboardService
 
         learningPathScoreStatistics.Add(new LearningPathScoreStatistic
         {
-            SpecialityName = specialityName,
+            SpecialityName = speciality?.Name,
+            TotalLearnerInSpeciality = speciality == null ? speciality!.Learners.Count : 0,
+            TotalSavedLearningPath = usedLearningPathLearners.Count + notUsedLearningPathLearners.Count,
+            TotalUsedLearningPath = usedLearningPathLearners.Count,
             BandScoreStatistics = bandScoreStatistics
         });
 
