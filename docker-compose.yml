@@ -4,7 +4,11 @@ services:
   mysql:
     image: mysql:latest
     command:
-        - '--skip-log-bin'
+      - '--skip-log-bin'                  # Bỏ qua binary logs
+      - '--expire-logs-days=7'            # Xóa binary logs cũ hơn 7 ngày
+      - '--max-binlog-size=104857600'     # Giới hạn kích thước binary log là 100MB
+      - '--innodb-log-file-size=104857600' # Giới hạn kích thước log file của InnoDB là 100MB
+      - '--general-log=0'                 # Tắt general query log
     restart: always
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
