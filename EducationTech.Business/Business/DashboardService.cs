@@ -282,7 +282,7 @@ public class DashboardService : IDashboardService
         learningPathScoreStatistics.Add(new LearningPathScoreStatistic
         {
             SpecialityName = speciality?.Name,
-            TotalLearnerInSpeciality = speciality == null ? speciality!.Learners.Count : 0,
+            TotalLearnerInSpeciality = speciality != null ? speciality!.Learners.Count : 0,
             TotalSavedLearningPath = usedLearningPathLearners.Count + notUsedLearningPathLearners.Count,
             TotalUsedLearningPath = usedLearningPathLearners.Count,
             BandScoreStatistics = bandScoreStatistics
