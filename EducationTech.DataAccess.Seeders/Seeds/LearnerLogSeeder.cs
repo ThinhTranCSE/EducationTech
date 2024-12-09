@@ -25,8 +25,8 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                 var ramdom = new Random();
                 foreach (var learningObject in learningObjects)
                 {
-                    //take 5 random learners
-                    var randomLearners = learners.OrderBy(x => Guid.NewGuid()).Take(5).ToList();
+                    //take all random learners
+                    var randomLearners = learners;
 
                     foreach (var learner in randomLearners)
                     {
@@ -34,9 +34,9 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                         {
                             LearnerId = learner.Id,
                             LearningObjectId = learningObject.Id,
-                            Score = ramdom.Next(0, learningObject.MaxScore),
+                            Score = (ramdom.Next(0, learningObject.MaxScore) / 10) * 10,
                             Attempt = ramdom.Next(1, 5),
-                            TimeTaken = ramdom.Next(10, learningObject.MaxLearningTime)
+                            TimeTaken = ramdom.Next(60, learningObject.MaxLearningTime)
                         };
 
                         _context.LearnerLogs.Add(learnerLog);

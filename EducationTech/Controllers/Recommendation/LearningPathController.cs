@@ -57,4 +57,16 @@ public class LearningPathController : BaseController
         return await _learningPathService.LoadLearningPathProgress();
     }
 
+    [HttpPost("Demo/AdjustLogToChangeSimilarity")]
+    public async Task<bool> AdjustLogToChangeSimilarity([FromBody] AdjustLogToChangeSimilarityRequest request)
+    {
+        return await _learningPathService.AdjustLogToChangeSimilarity(request.LearnerId, request.CourseTitle, request.TargetSimilarity);
+    }
+
+    [HttpPut("Demo/MakeLearnerUseLearningPath")]
+    public async Task<bool> MakeLearnerUseLearningPath(int learnerId)
+    {
+        return await _learningPathService.MakeLearnerUseLearningPath(learnerId);
+    }
+
 }

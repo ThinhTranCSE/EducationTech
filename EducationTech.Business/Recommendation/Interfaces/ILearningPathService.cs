@@ -10,4 +10,7 @@ public interface ILearningPathService : IService
     Task<bool> SaveLearningPath(LearningPath_SaveRequest request);
     Task<LearningPathDto?> LoadLearningPath();
     Task<LearningPath_ProgressDto?> LoadLearningPathProgress();
+
+    Task<bool> AdjustLogToChangeSimilarity(int learnerId, string courseTitle, double targetSimilarity);
+    Task<bool> MakeLearnerUseLearningPath(int learnerId);
 };

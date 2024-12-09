@@ -286,7 +286,6 @@ public class LearningPathService : ILearningPathService
 
         return result;
     }
-
     public async Task<LearningPathDto> RecomendLearningPathSemester(int learnerId, int specialityId)
     {
         int totalCreditToGraduate = 128;
@@ -486,6 +485,183 @@ public class LearningPathService : ILearningPathService
         return learningPathDto;
     }
 
+    public async Task<bool> AdjustLogToChangeSimilarity(int learnerId, string courseTitle, double targetSimilarity)
+    {
+        var course = await _unitOfWork.Courses.GetAll()
+            .IncludeFullCourseInformations()
+            .Where(c => c.Title == courseTitle)
+            .FirstOrDefaultAsync();
+
+        if (course == null)
+        {
+            throw new Exception("Course not found");
+        }
+
+        if (!course.Topics.Any())
+        {
+            throw new Exception("Course has no topic");
+        }
+
+        var learner = await _unitOfWork.Learners.Find(l => l.Id == learnerId).FirstOrDefaultAsync();
+
+        if (learner == null)
+        {
+            throw new Exception("Learner not found");
+        }
+
+        using var transaction = _unitOfWork.BeginTransaction();
+
+        try
+        {
+            var initialSimilarity = CalculateCourseScore(learner, course);
+
+
+            if (initialSimilarity <= targetSimilarity)
+            {
+                return true;
+            }
+
+            var deltaCourseSimilarity = targetSimilarity - initialSimilarity;
+            var deltaTopicSimilarity = deltaCourseSimilarity / course.Topics.Count;
+
+            foreach (var topic in course.Topics)
+            {
+                var inititalTopicSimilarity = topic.LearningObjects.Average(lo => CalculateSimilarity(learner, lo));
+                foreach (var learningObject in topic.LearningObjects)
+                {
+                    var deltaLearningObjectSimilarity = deltaTopicSimilarity / topic.LearningObjects.Count;
+                    var currentLearnerLog = learningObject.LearnerLogs.FirstOrDefault(x => x.LearnerId == learnerId);
+                    while (deltaLearningObjectSimilarity < 0)
+                    {
+                        var maxScore = learningObject.LearnerLogs.Max(x => x.Score);
+                        if (currentLearnerLog!.Score < maxScore)
+                        {
+                            currentLearnerLog.Score = maxScore;
+                        }
+
+                        var minimumTime = learningObject.LearnerLogs.Min(x => x.TimeTaken);
+                        if (currentLearnerLog.TimeTaken > minimumTime)
+                        {
+                            currentLearnerLog.TimeTaken = minimumTime;
+                        }
+
+                        var minimumAttempt = learningObject.LearnerLogs.Min(x => x.Attempt);
+                        if (currentLearnerLog.Attempt > minimumAttempt)
+                        {
+                            currentLearnerLog.Attempt = minimumAttempt;
+                        }
+
+                        var currentSimilarity = CalculateSimilarity(learner, learningObject);
+
+                        deltaLearningObjectSimilarity = targetSimilarity - currentSimilarity;
+
+                        if (deltaLearningObjectSimilarity >= 0)
+                        {
+                            break;
+                        }
+
+                        var otherLearnerLogs = learningObject.LearnerLogs.Where(x => x.LearnerId != learnerId).ToList();
+
+                        foreach (var otherLearnerLog in otherLearnerLogs)
+                        {
+                            if (otherLearnerLog.Score < learningObject.MaxScore)
+                            {
+                                var newScore = otherLearnerLog.Score + 10;
+                                otherLearnerLog.Score = Math.Min(newScore, learningObject.MaxScore);
+                            }
+
+                            if (otherLearnerLog.TimeTaken > 1)
+                            {
+                                var newTime = otherLearnerLog.TimeTaken - 10;
+                                otherLearnerLog.TimeTaken = Math.Max(newTime, 1);
+                            }
+                        }
+
+                        currentSimilarity = CalculateSimilarity(learner, learningObject);
+
+                        deltaLearningObjectSimilarity = targetSimilarity - currentSimilarity;
+                    }
+
+                    var currentTopicSimilarity = topic.LearningObjects.Average(lo => CalculateSimilarity(learner, lo));
+
+                    if (currentTopicSimilarity - initialSimilarity <= deltaTopicSimilarity)
+                    {
+                        break;
+                    }
+                }
+            }
+            //var currentCourseSimilarity = CalculateCourseScore(learner, course);
+            _unitOfWork.SaveChanges();
+            transaction.Commit();
+            return true;
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
+    public async Task<bool> MakeLearnerUseLearningPath(int learnerId)
+    {
+        var learner = await _unitOfWork.Learners.Find(l => l.Id == learnerId).FirstOrDefaultAsync();
+
+        if (learner == null)
+        {
+            throw new Exception("Learner not found");
+        }
+
+        var learningPathLearningObjectOrders = await _unitOfWork.LearningObjectLearningPathOrders.GetAll()
+            .Where(o => o.LearnerId == learnerId)
+            .OrderBy(o => o.Order)
+            .Include(o => o.LearningObject)
+                .ThenInclude(lo => lo.LearnerLogs.Where(ll => ll.LearnerId == learnerId))
+            .ToListAsync();
+
+        if (learningPathLearningObjectOrders.Count == 0)
+        {
+            throw new Exception("Learner has no learning path saved");
+        }
+
+        using var transaction = _unitOfWork.BeginTransaction();
+        try
+        {
+            // chỉnh create at của log theo thứ tự của learning path
+            var currentCreatedAt = DateTime.Now;
+            foreach (var order in learningPathLearningObjectOrders)
+            {
+                var currentLearnerLog = order.LearningObject.LearnerLogs.FirstOrDefault(x => x.LearnerId == learnerId);
+                currentCreatedAt = currentCreatedAt.AddMinutes(5);
+                if (currentLearnerLog == null)
+                {
+                    currentLearnerLog = new LearnerLog
+                    {
+                        LearnerId = learnerId,
+                        LearningObjectId = order.LearningObjectId,
+                        Score = 0,
+                        TimeTaken = order.LearningObject.MaxLearningTime,
+                        Attempt = 1,
+                        CreatedAt = currentCreatedAt
+                    };
+                    order.LearningObject.LearnerLogs.Add(currentLearnerLog);
+                }
+                else
+                {
+                    currentLearnerLog.CreatedAt = currentCreatedAt;
+                }
+            }
+
+            _unitOfWork.SaveChanges();
+            transaction.Commit();
+
+            return true;
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
+
+    }
     // utility methods
     private const double SCORE_WHEN_NO_LEARNING_OBJECT = double.MaxValue;
     private double CalculateCourseScore(Learner learner, Course course, Dictionary<int, LearnerLogInformations>? additionalLearnerLogInfomationLookUp = null)

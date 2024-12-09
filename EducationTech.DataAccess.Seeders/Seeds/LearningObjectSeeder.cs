@@ -32,9 +32,9 @@ namespace EducationTech.DataAccess.Seeders.Seeds
 
 
                 var learningObjectGenerator = new Faker<LearningObject>()
-                    .RuleFor(lo => lo.Difficulty, f => f.Random.Int(10, 100))
-                    .RuleFor(lo => lo.MaxScore, f => f.Random.Int(5, 8) * 10)
-                    .RuleFor(lo => lo.MaxLearningTime, f => f.Random.Int(50, 100))
+                    .RuleFor(lo => lo.Difficulty, f => 5)
+                    .RuleFor(lo => lo.MaxScore, f => 100)
+                    .RuleFor(lo => lo.MaxLearningTime, f => 300)
                     .RuleFor(lo => lo.Type, f => f.PickRandom(LOType.Explanatory, LOType.Evaluative));
 
                 var questionGenerator = new Faker<Question>()
@@ -82,7 +82,7 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                                    {
                                     new Answer
                                     {
-                                        Content = "True answer",
+                                        Content = "Đây là đáp án đúng (phục vụ cho demo)",
                                         IsCorrect = true,
                                         Score = 10
                                     },

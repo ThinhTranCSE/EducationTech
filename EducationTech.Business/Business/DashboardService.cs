@@ -153,7 +153,12 @@ public class DashboardService : IDashboardService
 
     private async Task<bool> IsLearningPathUsed(Learner learner)
     {
-        var learnerLogs = learner.LearnerLogs
+        var learnerLogs = await _unitOfWork.LearnerLogs.GetAll()
+            .Where(ll => ll.LearnerId == learner.Id)
+            .Where(ll => ll.LearningObject.LearningObjectLearningPathOrders.Any(o => o.LearnerId == learner.Id))
+            .ToListAsync();
+
+        learnerLogs = learnerLogs
             .OrderBy(l => l.CreatedAt)
             .ToList();
 
@@ -220,7 +225,7 @@ public class DashboardService : IDashboardService
                             break;
                         }
 
-                        if (learningObject.LearningObjectLearningPathOrders.First().Order <= learnedOrder)
+                        if (learningObject.LearningObjectLearningPathOrders.First().Order < learnedOrder)
                         {
                             isLearningPathUsed = false;
                             break;
