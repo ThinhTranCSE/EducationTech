@@ -301,10 +301,15 @@ public class LearningPathService : ILearningPathService
         List<string> projectCourseGroupNames = new() { "A", "B" };
         var courseGroups = await _unitOfWork.CourseGroups.GetAll()
             .Where(cg => !projectCourseGroupNames.Contains(cg.Name))
-            .Include(cg => cg.Courses.Where(c => c.Specialities.Count != 0))
-            .ThenInclude(c => c.Topics)
-            .ThenInclude(t => t.LearningObjects)
-            .ThenInclude(lo => lo.LearnerLogs)
+            .Include(cg => cg.Courses.Where(c => c.Specialities.Count != 0).Where(c => c.IsPublished))
+                .ThenInclude(c => c.Prerequisites)
+            .Include(cg => cg.Courses.Where(c => c.Specialities.Count != 0).Where(c => c.IsPublished))
+                .ThenInclude(c => c.Specialities)
+            .Include(cg => cg.Courses.Where(c => c.Specialities.Count != 0).Where(c => c.IsPublished))
+                .ThenInclude(c => c.Topics)
+                    .ThenInclude(t => t.LearningObjects)
+                        .ThenInclude(lo => lo.LearnerLogs)
+
             .ToListAsync();
 
         var sortedCourses = new SortedList<double, Course>(new DuplicateKeyComparer<double>());
