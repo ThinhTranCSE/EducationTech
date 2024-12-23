@@ -16,8 +16,8 @@ public class Learner : Entity
     public virtual User User { get; set; } = null!;
     public int SpecialityId { get; set; }
     public virtual Speciality Speciality { get; set; } = null!;
+    public virtual string IdentificationNumber { get; set; } = null!;
     public virtual ICollection<LearnerLog> LearnerLogs { get; set; }
-
     public virtual ICollection<CourseLearningPathOrder> CourseLearningPathOrders { get; set; } = new List<CourseLearningPathOrder>();
     public virtual ICollection<TopicLearningPathOrder> TopicLearningPathOrders { get; set; } = new List<TopicLearningPathOrder>();
     public virtual ICollection<LearningObjectLearningPathOrder> LearningObjectLearningPathOrders { get; set; } = new List<LearningObjectLearningPathOrder>();

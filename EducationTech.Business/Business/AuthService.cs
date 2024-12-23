@@ -287,10 +287,12 @@ namespace EducationTech.Business.Business
                         throw new HttpException(HttpStatusCode.NotFound, "Speciality not found");
                     }
 
+                    var learnerCount = _unitOfWork.Learners.GetAll().Count();
                     var learner = new Learner()
                     {
                         UserId = createdUser.Id,
-                        SpecialityId = speciality.Id
+                        SpecialityId = speciality.Id,
+                        IdentificationNumber = $"201{(learnerCount + 1):0000}"
                     };
 
                     _unitOfWork.Learners.Add(learner);

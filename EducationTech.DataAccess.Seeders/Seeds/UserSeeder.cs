@@ -40,6 +40,7 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                 .RuleFor(x => x.SpecialityId, f => f.PickRandom(specialityIds));
 
 
+
             var users = new List<RegisterDto>();
 
             var admin = adminGenerator.Generate();
@@ -51,6 +52,16 @@ namespace EducationTech.DataAccess.Seeders.Seeds
             instructor.Username = "instructor";
             instructor.RoleIds = new List<int> { instructorRoleId };
             users.Add(instructor);
+
+            var instructors = instructorGenerator.Generate(5);
+            int instructorIndex = 1;
+            instructors.ForEach(i =>
+            {
+                i.Username = $"instructor{instructorIndex}";
+                i.RoleIds = new List<int> { instructorRoleId };
+                instructorIndex++;
+            });
+            users.AddRange(instructors);
 
             var learners = learnerGenerator.Generate(10);
             int learnerIndex = _context.Learners.Count() + 1;

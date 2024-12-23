@@ -32,28 +32,34 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                 var coursesGenerator = new Faker<Course>();
                 Random random = new Random();
 
-                var instructor = _context.Users.FirstOrDefault(x => x.Roles.Any(r => r.Name == nameof(RoleType.Instructor)));
-                if (instructor == null)
+                var instructors = _context.Users.Where(x => x.Roles.Any(r => r.Name == nameof(RoleType.Instructor))).ToList();
+                if (!instructors.Any())
                 {
                     throw new Exception("Please seed the user first.");
                 }
-                var sampleImage = _context.Images.FirstOrDefault();
-                if (sampleImage == null)
+                var sampleImages = _context.Images.ToList();
+                if (!sampleImages.Any())
                 {
                     throw new Exception("No image found, please use api upload at least 1 image first");
                 }
-                var sampleVideo = _context.Videos.FirstOrDefault();
-                if (sampleVideo == null)
+                var sampleVideos = _context.Videos.ToList();
+                if (!sampleVideos.Any())
                 {
                     throw new Exception("No video found, please use api upload at least 1 video first");
                 }
 
                 coursesGenerator = coursesGenerator
                     .RuleFor(x => x.Description, f => f.Lorem.Paragraph())
-                    .RuleFor(x => x.OwnerId, f => instructor.Id)
+                    .RuleFor(x => x.OwnerId, f =>
+                    {
+                        return instructors[f.Random.Number(0, instructors.Count - 1)].Id;
+                    })
                     .RuleFor(x => x.IsPublished, f => true)
                     .RuleFor(x => x.PublishedAt, f => f.Date.Past())
-                    .RuleFor(x => x.ImageUrl, $"{sampleImage?.Url}");
+                    .RuleFor(x => x.ImageUrl, f =>
+                    {
+                        return sampleImages[f.Random.Number(0, sampleImages.Count - 1)].Url;
+                    });
 
 
                 var courses = new List<Course>();
