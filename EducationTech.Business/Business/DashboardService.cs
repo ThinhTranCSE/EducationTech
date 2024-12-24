@@ -2,6 +2,7 @@
 using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Shared.DTOs.Business.Dashboards;
 using EducationTech.Business.Shared.DTOs.Masters.Courses;
+using EducationTech.Business.Shared.DTOs.Recommendation.Learners;
 using EducationTech.Business.Shared.DTOs.Recommendation.LearningPaths;
 using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Recommendation;
@@ -293,6 +294,55 @@ public class DashboardService : IDashboardService
             BandScoreStatistics = bandScoreStatistics
         });
 
+    }
+
+    public async Task<CourseDashboardDto> GetCourseDashboard(int courseId)
+    {
+        var course = await _unitOfWork.Courses.GetAll()
+            .Where(c => c.Id == courseId)
+            .FirstOrDefaultAsync();
+
+        if (course == null)
+        {
+            throw new Exception("Course not found");
+        }
+
+        var learnerLogGroupByLearnerIds = await _unitOfWork.LearnerLogs.GetAll()
+            .Where(ll => ll.LearningObject.Topic.CourseId == courseId)
+            .GroupBy(ll => ll.LearnerId)
+            .Select(g => new
+            {
+                LearnerId = g.Key,
+                LearnerLogs = g.ToList(),
+            })
+            .ToListAsync();
+
+        var leanerIds = learnerLogGroupByLearnerIds.Select(ll => ll.LearnerId).ToList();
+
+        var learners = await _unitOfWork.Learners.GetAll()
+            .Where(l => leanerIds.Contains(l.Id))
+            .ToListAsync();
+
+        var learnerLookup = learners.ToDictionary(l => l.Id, l => l);
+
+        var learnerAverageScoreWhenLearnCourseDtos = learnerLogGroupByLearnerIds
+            .Select(ll => new LearnerAverageScoreWhenLearnCourseDto
+            {
+                Learner = _mapper.Map<LearnerDto>(learnerLookup[ll.LearnerId]),
+                AverageScore = ll.LearnerLogs.Any() ? ll.LearnerLogs.Average(l => l.Score) : 0
+            })
+            .ToList();
+
+        var learnerLogs = learnerLogGroupByLearnerIds.SelectMany(ll => ll.LearnerLogs).ToList();
+        var averageScore = learnerLogs.Any() ? learnerLogs.Average(ll => ll.Score) : 0;
+
+        var result = new CourseDashboardDto
+        {
+            AverageScore = averageScore,
+            LearnerAverageScores = learnerAverageScoreWhenLearnCourseDtos
+        };
+
+        return result;
     }
 }
 

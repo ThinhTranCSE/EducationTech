@@ -6,4 +6,5 @@ namespace EducationTech.Business.Business.Interfaces;
 public interface IDashboardService : IService
 {
     Task<DashboardDto> GetDashboard(IEnumerable<int> specialityIds);
+    Task<CourseDashboardDto> GetCourseDashboard(int courseId);
 }

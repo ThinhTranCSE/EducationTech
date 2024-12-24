@@ -20,4 +20,11 @@ public class DashboardController : BaseController
         var dashboard = await _dashboardService.GetDashboard(specialityIds);
         return dashboard;
     }
+
+    [HttpGet("Instructor/{courseId}")]
+    public async Task<CourseDashboardDto> GetCourseDashboard(int courseId)
+    {
+        var courseDashboard = await _dashboardService.GetCourseDashboard(courseId);
+        return courseDashboard;
+    }
 }
