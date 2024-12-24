@@ -4,6 +4,7 @@ using EducationTech.Business.Business.Interfaces;
 using EducationTech.Business.Master.Interfaces;
 using EducationTech.Business.Shared.DTOs.Masters.Comunities;
 using EducationTech.Business.Shared.DTOs.Masters.Courses;
+using EducationTech.Business.Shared.DTOs.Recommendation.RecommendTopics;
 using EducationTech.DataAccess.Abstract;
 using EducationTech.DataAccess.Entities.Business;
 using EducationTech.DataAccess.Entities.Master;
@@ -186,6 +187,8 @@ namespace EducationTech.Business.Master
 
             query = query
                 .Include(x => x.Specialities)
+                .Include(x => x.Topics)
+                    .ThenInclude(t => t.LearningObjects)
                 .Include(c => c.Owner);
 
             if (requestDto.SpecialityIds.Count > 0)
@@ -209,6 +212,13 @@ namespace EducationTech.Business.Master
 
             var courseDtos = _mapper.Map<List<CourseDto>>(courses);
 
+            foreach (var c in courseDtos)
+            {
+                var los = c.Topics.SelectMany(t => t.LearningObjects).ToList();
+                var count = los.Count;
+                c.DifficultyLevel = count > 0 ? los.Average(x => x.Difficulty) : 0;
+                c.Topics = new List<RecommendTopicDto>();
+            }
             return new Course_GetResponseDto
             {
                 Courses = courseDtos

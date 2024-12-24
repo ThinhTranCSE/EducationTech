@@ -22,6 +22,7 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
         public string CourseCode { get; set; }
         public int Credits { get; set; }
         public int RecommendedSemester { get; set; }
+        public double DifficultyLevel { get; set; }
         public CourseGroupDto? CourseGroup { get; set; }
         public UserDto Owner { get; set; }
         public ICollection<RecommendTopicDto> Topics { get; set; } = new List<RecommendTopicDto>();
@@ -33,7 +34,7 @@ namespace EducationTech.Business.Shared.DTOs.Masters.Courses
             string scheme = GlobalReference.Instance.HostScheme;
             cfg.CreateMap<Course, CourseDto>()
                 .ForMember(x => x.ImageUrl, opt => opt.MapFrom(x => $"{scheme}://{hostName}/{x.ImageUrl}"))
-                .ReverseMap();
+                ;
         }
     }
 }
