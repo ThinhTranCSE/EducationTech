@@ -35,7 +35,8 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                     .RuleFor(lo => lo.Difficulty, f => 5)
                     .RuleFor(lo => lo.MaxScore, f => 100)
                     .RuleFor(lo => lo.MaxLearningTime, f => 300)
-                    .RuleFor(lo => lo.Type, f => f.PickRandom(LOType.Explanatory, LOType.Evaluative));
+                    .RuleFor(lo => lo.Type, f => f.PickRandom(LOType.Explanatory, LOType.Evaluative))
+                    .RuleFor(lo => lo.Title, f => f.Random.AlphaNumeric(5));
 
                 var questionGenerator = new Faker<Question>()
                     .RuleFor(q => q.Content, f => f.Lorem.Sentence());
@@ -51,8 +52,8 @@ namespace EducationTech.DataAccess.Seeders.Seeds
                     {
                         lo.TopicId = topic.Id;
                         lo.Order = order++;
-                        string title = lo.Type == LOType.Explanatory ? "Video" : "Quiz";
-                        lo.Title = $"{title} {lo.Order}";
+                        string prefix = lo.Type == LOType.Explanatory ? "Video" : "Quiz";
+                        lo.Title = $"{prefix}_{lo.Title}_{lo.Order}";
 
                         if (lo.Type == LOType.Explanatory)
                         {

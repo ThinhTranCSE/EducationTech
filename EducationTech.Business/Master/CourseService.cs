@@ -244,6 +244,73 @@ namespace EducationTech.Business.Master
 
             return _mapper.Map<ComunityDto>(comunity);
         }
+
+        public async Task<Course_GetResponseDto> GetRecentLearningCourses(int limit = 3)
+        {
+            var user = _sessionService.CurrentUser;
+            if (user == null)
+            {
+                throw new Exception("You have not loged in");
+            }
+
+            var learner = user.Learner;
+            if (learner == null)
+            {
+                throw new Exception("You are not a learner");
+            }
+
+            var query = _unitOfWork.Courses.GetAll();
+
+            query = query
+                .Include(x => x.Specialities)
+                .Include(c => c.Owner)
+                .Where(c => c.Specialities.Any(s => s.SpecialityId == learner.SpecialityId))
+                .Where(x => x.Topics.Any(t => t.LearningObjects.Any(lo => lo.LearnerLogs.Any(ll => ll.LearnerId == learner.Id))))
+                .OrderByDescending(x => x.Topics.SelectMany(t => t.LearningObjects).SelectMany(lo => lo.LearnerLogs).Max(ll => ll.UpdatedAt != null ? ll.UpdatedAt : ll.CreatedAt))
+                .Take(limit);
+
+            var courses = await query.ToListAsync();
+
+            var courseDtos = _mapper.ProjectTo<CourseDto>(courses.AsQueryable()).ToList();
+
+            return new Course_GetResponseDto
+            {
+                Courses = courseDtos
+            };
+        }
+
+        public async Task<Course_GetResponseDto> GetPopularCourse(int limit = 5)
+        {
+            var user = _sessionService.CurrentUser;
+            if (user == null)
+            {
+                throw new Exception("You have not loged in");
+            }
+
+            var learner = user.Learner;
+            if (learner == null)
+            {
+                throw new Exception("You are not a learner");
+            }
+
+            var query = _unitOfWork.Courses.GetAll();
+
+            query = query
+                .Include(x => x.Specialities)
+                .Include(c => c.Owner)
+                .Where(c => c.Specialities.Any(s => s.SpecialityId == learner.SpecialityId))
+                .OrderByDescending(x => x.Topics.SelectMany(t => t.LearningObjects).SelectMany(lo => lo.LearnerLogs).Select(ll => ll.LearnerId).Distinct().Count())
+                .Take(limit);
+
+            var courses = await query.ToListAsync();
+
+            var courseDtos = _mapper.ProjectTo<CourseDto>(courses.AsQueryable()).ToList();
+
+            return new Course_GetResponseDto
+            {
+                Courses = courseDtos
+            };
+        }
     }
 }
 

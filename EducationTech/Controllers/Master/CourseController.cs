@@ -51,4 +51,18 @@ public class CourseController : BaseController
         return comunity;
     }
 
+    [HttpGet("Recent")]
+    public async Task<Course_GetResponseDto> GetRecentLearningCourses([FromQuery] int limit = 3)
+    {
+        var courses = await _courseService.GetRecentLearningCourses(limit);
+        return courses;
+    }
+
+    [HttpGet("Popular")]
+    public async Task<Course_GetResponseDto> GetPopularCourse([FromQuery] int limit = 5)
+    {
+        var courses = await _courseService.GetPopularCourse(limit);
+        return courses;
+    }
+
 }
