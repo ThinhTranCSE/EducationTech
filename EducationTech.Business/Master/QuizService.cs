@@ -233,8 +233,8 @@ class QuizService : IQuizService
                     learnerLog.Score = score;
                     learnerLog.TimeTaken = quizResult.TimeTaken.Value;
                 }
+                learnerLog.UpdatedAt = DateTime.Now;
             }
-
             _unitOfWork.SaveChanges();
 
             transaction.Commit();
