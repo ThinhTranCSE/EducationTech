@@ -320,6 +320,7 @@ public class DashboardService : IDashboardService
         var leanerIds = learnerLogGroupByLearnerIds.Select(ll => ll.LearnerId).ToList();
 
         var learners = await _unitOfWork.Learners.GetAll()
+            .Include(l => l.User)
             .Where(l => leanerIds.Contains(l.Id))
             .ToListAsync();
 
