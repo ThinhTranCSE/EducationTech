@@ -266,7 +266,9 @@ namespace EducationTech.Business.Master
                 .Include(c => c.Owner)
                 .Where(c => c.Specialities.Any(s => s.SpecialityId == learner.SpecialityId))
                 .Where(x => x.Topics.Any(t => t.LearningObjects.Any(lo => lo.LearnerLogs.Any(ll => ll.LearnerId == learner.Id))))
-                .OrderByDescending(x => x.Topics.SelectMany(t => t.LearningObjects).SelectMany(lo => lo.LearnerLogs).Max(ll => ll.UpdatedAt != null ? ll.UpdatedAt : ll.CreatedAt))
+                .OrderByDescending(x => x.Topics.SelectMany(t => t.LearningObjects).SelectMany(lo => lo.LearnerLogs)
+                    .Where(ll => ll.LearnerId == learner.Id)
+                    .Max(ll => ll.UpdatedAt != null ? ll.UpdatedAt : ll.CreatedAt))
                 .Take(limit);
 
             var courses = await query.ToListAsync();
